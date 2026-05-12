@@ -22,7 +22,7 @@
   }
 
   .btn-primary {
-    @apply bg-yellow-400 border-2 border-black px-4 py-2
+    @apply bg-orange-400 border-2 border-black px-4 py-2
            font-bold uppercase font-mono text-sm
            shadow-[4px_4px_0px_0px_#000]
            hover:translate-x-[-2px] hover:translate-y-[-2px]

@@ -42,14 +42,14 @@ export const Card: React.FC<{ children: React.ReactNode; className?: string; tit
 
 export const Input: React.FC<React.InputHTMLAttributes<HTMLInputElement>> = (props) => (
   <input 
-    className="w-full bg-white border-2 border-black p-3 font-mono focus:outline-none focus:bg-yellow-50 placeholder-gray-500 shadow-[2px_2px_0px_0px_#ccc] focus:shadow-[2px_2px_0px_0px_#000] transition-all"
+    className="w-full bg-white border-2 border-black p-3 font-mono focus:outline-none focus:bg-orange-50 placeholder-gray-500 shadow-[2px_2px_0px_0px_#ccc] focus:shadow-[2px_2px_0px_0px_#000] transition-all"
     {...props}
   />
 );
 
 export const TextArea: React.FC<React.TextareaHTMLAttributes<HTMLTextAreaElement>> = (props) => (
   <textarea 
-    className="w-full bg-white border-2 border-black p-3 font-mono focus:outline-none focus:bg-yellow-50 placeholder-gray-500 shadow-[2px_2px_0px_0px_#ccc] focus:shadow-[2px_2px_0px_0px_#000] transition-all"
+    className="w-full bg-white border-2 border-black p-3 font-mono focus:outline-none focus:bg-orange-50 placeholder-gray-500 shadow-[2px_2px_0px_0px_#ccc] focus:shadow-[2px_2px_0px_0px_#000] transition-all"
     {...props}
   />
 );
@@ -61,7 +61,7 @@ export const Label: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 export const Select: React.FC<React.SelectHTMLAttributes<HTMLSelectElement>> = (props) => (
   <div className="relative">
     <select 
-      className="w-full appearance-none bg-white border-2 border-black p-3 pr-8 font-mono focus:outline-none focus:bg-yellow-50 shadow-[2px_2px_0px_0px_#ccc] focus:shadow-[2px_2px_0px_0px_#000] transition-all"
+      className="w-full appearance-none bg-white border-2 border-black p-3 pr-8 font-mono focus:outline-none focus:bg-orange-50 shadow-[2px_2px_0px_0px_#ccc] focus:shadow-[2px_2px_0px_0px_#000] transition-all"
       {...props}
     />
     <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
@@ -72,7 +72,7 @@ export const Select: React.FC<React.SelectHTMLAttributes<HTMLSelectElement>> = (
   </div>
 );
 
-export const Badge: React.FC<{ children: React.ReactNode; color?: string }> = ({ children, color = "bg-yellow-300" }) => (
+export const Badge: React.FC<{ children: React.ReactNode; color?: string }> = ({ children, color = "bg-orange-300" }) => (
   <span className={`${color} border border-black px-2 py-0.5 text-xs font-bold uppercase tracking-wider`}>
     {children}
   </span>
@@ -90,7 +90,7 @@ export const Modal: React.FC<{
   return (
     <div className={`fixed inset-0 ${zIndex} flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm`}>
       <div className="bg-white border-4 border-black w-full max-w-lg shadow-[8px_8px_0px_0px_#000] max-h-[90vh] flex flex-col">
-        <div className="flex-shrink-0 flex justify-between items-center p-4 border-b-2 border-black bg-yellow-400">
+        <div className="flex-shrink-0 flex justify-between items-center p-4 border-b-2 border-black bg-orange-400">
           <h2 className="font-bold text-xl font-mono uppercase truncate pr-4">{title}</h2>
           <button onClick={onClose} className="p-1 hover:bg-black hover:text-white transition-colors border border-black">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="square" strokeLinejoin="miter">

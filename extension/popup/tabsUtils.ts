@@ -92,7 +92,7 @@ export const GROUP_COLOR_MAP: Record<TabGroupColor, string> = {
   grey:   'border-l-gray-400',
   blue:   'border-l-blue-500',
   red:    'border-l-red-500',
-  yellow: 'border-l-yellow-400',
+  yellow: 'border-l-orange-400',
   green:  'border-l-green-500',
   pink:   'border-l-pink-400',
   purple: 'border-l-purple-500',

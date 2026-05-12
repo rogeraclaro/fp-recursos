@@ -429,7 +429,7 @@ export default function Popup() {
   if (viewState === 'loading') {
     return (
       <div className="p-6 text-center">
-        <div className="bg-yellow-400 border-2 border-black p-4 mb-4">
+        <div className="bg-orange-400 border-2 border-black p-4 mb-4">
           <h1 className="text-xl font-bold uppercase">{UI_STRINGS.TITLE}</h1>
         </div>
         <p className="font-mono text-sm">{UI_STRINGS.LOADING}</p>
@@ -501,7 +501,7 @@ export default function Popup() {
     return (
       <div className="w-[400px] flex flex-col max-h-[580px]">
         {/* Header */}
-        <div className="bg-yellow-400 border-b-2 border-black p-3 flex items-center justify-between flex-shrink-0">
+        <div className="bg-orange-400 border-b-2 border-black p-3 flex items-center justify-between flex-shrink-0">
           <h1 className="text-lg font-bold uppercase">🔖 {UI_STRINGS.TABS_HEADING}</h1>
           <button
             className="text-xs underline font-mono hover:no-underline"
@@ -655,7 +655,7 @@ export default function Popup() {
     const catTabs = tabs.filter(t => selectedTabIds.has(t.id));
     return (
       <div className="w-[400px] flex flex-col max-h-[580px]">
-        <div className="bg-yellow-400 border-b-2 border-black p-3 flex-shrink-0">
+        <div className="bg-orange-400 border-b-2 border-black p-3 flex-shrink-0">
           <h1 className="text-lg font-bold uppercase">🤖 {UI_STRINGS.TABS_CATEGORIZING_HEADING}</h1>
         </div>
         <div className="flex-1 overflow-y-auto">
@@ -684,7 +684,7 @@ export default function Popup() {
     const reviewTabs = tabs.filter(t => selectedTabIds.has(t.id));
     return (
       <div className="w-[400px] flex flex-col max-h-[580px]">
-        <div className="bg-yellow-400 border-b-2 border-black p-3 flex-shrink-0">
+        <div className="bg-orange-400 border-b-2 border-black p-3 flex-shrink-0">
           <h1 className="text-lg font-bold uppercase">🏷️ {UI_STRINGS.TABS_REVIEW_HEADING}</h1>
         </div>
         <div className="flex-1 overflow-y-auto divide-y divide-gray-200">
@@ -707,7 +707,7 @@ export default function Popup() {
                     <span className="text-xs text-gray-400 font-mono">{UI_STRINGS.TABS_REVIEW_NO_CATEGORIES}</span>
                   )}
                   {tabCats.map(cat => (
-                    <span key={cat} className="flex items-center gap-1 text-xs font-mono bg-yellow-100 border border-yellow-400 px-1 rounded">
+                    <span key={cat} className="flex items-center gap-1 text-xs font-mono bg-orange-100 border border-orange-400 px-1 rounded">
                       {cat}
                       <button
                         className="text-gray-500 hover:text-red-600 font-bold leading-none"
@@ -759,7 +759,7 @@ export default function Popup() {
     const savingTabs = tabs.filter(t => tabStatuses.has(t.id));
     return (
       <div className="w-[400px] flex flex-col max-h-[580px]">
-        <div className="bg-yellow-400 border-b-2 border-black p-3 flex-shrink-0">
+        <div className="bg-orange-400 border-b-2 border-black p-3 flex-shrink-0">
           <h1 className="text-lg font-bold uppercase">⏳ {UI_STRINGS.TABS_SAVING_HEADING}</h1>
         </div>
         <div className="flex-1 overflow-y-auto">
@@ -799,7 +799,7 @@ export default function Popup() {
 
     return (
       <div className="w-[400px] flex flex-col max-h-[580px]">
-        <div className="bg-yellow-400 border-b-2 border-black p-3 flex-shrink-0">
+        <div className="bg-orange-400 border-b-2 border-black p-3 flex-shrink-0">
           <h1 className="text-lg font-bold uppercase">🔖 {UI_STRINGS.TABS_SUMMARY_HEADING}</h1>
         </div>
         <div className="flex-1 overflow-y-auto">
@@ -814,7 +814,7 @@ export default function Popup() {
                     <p className="font-bold text-xs truncate">{result?.title || t.title}</p>
                     <div className="flex flex-wrap gap-1">
                       {(result?.categories ?? []).map(cat => (
-                        <span key={cat} className="text-xs font-mono bg-yellow-100 border border-yellow-400 px-1 rounded">
+                        <span key={cat} className="text-xs font-mono bg-orange-100 border border-orange-400 px-1 rounded">
                           {cat}
                         </span>
                       ))}
@@ -858,7 +858,7 @@ export default function Popup() {
   return (
     <div className="w-[400px]">
       {/* Header */}
-      <div className="bg-yellow-400 border-b-2 border-black p-4">
+      <div className="bg-orange-400 border-b-2 border-black p-4">
         <h1 className="text-xl font-bold uppercase">🔖 {UI_STRINGS.TITLE}</h1>
       </div>
 
