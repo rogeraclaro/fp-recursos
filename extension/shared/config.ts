@@ -1,32 +1,21 @@
-// API Configuration
-export const API_CONFIG = {
-	BASE_URL: 'https://ailinksdb.masellas.info/api',
-	SECRET: 'aAgYYud97Kp29Lif9u0i',
-	HEADERS: {
-		'Content-Type': 'application/json',
-		'x-api-secret': 'aAgYYud97Kp29Lif9u0i',
-	},
-}
+// Supabase — substituir pels valors reals del projecte Supabase
+export const SUPABASE_URL = 'https://placeholder.supabase.co'
+export const SUPABASE_ANON_KEY = 'placeholder-anon-key'
+export const EDGE_FUNCTION_URL = `${SUPABASE_URL}/functions/v1/suggest-resource`
 
-// Error messages in Catalan
 export const ERRORS = {
 	NO_TITLE: 'El títol no pot estar buit',
 	TITLE_TOO_LONG: 'El títol no pot superar els 80 caràcters',
 	DUPLICATE: 'Aquest enllaç ja està guardat',
 	API_ERROR: 'Error de connexió amb el servidor',
 	UNKNOWN: 'Error desconegut. Torna-ho a intentar.',
-	CATEGORY_EXISTS: 'Aquesta categoria ja existeix',
-	CATEGORY_EMPTY: 'El nom de la categoria no pot estar buit',
+	AUTH_FAILED: 'Credencials incorrectes. Comprova email i contrasenya.',
 }
 
-// Claude proxy — local server that uses claude -p CLI subprocess
-export const CLAUDE_PROXY_URL = 'http://localhost:3838'
-
-// UI strings in Catalan
 export const UI_STRINGS = {
-	TITLE: 'AI Bookmark Manager',
+	TITLE: 'FP Recursos',
 	LOADING: 'Carregant informació...',
-	SAVE: 'Afegir Bookmark',
+	SAVE: 'Guardar recurs',
 	CANCEL: 'Cancel·lar',
 	CLOSE: 'Tancar',
 	RETRY: 'Reintentar',
@@ -35,13 +24,10 @@ export const UI_STRINGS = {
 	LABEL_AUTHOR: 'Autor:',
 	LABEL_URL: 'URL:',
 	LABEL_CATEGORIES: 'Categories:',
-	SUCCESS: 'Bookmark afegit correctament!',
-	DUPLICATE_WARNING: 'Aquest enllaç ja existeix!',
+	SUCCESS: 'Recurs guardat correctament!',
+	DUPLICATE_WARNING: 'Aquest recurs ja existeix!',
 	DUPLICATE_MESSAGE: 'Aquesta pàgina ja està guardada a la teva col·lecció.',
-	NEW_CATEGORY_PLACEHOLDER: 'Nova categoria...',
-	ADD_CATEGORY: 'Afegir',
 
-	// Tabs feature strings (Catalan)
 	TABS_HEADING: 'Pestanyes Obertes',
 	TABS_SAVE_THIS_PAGE: 'Guardar pàgina',
 	TABS_FILTER_ALL: 'Totes',

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { ExtractedMetadata, Bookmark, TabItem, TabSaveStatus, TabGroupColor, TabGroupInfo } from '../shared/types';
 import { UI_STRINGS, ERRORS } from '../shared/config';
-import { getBookmarks, getCategories, callClaudeProxy } from '../shared/api';
 import { resolveSaveCategories } from './singleSaveUtils';
 import {
   filterTabsByGroup,
@@ -17,7 +16,7 @@ import {
   resolveAuthorFromUrl,
 } from './tabsUtils';
 
-type ViewState = 'loading' | 'form' | 'duplicate' | 'success' | 'error' | 'tabs' | 'tabs-categorizing' | 'tabs-review' | 'tabs-saving' | 'tabs-summary';
+type ViewState = 'login' | 'loading' | 'form' | 'duplicate' | 'success' | 'error' | 'tabs' | 'tabs-categorizing' | 'tabs-review' | 'tabs-saving' | 'tabs-summary';
 type CatStatus = 'pending' | 'categorizing' | 'done' | 'failed';
 
 export default function Popup() {
@@ -28,8 +27,13 @@ export default function Popup() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [error, setError] = useState('');
-  const [newCategoryName, setNewCategoryName] = useState('');
-  const [isAddingCategory, setIsAddingCategory] = useState(false);
+
+  // Login state
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [sessionUsername, setSessionUsername] = useState<string | null>(null);
 
   // Tabs feature state
   const [tabs, setTabs] = useState<TabItem[]>([]);
@@ -43,25 +47,30 @@ export default function Popup() {
   const [tabReviewCategories, setTabReviewCategories] = useState<Map<number, string[]>>(new Map());
   const [tabReviewMeta, setTabReviewMeta] = useState<Map<number, { title: string; description: string }>>(new Map());
 
-  // Load tabs on mount — restore single-page form if was active
+  // Load tabs on mount — check auth first, then restore state
   useEffect(() => {
-    chrome.storage.session.get(['singlePageMode', 'formState']).then(({ singlePageMode, formState }) => {
-      if (singlePageMode) {
-        if (formState) {
-          const fs = formState as { title: string; description: string; selectedCategories: string[]; metadata: ExtractedMetadata; categories: string[] };
-          setTitle(fs.title);
-          setDescription(fs.description);
-          setSelectedCategories(fs.selectedCategories);
-          setMetadata(fs.metadata);
-          setCategories(fs.categories);
-          setViewState('form');
+    chrome.runtime.sendMessage({ type: 'AUTH_GET_SESSION' }).then(({ data: session }) => {
+      if (!session) { setViewState('login'); return; }
+      setSessionUsername(session.username);
+
+      chrome.storage.session.get(['singlePageMode', 'formState']).then(({ singlePageMode, formState }) => {
+        if (singlePageMode) {
+          if (formState) {
+            const fs = formState as { title: string; description: string; selectedCategories: string[]; metadata: ExtractedMetadata; categories: string[] };
+            setTitle(fs.title);
+            setDescription(fs.description);
+            setSelectedCategories(fs.selectedCategories);
+            setMetadata(fs.metadata);
+            setCategories(fs.categories);
+            setViewState('form');
+          } else {
+            loadData();
+          }
         } else {
-          loadData();
+          loadTabsData();
         }
-      } else {
-        loadTabsData();
-      }
-    }).catch(() => loadTabsData());
+      }).catch(() => loadTabsData());
+    }).catch(() => setViewState('login'));
   }, []);
 
   // Save form state to session whenever it changes (so it survives tab switches)
@@ -77,8 +86,8 @@ export default function Popup() {
       const allChromeTabs = await chrome.tabs.query({ currentWindow: true });
       const allGroups = await chrome.tabGroups.query({ windowId: chrome.windows.WINDOW_ID_CURRENT });
       const groupMap = new Map(allGroups.map(g => [g.id, g]));
-      const savedBookmarks = await getBookmarks();
-      const savedUrls = new Set(savedBookmarks.map(b => b.originalLink));
+      const savedUrlsResp = await chrome.runtime.sendMessage({ type: 'GET_SAVED_URLS' });
+      const savedUrls = new Set<string>(savedUrlsResp.success ? savedUrlsResp.data : []);
 
       const tabItems: TabItem[] = allChromeTabs
         .filter(t => t.id != null && t.url && !t.url.startsWith('chrome://') && !t.url.startsWith('chrome-extension://'))
@@ -98,12 +107,12 @@ export default function Popup() {
 
       setTabs(tabItems);
 
-      // Load categories so handleBulkSave can pass them to the proxy
+      // Load categories so handleBulkSave can pass them to the AI
       try {
-        const cats = await getCategories();
-        if (cats.length > 0) setCategories(cats);
+        const catsResp = await chrome.runtime.sendMessage({ type: 'GET_CATEGORIES' });
+        if (catsResp.success && catsResp.data.length > 0) setCategories(catsResp.data);
       } catch {
-        // Non-fatal — proxy will do best-effort without category list
+        // Non-fatal
       }
 
       setViewState('tabs');
@@ -162,20 +171,19 @@ export default function Popup() {
       const resolvedCats: string[] = categoriesResponse.success ? categoriesResponse.data : ['Altres'];
       setCategories(resolvedCats);
 
-      // Call Claude for AI-suggested categories (never throws — returns { categories: [] } on failure)
-      const aiResult = await callClaudeProxy({
-        url: extractedMetadata.url,
-        title: extractedMetadata.title,
-        description: extractedMetadata.description,
-        categories: resolvedCats,
+      // Call AI Edge Function for suggested title/category
+      const aiResp = await chrome.runtime.sendMessage({
+        type: 'SUGGEST_RESOURCE',
+        data: { url: extractedMetadata.url, categories: resolvedCats },
       });
-
-      const valid = aiResult.categories.filter(c => resolvedCats.includes(c));
-      if (valid.length > 0) {
-        setSelectedCategories(valid);
+      if (aiResp.success && aiResp.data) {
+        const suggestion = aiResp.data;
+        if (suggestion.title) setTitle(suggestion.title);
+        if (suggestion.description) setDescription(suggestion.description);
+        if (suggestion.category && resolvedCats.includes(suggestion.category)) {
+          setSelectedCategories([suggestion.category]);
+        }
       }
-      if (aiResult.title) setTitle(aiResult.title);
-      if (aiResult.description) setDescription(aiResult.description);
 
       setViewState('form');
     } catch (err) {
@@ -195,40 +203,33 @@ export default function Popup() {
     });
   }
 
-  async function handleAddCategory() {
-    const trimmedName = newCategoryName.trim();
-
-    if (!trimmedName) {
-      setError(ERRORS.CATEGORY_EMPTY);
-      return;
-    }
-
-    if (categories.includes(trimmedName)) {
-      setError(ERRORS.CATEGORY_EXISTS);
-      return;
-    }
-
-    setIsAddingCategory(true);
-    setError('');
-
+  async function handleLogin(e: React.FormEvent) {
+    e.preventDefault();
+    setLoginLoading(true);
+    setLoginError('');
     try {
-      const response = await chrome.runtime.sendMessage({
-        type: 'ADD_CATEGORY',
-        data: { category: trimmedName }
+      const resp = await chrome.runtime.sendMessage({
+        type: 'AUTH_SIGN_IN',
+        data: { email: loginEmail, password: loginPassword },
       });
-
-      if (response.success) {
-        setCategories(response.data);
-        setSelectedCategories(prev => [...prev, trimmedName]);
-        setNewCategoryName('');
+      if (resp.success) {
+        setSessionUsername(resp.data.username);
+        loadTabsData();
       } else {
-        setError(response.error || ERRORS.API_ERROR);
+        setLoginError(ERRORS.AUTH_FAILED);
       }
-    } catch (err: any) {
-      setError(err.message || ERRORS.API_ERROR);
+    } catch {
+      setLoginError(ERRORS.API_ERROR);
     } finally {
-      setIsAddingCategory(false);
+      setLoginLoading(false);
     }
+  }
+
+  async function handleLogout() {
+    await chrome.runtime.sendMessage({ type: 'AUTH_SIGN_OUT' });
+    chrome.storage.session.clear();
+    setSessionUsername(null);
+    setViewState('login');
   }
 
   async function handleSave() {
@@ -346,18 +347,16 @@ export default function Popup() {
           tabDescription = result ?? '';
         } catch { /* not scriptable */ }
 
-        const aiResult = await callClaudeProxy({
-          url: tab.url,
-          title: tab.title,
-          description: tabDescription,
-          categories,
+        const aiResp = await chrome.runtime.sendMessage({
+          type: 'SUGGEST_RESOURCE',
+          data: { url: tab.url, categories },
         });
-
-        const valid = aiResult.categories.filter(c => categories.includes(c));
-        reviewCats.set(tab.id, valid.length > 0 ? valid : ['Altres']);
+        const suggestion = aiResp.success ? aiResp.data : null;
+        const suggestedCat = suggestion?.category && categories.includes(suggestion.category) ? suggestion.category : null;
+        reviewCats.set(tab.id, suggestedCat ? [suggestedCat] : (categories[0] ? [categories[0]] : []));
         reviewMeta.set(tab.id, {
-          title: aiResult.title || tab.title,
-          description: aiResult.description || '',
+          title: suggestion?.title || tab.title,
+          description: suggestion?.description || tabDescription,
         });
         setTabCatStatuses(prev => new Map(prev).set(tab.id, 'done'));
       } catch {
@@ -423,6 +422,49 @@ export default function Popup() {
     }
 
     setViewState('tabs-summary');
+  }
+
+  // Login view
+  if (viewState === 'login') {
+    return (
+      <div className="w-72 p-0">
+        <div className="bg-orange-400 border-b-4 border-black p-4">
+          <h1 className="font-black font-mono text-lg uppercase tracking-wider">FP Recursos</h1>
+          <p className="font-mono text-xs">Accés editors</p>
+        </div>
+        <form onSubmit={handleLogin} className="p-4 space-y-3">
+          <div>
+            <label className="block font-mono text-xs font-bold uppercase mb-1">Email</label>
+            <input
+              type="email"
+              className="input w-full text-sm"
+              placeholder="editor@centre.cat"
+              value={loginEmail}
+              onChange={e => setLoginEmail(e.target.value)}
+              required
+              autoFocus
+            />
+          </div>
+          <div>
+            <label className="block font-mono text-xs font-bold uppercase mb-1">Contrasenya</label>
+            <input
+              type="password"
+              className="input w-full text-sm"
+              placeholder="••••••••"
+              value={loginPassword}
+              onChange={e => setLoginPassword(e.target.value)}
+              required
+            />
+          </div>
+          {loginError && (
+            <p className="text-red-600 font-mono text-xs border border-red-300 bg-red-50 p-2">{loginError}</p>
+          )}
+          <button type="submit" disabled={loginLoading} className="btn-primary w-full text-sm">
+            {loginLoading ? 'Entrant...' : 'Entrar'}
+          </button>
+        </form>
+      </div>
+    );
   }
 
   // Loading state
@@ -502,13 +544,25 @@ export default function Popup() {
       <div className="w-[400px] flex flex-col max-h-[580px]">
         {/* Header */}
         <div className="bg-orange-400 border-b-2 border-black p-3 flex items-center justify-between flex-shrink-0">
-          <h1 className="text-lg font-bold uppercase">🔖 {UI_STRINGS.TABS_HEADING}</h1>
-          <button
-            className="text-xs underline font-mono hover:no-underline"
-            onClick={() => { chrome.storage.session.set({ singlePageMode: true }); loadData(); setViewState('loading'); }}
-          >
-            {UI_STRINGS.TABS_SAVE_THIS_PAGE}
-          </button>
+          <div>
+            <h1 className="text-base font-bold uppercase leading-tight">🔖 {UI_STRINGS.TABS_HEADING}</h1>
+            {sessionUsername && <p className="text-xs font-mono opacity-70">{sessionUsername}</p>}
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              className="text-xs underline font-mono hover:no-underline"
+              onClick={() => { chrome.storage.session.set({ singlePageMode: true }); loadData(); setViewState('loading'); }}
+            >
+              {UI_STRINGS.TABS_SAVE_THIS_PAGE}
+            </button>
+            <button
+              className="text-xs font-mono border border-black px-2 py-0.5 hover:bg-orange-600 hover:text-white"
+              onClick={handleLogout}
+              title="Tancar sessió"
+            >
+              ↩
+            </button>
+          </div>
         </div>
 
         {/* Group filter bar — hidden when no groups */}
@@ -914,25 +968,6 @@ export default function Popup() {
                   <span>{cat}</span>
                 </label>
               ))}
-            </div>
-            {/* Add new category */}
-            <div className="flex gap-2 mt-2 pt-2 border-t border-gray-300">
-              <input
-                type="text"
-                className="input flex-1 text-sm"
-                placeholder={UI_STRINGS.NEW_CATEGORY_PLACEHOLDER}
-                value={newCategoryName}
-                onChange={(e) => setNewCategoryName(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleAddCategory()}
-                disabled={isAddingCategory}
-              />
-              <button
-                onClick={handleAddCategory}
-                disabled={isAddingCategory}
-                className="btn-secondary text-sm px-3"
-              >
-                {isAddingCategory ? '...' : UI_STRINGS.ADD_CATEGORY}
-              </button>
             </div>
           </div>
         </div>

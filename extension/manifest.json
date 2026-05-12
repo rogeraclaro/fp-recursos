@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "AI Bookmark Manager",
-  "description": "Guarda pàgines web a la teva col·lecció d'AI Bookmarks",
+  "name": "FP Recursos",
+  "description": "Guarda recursos educatius FP a fp-recursos",
   "version": "1.0.0",
   "action": {
     "default_popup": "popup/index.html",
@@ -25,8 +25,7 @@
     "favicon"
   ],
   "host_permissions": [
-    "https://ailinksdb.masellas.info/*",
-    "http://localhost:3838/*"
+    "https://*.supabase.co/*"
   ],
   "background": {
     "service_worker": "background/service-worker.js",

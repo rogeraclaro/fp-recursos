@@ -1,13 +1,13 @@
-// Bookmark interface (matches webapp)
+// Bookmark — internal popup representation (service worker maps to Supabase format)
 export interface Bookmark {
-  id: string;
+  id?: string;
   title: string;
   description: string;
-  author: string;
+  author?: string;
   originalLink: string;
-  externalLinks: string[];
+  externalLinks?: string[];
   categories: string[];
-  createdAt: number;
+  createdAt?: number;
 }
 
 // Metadata extracted from webpage
@@ -20,7 +20,16 @@ export interface ExtractedMetadata {
 
 // Message types for Chrome messaging
 export interface Message {
-  type: 'GET_METADATA' | 'SAVE_BOOKMARK' | 'CHECK_DUPLICATE' | 'GET_CATEGORIES' | 'ADD_CATEGORY';
+  type:
+    | 'GET_METADATA'
+    | 'SAVE_BOOKMARK'
+    | 'CHECK_DUPLICATE'
+    | 'GET_CATEGORIES'
+    | 'GET_SAVED_URLS'
+    | 'SUGGEST_RESOURCE'
+    | 'AUTH_SIGN_IN'
+    | 'AUTH_SIGN_OUT'
+    | 'AUTH_GET_SESSION';
   data?: any;
 }
 
@@ -28,19 +37,6 @@ export interface MessageResponse {
   success: boolean;
   data?: any;
   error?: string;
-}
-
-// API Response types
-export interface APIBookmarksResponse {
-  data: Bookmark[];
-}
-
-export interface APICategoriesResponse {
-  data: string[];
-}
-
-export interface APISaveResponse {
-  success: boolean;
 }
 
 // --- Tabs Feature Types ---
