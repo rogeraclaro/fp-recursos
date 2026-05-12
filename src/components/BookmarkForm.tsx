@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
-import { X } from 'lucide-react'
+import { X, Sparkles } from 'lucide-react'
 import { Button, Input, Label, TextArea } from './UI'
 import type { Bookmark, BookmarkInsert, Category } from '../types/database'
+import { suggestResource } from '../services/ai'
 
 interface Props {
   bookmark?: Bookmark | null
@@ -17,12 +18,30 @@ export const BookmarkForm: React.FC<Props> = ({ bookmark, categories, userId, on
   const [url, setUrl] = useState(bookmark?.url ?? '')
   const [selectedCats, setSelectedCats] = useState<string[]>(bookmark?.categories ?? [])
   const [saving, setSaving] = useState(false)
+  const [suggesting, setSuggesting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   function toggleCat(name: string) {
     setSelectedCats(prev =>
       prev.includes(name) ? prev.filter(c => c !== name) : [...prev, name]
     )
+  }
+
+  async function handleSuggest() {
+    if (!url.trim()) return
+    setSuggesting(true)
+    setError(null)
+    const result = await suggestResource(url.trim(), categories.map(c => c.name))
+    if (result) {
+      setTitle(result.title)
+      setDescription(result.description)
+      if (result.category && !selectedCats.includes(result.category)) {
+        setSelectedCats([result.category])
+      }
+    } else {
+      setError('No s\'ha pogut obtenir suggeriment. Comprova que la Edge Function està desplegada.')
+    }
+    setSuggesting(false)
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -57,6 +76,15 @@ export const BookmarkForm: React.FC<Props> = ({ bookmark, categories, userId, on
         <div>
           <Label>URL *</Label>
           <Input value={url} onChange={e => setUrl(e.target.value)} placeholder="https://..." type="url" required />
+          <button
+            type="button"
+            onClick={handleSuggest}
+            disabled={!url.trim() || suggesting}
+            className="mt-2 flex items-center gap-1.5 font-mono text-xs px-3 py-1.5 bg-orange-400 border-2 border-black hover:bg-orange-300 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          >
+            <Sparkles size={12} />
+            {suggesting ? 'Analitzant...' : 'Suggerir amb IA'}
+          </button>
         </div>
         <div>
           <Label>Títol *</Label>
