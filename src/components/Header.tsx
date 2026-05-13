@@ -18,11 +18,10 @@ export const Header: React.FC<Props> = ({ view, onChangeView }) => {
         {/* Logo */}
         <button
           onClick={() => onChangeView('public')}
-          className="flex items-baseline gap-2 hover:opacity-80 transition-opacity"
+          className="hover:opacity-80 transition-opacity"
         >
-          <h1 className="font-black font-mono text-xl uppercase tracking-wider">
-            <span className="bg-orange-400 px-2 border-2 border-black">FP</span>
-            <span className="ml-2">Recursos</span>
+          <h1 className="text-4xl font-black uppercase tracking-tighter bg-black text-white px-3 py-1 inline-block transform -rotate-1 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]">
+            FP Recursos
           </h1>
         </button>
 

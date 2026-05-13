@@ -1,0 +1,9 @@
+update public.profiles set role = 'admin' where id = 'c96ef600-d443-4b6b-b312-4d279e78e345';
+
+
+supabase link --project-ref wmnomhexggvrdvyznini
+
+
+supabase secrets set SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indtbm9taGV4Z2d2cmR2eXpuaW5pIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODYxMDA2OSwiZXhwIjoyMDk0MTg2MDY5fQ.PF1Z8Y355t2aPGu2Fc2KWSXIy-Nyv4m6NhT2aa_46_0
+
+supabase secrets set GEMINI_API_KEY=AIzaSyB2k_XDZmoyRUpDpr9_Dil8xocbR2BZCjA

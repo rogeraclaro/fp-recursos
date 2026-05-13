@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Plus, Edit2, Trash2, Check, X, UserX, UserCheck } from 'lucide-react'
 import { Header } from '../components/Header'
-import { Button, Input } from '../components/UI'
+import { Button, Input, Label } from '../components/UI'
 import { createCategory, updateCategory, deleteCategory } from '../services/categories'
-import { getProfiles, setUserActive } from '../services/profiles'
+import { getProfiles, setUserActive, createEditor } from '../services/profiles'
 import { useAuth } from '../context/AuthContext'
 import type { Category, Profile } from '../types/database'
 import { theme } from '../theme'
@@ -21,6 +21,10 @@ export const AdminView: React.FC<Props> = ({ categories, onCategoriesChange, onB
   const [newCatName, setNewCatName] = useState('')
   const [editingCat, setEditingCat] = useState<{ id: string; name: string } | null>(null)
   const [activeTab, setActiveTab] = useState<'categories' | 'editors'>('categories')
+  const [newEditor, setNewEditor] = useState({ email: '', password: '', username: '' })
+  const [creatingEditor, setCreatingEditor] = useState(false)
+  const [editorError, setEditorError] = useState<string | null>(null)
+  const [editorSuccess, setEditorSuccess] = useState<string | null>(null)
 
   useEffect(() => {
     getProfiles().then(setProfiles)
@@ -50,6 +54,24 @@ export const AdminView: React.FC<Props> = ({ categories, onCategoriesChange, onB
     const newCats = cats.filter(c => c.id !== id)
     setCats(newCats)
     onCategoriesChange(newCats)
+  }
+
+  async function handleCreateEditor(e: React.FormEvent) {
+    e.preventDefault()
+    setEditorError(null)
+    setEditorSuccess(null)
+    setCreatingEditor(true)
+    try {
+      await createEditor(newEditor.email, newEditor.password, newEditor.username)
+      const updated = await getProfiles()
+      setProfiles(updated)
+      setNewEditor({ email: '', password: '', username: '' })
+      setEditorSuccess(`Editor "${newEditor.username}" creat correctament.`)
+    } catch (err: any) {
+      setEditorError(err.message)
+    } finally {
+      setCreatingEditor(false)
+    }
   }
 
   async function handleToggleActive(id: string, active: boolean) {
@@ -114,32 +136,81 @@ export const AdminView: React.FC<Props> = ({ categories, onCategoriesChange, onB
         )}
 
         {activeTab === 'editors' && (
-          <div className="bg-white border-2 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-            <p className="font-mono text-sm text-gray-500 mb-4 p-3 bg-orange-50 border border-orange-200">
-              Per crear nous editors, utilitza el dashboard de Supabase → Authentication → Invite user. Posa <code className="bg-gray-100 px-1">username</code> als metadades.
-            </p>
-            <ul className="space-y-2">
-              {profiles.map(p => (
-                <li key={p.id} className="flex items-center gap-3 p-3 border-2 border-black">
-                  <div className="flex-grow">
-                    <span className="font-mono font-bold">{p.username}</span>
-                    <span className={`ml-2 font-mono text-xs px-2 py-0.5 border ${p.role === 'admin' ? 'bg-orange-400 border-orange-600' : 'bg-cyan-100 border-cyan-400'}`}>
-                      {p.role}
-                    </span>
-                    {!p.active && <span className="ml-2 font-mono text-xs text-red-500">inactiu</span>}
+          <div className="space-y-6">
+            {/* Formulari nou editor */}
+            <div className="bg-white border-2 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+              <h3 className="font-black font-mono uppercase text-sm mb-4 pb-2 border-b-2 border-black">Nou editor</h3>
+              <form onSubmit={handleCreateEditor} className="space-y-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <Label>Nom d'usuari</Label>
+                    <Input
+                      value={newEditor.username}
+                      onChange={e => setNewEditor(prev => ({ ...prev, username: e.target.value }))}
+                      placeholder="nom.cognom"
+                      required
+                    />
                   </div>
-                  {p.role !== 'admin' && (
-                    <button
-                      onClick={() => handleToggleActive(p.id, !p.active)}
-                      className={`p-1.5 border border-transparent hover:border-black transition-colors ${p.active ? 'hover:bg-red-100' : 'hover:bg-green-100'}`}
-                      title={p.active ? 'Desactivar' : 'Activar'}
-                    >
-                      {p.active ? <UserX size={14} /> : <UserCheck size={14} />}
-                    </button>
-                  )}
-                </li>
-              ))}
-            </ul>
+                  <div>
+                    <Label>Email</Label>
+                    <Input
+                      type="email"
+                      value={newEditor.email}
+                      onChange={e => setNewEditor(prev => ({ ...prev, email: e.target.value }))}
+                      placeholder="editor@centre.cat"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label>Contrasenya</Label>
+                    <Input
+                      type="password"
+                      value={newEditor.password}
+                      onChange={e => setNewEditor(prev => ({ ...prev, password: e.target.value }))}
+                      placeholder="mínim 6 caràcters"
+                      minLength={6}
+                      required
+                    />
+                  </div>
+                </div>
+                {editorError && (
+                  <p className="font-mono text-xs text-red-600 border border-red-200 bg-red-50 p-2">{editorError}</p>
+                )}
+                {editorSuccess && (
+                  <p className="font-mono text-xs text-green-700 border border-green-200 bg-green-50 p-2">{editorSuccess}</p>
+                )}
+                <Button type="submit" disabled={creatingEditor} icon={<Plus size={14} />}>
+                  {creatingEditor ? 'Creant...' : 'Crear editor'}
+                </Button>
+              </form>
+            </div>
+
+            {/* Llista editors */}
+            <div className="bg-white border-2 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+              <h3 className="font-black font-mono uppercase text-sm mb-4 pb-2 border-b-2 border-black">Editors ({profiles.length})</h3>
+              <ul className="space-y-2">
+                {profiles.map(p => (
+                  <li key={p.id} className="flex items-center gap-3 p-3 border-2 border-black">
+                    <div className="flex-grow">
+                      <span className="font-mono font-bold">{p.username}</span>
+                      <span className={`ml-2 font-mono text-xs px-2 py-0.5 border ${p.role === 'admin' ? 'bg-orange-400 border-orange-600' : 'bg-cyan-100 border-cyan-400'}`}>
+                        {p.role}
+                      </span>
+                      {!p.active && <span className="ml-2 font-mono text-xs text-red-500">inactiu</span>}
+                    </div>
+                    {p.role !== 'admin' && (
+                      <button
+                        onClick={() => handleToggleActive(p.id, !p.active)}
+                        className={`p-1.5 border border-transparent hover:border-black transition-colors ${p.active ? 'hover:bg-red-100' : 'hover:bg-green-100'}`}
+                        title={p.active ? 'Desactivar' : 'Activar'}
+                      >
+                        {p.active ? <UserX size={14} /> : <UserCheck size={14} />}
+                      </button>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         )}
       </div>

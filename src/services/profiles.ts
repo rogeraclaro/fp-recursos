@@ -18,3 +18,10 @@ export async function setUserActive(id: string, active: boolean): Promise<void> 
     .eq('id', id)
   if (error) throw error
 }
+
+export async function createEditor(email: string, password: string, username: string): Promise<void> {
+  const { error } = await supabase.functions.invoke('create-editor', {
+    body: { email, password, username }
+  })
+  if (error) throw error
+}
