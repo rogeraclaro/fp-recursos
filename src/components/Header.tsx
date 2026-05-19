@@ -7,9 +7,11 @@ type View = 'public' | 'editor' | 'admin'
 interface Props {
   view: View
   onChangeView: (v: View) => void
+  onNewResource?: () => void
+  onCategories?: () => void
 }
 
-export const Header: React.FC<Props> = ({ view, onChangeView }) => {
+export const Header: React.FC<Props> = ({ view, onChangeView, onNewResource, onCategories }) => {
   const { user, profile, signOut, isAdmin, isEditor } = useAuth()
 
   return (
@@ -27,6 +29,24 @@ export const Header: React.FC<Props> = ({ view, onChangeView }) => {
 
         {/* Nav + accions */}
         <div className="flex items-center gap-2 flex-wrap justify-end">
+          {onNewResource && (
+            <button
+              onClick={onNewResource}
+              className="flex items-center gap-1 font-mono text-sm px-3 py-1.5 border-2 border-black bg-white hover:bg-orange-400 transition-colors shadow-[2px_2px_0px_0px_#000]"
+            >
+              <Plus size={14} />
+              <span className="hidden sm:inline">Nou recurs</span>
+            </button>
+          )}
+          {onCategories && (
+            <button
+              onClick={onCategories}
+              className="flex items-center gap-1 font-mono text-sm px-3 py-1.5 border-2 border-black bg-white hover:bg-orange-400 transition-colors shadow-[2px_2px_0px_0px_#000]"
+            >
+              <Settings size={14} />
+              <span className="hidden sm:inline">Categories</span>
+            </button>
+          )}
           {isEditor && view !== 'editor' && (
             <button
               onClick={() => onChangeView('editor')}

@@ -5,8 +5,9 @@ import { BookmarkForm } from './components/BookmarkForm'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { ScrollToTop } from './components/ScrollToTop'
 import { useAuth } from './context/AuthContext'
-import { getBookmarks, createBookmark, deleteBookmark, toggleHighlight, updateBookmark } from './services/bookmarks'
+import { getBookmarks, createBookmark, deleteBookmark, toggleHighlight, updateBookmark, reassignCategory } from './services/bookmarks'
 import { getCategories, createCategory, updateCategory, deleteCategory } from './services/categories'
+import { getEditorHighlights, toggleEditorHighlight } from './services/highlights'
 import type { Bookmark, BookmarkInsert, Category } from './types/database'
 import { theme } from './theme'
 
@@ -30,6 +31,21 @@ export default function App() {
   const [editingCat, setEditingCat] = useState<{ id: string; name: string } | null>(null)
   const [showNewResourceForm, setShowNewResourceForm] = useState(false)
   const [exporting, setExporting] = useState(false)
+  const [deletingCat, setDeletingCat] = useState<{ id: string; name: string } | null>(null)
+  const [reassignTo, setReassignTo] = useState('')
+  const [editorHighlights, setEditorHighlights] = useState<string[]>([])
+  const [showEditorCatModal, setShowEditorCatModal] = useState(false)
+  const [editorNewCatName, setEditorNewCatName] = useState('')
+  const [editorCatError, setEditorCatError] = useState('')
+  const [editorEditingCat, setEditorEditingCat] = useState<{ id: string; name: string } | null>(null)
+
+  useEffect(() => {
+    if (!user) { setView('public'); setEditorHighlights([]); return }
+    setView('public')
+    if (isEditor && !isAdmin) {
+      getEditorHighlights(user.id).then(setEditorHighlights)
+    }
+  }, [user, isAdmin, isEditor])
 
   useEffect(() => {
     Promise.all([getBookmarks(), getCategories()])
@@ -59,11 +75,20 @@ export default function App() {
     return groups
   }, [bookmarks, categories])
 
+  const editorHighlightSet = useMemo(() => new Set(editorHighlights), [editorHighlights])
+
   const highlightedBookmarks = useMemo(() => {
     return bookmarks
       .filter(b => b.highlighted)
       .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
   }, [bookmarks])
+
+  const displayHighlighted = useMemo(() => {
+    if (isEditor && !isAdmin) return bookmarks
+      .filter(b => editorHighlightSet.has(b.id))
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    return highlightedBookmarks
+  }, [isEditor, isAdmin, bookmarks, editorHighlightSet, highlightedBookmarks])
 
   const orphanCategories = useMemo(() => {
     const known = new Set(categories.map(c => c.name))
@@ -109,6 +134,47 @@ export default function App() {
     setBookmarks(prev => prev.map(b => b.id === id ? { ...b, highlighted } : b))
   }
 
+  async function handleToggleEditorHighlight(id: string, on: boolean) {
+    await toggleEditorHighlight(user!.id, id, on)
+    setEditorHighlights(prev => on ? [...prev, id] : prev.filter(x => x !== id))
+  }
+
+  async function handleEditorAddCat() {
+    if (!editorNewCatName.trim() || !user) return
+    setEditorCatError('')
+    try {
+      const cat = await createCategory(editorNewCatName.trim(), user.id)
+      setCategories(prev => [...prev, cat].sort((a, b) => a.name.localeCompare(b.name)))
+      setEditorNewCatName('')
+    } catch (err) {
+      setEditorCatError((err as { message?: string })?.message ?? 'Error desconegut')
+    }
+  }
+
+  async function handleEditorEditCat(id: string, name: string) {
+    try {
+      const updated = await updateCategory(id, name)
+      setCategories(prev => prev.map(c => c.id === id ? updated : c).sort((a, b) => a.name.localeCompare(b.name)))
+      setEditorEditingCat(null)
+    } catch (err) {
+      setEditorCatError((err as { message?: string })?.message ?? 'Error en editar')
+    }
+  }
+
+  async function handleEditorDeleteCat(id: string, name: string) {
+    if (!confirm(`Eliminar la categoria "${name}"?`)) return
+    try {
+      await deleteCategory(id)
+      setCategories(prev => prev.filter(c => c.id !== id))
+    } catch (err) {
+      setEditorCatError((err as { message?: string })?.message ?? 'Error en eliminar')
+    }
+  }
+
+  function isPersonalHighlight(bookmarkId: string) {
+    return isEditor && !isAdmin ? editorHighlightSet.has(bookmarkId) : false
+  }
+
   async function handleEditSave(data: BookmarkInsert) {
     if (!editingBookmark) return
     const { user_id: _, ...updates } = data
@@ -149,15 +215,43 @@ export default function App() {
   }
 
   async function handleUpdateCategory(id: string, name: string) {
+    const oldName = categories.find(c => c.id === id)?.name
     const updated = await updateCategory(id, name)
+    if (oldName && oldName !== name) {
+      await reassignCategory(oldName, name)
+      setBookmarks(prev => prev.map(b => ({
+        ...b,
+        categories: b.categories.map(c => c === oldName ? name : c),
+      })))
+    }
     setCategories(prev => prev.map(c => c.id === id ? updated : c).sort((a, b) => a.name.localeCompare(b.name)))
     setEditingCat(null)
   }
 
-  async function handleDeleteCategory(id: string) {
-    if (!confirm('Eliminar categoria? Els recursos que la tinguin perdran aquesta categoria.')) return
-    await deleteCategory(id)
-    setCategories(prev => prev.filter(c => c.id !== id))
+  function handleDeleteCategory(id: string) {
+    const cat = categories.find(c => c.id === id)
+    if (!cat) return
+    const affected = bookmarks.filter(b => b.categories.includes(cat.name))
+    if (affected.length === 0) {
+      if (!confirm(`Eliminar la categoria "${cat.name}"?`)) return
+      deleteCategory(id).then(() => setCategories(prev => prev.filter(c => c.id !== id)))
+      return
+    }
+    const firstOther = categories.find(c => c.id !== id)?.name ?? ''
+    setReassignTo(firstOther)
+    setDeletingCat({ id, name: cat.name })
+  }
+
+  async function handleConfirmDelete() {
+    if (!deletingCat || !reassignTo) return
+    await reassignCategory(deletingCat.name, reassignTo)
+    setBookmarks(prev => prev.map(b => ({
+      ...b,
+      categories: b.categories.map(c => c === deletingCat.name ? reassignTo : c),
+    })))
+    await deleteCategory(deletingCat.id)
+    setCategories(prev => prev.filter(c => c.id !== deletingCat.id))
+    setDeletingCat(null)
   }
 
   async function handlePromoteOrphan(catName: string) {
@@ -189,6 +283,7 @@ export default function App() {
           categories={categories}
           onBack={() => setView('public')}
           onBookmarksChange={setBookmarks}
+          onCategoriesChange={setCategories}
         />
       </React.Suspense>
     </ProtectedRoute>
@@ -255,14 +350,23 @@ export default function App() {
               </>
             )}
             {!isAdmin && isEditor && (
-              <button
-                onClick={() => setView('editor')}
-                className="flex items-center gap-1.5 font-mono font-bold text-sm px-4 py-2.5 border-2 border-black bg-white shadow-[4px_4px_0px_0px_#000] hover:bg-orange-400 transition-colors"
-              >
-                <Plus size={16} />
-                <span className="hidden sm:inline">Els meus recursos</span>
-                <span className="sm:hidden">Recursos</span>
-              </button>
+              <>
+                <button
+                  onClick={() => setShowEditorCatModal(true)}
+                  className="flex items-center gap-1.5 font-mono font-bold text-sm px-4 py-2.5 border-2 border-black bg-white shadow-[4px_4px_0px_0px_#000] hover:bg-orange-400 transition-colors"
+                >
+                  <Settings size={16} />
+                  <span className="hidden sm:inline">Categories</span>
+                </button>
+                <button
+                  onClick={() => setView('editor')}
+                  className="flex items-center gap-1.5 font-mono font-bold text-sm px-4 py-2.5 border-2 border-black bg-white shadow-[4px_4px_0px_0px_#000] hover:bg-orange-400 transition-colors"
+                >
+                  <Plus size={16} />
+                  <span className="hidden sm:inline">Els meus recursos</span>
+                  <span className="sm:hidden">Recursos</span>
+                </button>
+              </>
             )}
             {user ? (
               <div className="flex items-center gap-2">
@@ -382,7 +486,7 @@ export default function App() {
                   className="text-left font-bold font-mono text-lg border-2 border-black p-3 hover:bg-black hover:text-white transition-all flex justify-between items-center bg-orange-400 shadow-[4px_4px_0px_0px_#000]"
                 >
                   <span>★ DESTACAT</span>
-                  <span className="bg-black text-orange-400 text-xs px-2 py-1 border border-black">{highlightedBookmarks.length}</span>
+                  <span className="bg-black text-orange-400 text-xs px-2 py-1 border border-black">{displayHighlighted.length}</span>
                 </button>
               )}
             </div>
@@ -430,10 +534,11 @@ export default function App() {
                     key={b.id}
                     bookmark={b}
                     canEdit={isAdmin || (isEditor && b.user_id === user?.id)}
-                    canHighlight={isAdmin}
+                    canHighlight={isAdmin || isEditor}
                     onEdit={setEditingBookmark}
                     onDelete={handleDelete}
-                    onToggleHighlight={handleToggleHighlight}
+                    onToggleHighlight={isAdmin ? handleToggleHighlight : handleToggleEditorHighlight}
+                    bookmark={{ ...b, highlighted: isAdmin ? b.highlighted : isPersonalHighlight(b.id) }}
                   />
                 ))}
               </div>
@@ -460,12 +565,12 @@ export default function App() {
                   {items.map(b => (
                     <BookmarkCard
                       key={b.id}
-                      bookmark={b}
+                      bookmark={{ ...b, highlighted: isAdmin ? b.highlighted : isPersonalHighlight(b.id) }}
                       canEdit={isAdmin || (isEditor && b.user_id === user?.id)}
-                      canHighlight={isAdmin}
+                      canHighlight={isAdmin || isEditor}
                       onEdit={setEditingBookmark}
                       onDelete={handleDelete}
-                      onToggleHighlight={handleToggleHighlight}
+                      onToggleHighlight={isAdmin ? handleToggleHighlight : handleToggleEditorHighlight}
                     />
                   ))}
                 </div>
@@ -474,25 +579,25 @@ export default function App() {
           })}
 
         {/* Secció virtual DESTACAT */}
-        {!searchQuery && highlightedBookmarks.length > 0 && (
+        {!searchQuery && displayHighlighted.length > 0 && (
           <div id="category-DESTACAT" className="scroll-mt-48">
             <div className="flex items-center gap-4 mb-6">
               <h2 className="text-3xl font-black uppercase bg-orange-400 text-black px-4 py-2 inline-block border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)]">
                 ★ DESTACAT
               </h2>
-              <span className="font-mono font-bold text-xl text-gray-500">{highlightedBookmarks.length}</span>
+              <span className="font-mono font-bold text-xl text-gray-500">{displayHighlighted.length}</span>
               <div className="h-1 flex-grow bg-orange-400 border border-black" />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
-              {highlightedBookmarks.map(b => (
+              {displayHighlighted.map(b => (
                 <BookmarkCard
                   key={b.id}
-                  bookmark={b}
+                  bookmark={{ ...b, highlighted: true }}
                   canEdit={isAdmin || (isEditor && b.user_id === user?.id)}
-                  canHighlight={isAdmin}
+                  canHighlight={isAdmin || isEditor}
                   onEdit={setEditingBookmark}
                   onDelete={handleDelete}
-                  onToggleHighlight={handleToggleHighlight}
+                  onToggleHighlight={isAdmin ? handleToggleHighlight : handleToggleEditorHighlight}
                 />
               ))}
             </div>
@@ -650,6 +755,43 @@ export default function App() {
         </div>
       )}
 
+      {/* Modal reassignació en eliminar categoria */}
+      {deletingCat && (
+        <div className="fixed inset-0 z-[60] bg-black/50 flex items-center justify-center p-4">
+          <div className="bg-white border-4 border-black w-full max-w-sm shadow-[8px_8px_0px_0px_#000] p-6">
+            <h3 className="font-black font-mono text-lg uppercase mb-1">Eliminar categoria</h3>
+            <p className="font-mono text-sm text-gray-600 mb-4">
+              La categoria <strong>"{deletingCat.name}"</strong> s'usa en {bookmarks.filter(b => b.categories.includes(deletingCat.name)).length} recursos.
+              Tria a quina categoria els vols reassignar:
+            </p>
+            <select
+              value={reassignTo}
+              onChange={e => setReassignTo(e.target.value)}
+              className="w-full border-2 border-black font-mono text-sm px-3 py-2 mb-4 focus:outline-none focus:border-orange-400"
+            >
+              {categories.filter(c => c.id !== deletingCat.id).map(c => (
+                <option key={c.id} value={c.name}>{c.name}</option>
+              ))}
+            </select>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setDeletingCat(null)}
+                className="font-mono font-bold text-sm px-4 py-2 border-2 border-black bg-white hover:bg-gray-100 transition-colors"
+              >
+                Cancel·lar
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                disabled={!reassignTo}
+                className="font-mono font-bold text-sm px-4 py-2 border-2 border-black bg-red-500 text-white hover:bg-red-600 disabled:opacity-50 transition-colors"
+              >
+                Eliminar i reassignar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Modal nou recurs (admin) */}
       {showNewResourceForm && user && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
@@ -659,6 +801,58 @@ export default function App() {
             onSave={handleCreateBookmark}
             onCancel={() => setShowNewResourceForm(false)}
           />
+        </div>
+      )}
+
+      {/* Modal categories editor */}
+      {showEditorCatModal && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+          <div className="bg-white border-4 border-black w-full max-w-md shadow-[8px_8px_0px_0px_#000]">
+            <div className="flex justify-between items-center p-4 border-b-2 border-black bg-orange-400">
+              <h2 className="font-bold text-xl font-mono uppercase">Les meves categories</h2>
+              <button onClick={() => { setShowEditorCatModal(false); setEditorNewCatName(''); setEditorCatError(''); setEditorEditingCat(null) }} className="p-1 hover:bg-black hover:text-white transition-colors border border-black"><X size={20} /></button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="Nova categoria..."
+                  value={editorNewCatName}
+                  onChange={e => setEditorNewCatName(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') handleEditorAddCat() }}
+                  className="flex-grow border-2 border-black p-2 font-mono text-sm focus:outline-none focus:bg-orange-50"
+                  autoFocus
+                />
+                <button onClick={handleEditorAddCat} disabled={!editorNewCatName.trim()} className="font-mono font-bold text-sm px-4 py-2 border-2 border-black bg-orange-400 hover:bg-orange-500 disabled:opacity-40 transition-colors flex items-center gap-1">
+                  <Plus size={14} /> Afegir
+                </button>
+              </div>
+              {editorCatError && <p className="font-mono text-xs text-red-600 border border-red-300 bg-red-50 px-3 py-2">{editorCatError}</p>}
+              {categories.filter(c => c.created_by === user?.id).length > 0 ? (
+                <ul className="space-y-2 max-h-64 overflow-y-auto">
+                  {categories.filter(c => c.created_by === user?.id).map(cat => (
+                    <li key={cat.id} className="flex items-center gap-2 p-3 border-2 border-black">
+                      {editorEditingCat?.id === cat.id ? (
+                        <>
+                          <input autoFocus value={editorEditingCat.name} onChange={e => setEditorEditingCat({ ...editorEditingCat, name: e.target.value })} onKeyDown={e => { if (e.key === 'Enter') handleEditorEditCat(cat.id, editorEditingCat.name); if (e.key === 'Escape') setEditorEditingCat(null) }} className="flex-grow border-2 border-black p-1 font-mono text-sm focus:outline-none focus:bg-orange-50" />
+                          <button onClick={() => handleEditorEditCat(cat.id, editorEditingCat.name)} className="p-1.5 hover:bg-green-100 border border-transparent hover:border-black transition-colors"><Check size={14} /></button>
+                          <button onClick={() => setEditorEditingCat(null)} className="p-1.5 hover:bg-gray-100 border border-transparent hover:border-black transition-colors"><X size={14} /></button>
+                        </>
+                      ) : (
+                        <>
+                          <span className="font-mono flex-grow">{cat.name}</span>
+                          <button onClick={() => setEditorEditingCat({ id: cat.id, name: cat.name })} className="p-1.5 hover:bg-orange-100 border border-transparent hover:border-black transition-colors"><Edit2 size={14} /></button>
+                          <button onClick={() => handleEditorDeleteCat(cat.id, cat.name)} className="p-1.5 hover:bg-red-100 border border-transparent hover:border-black transition-colors"><Trash2 size={14} /></button>
+                        </>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="font-mono text-sm text-gray-400 text-center py-4">Encara no has creat cap categoria.</p>
+              )}
+            </div>
+          </div>
         </div>
       )}
 

@@ -45,3 +45,17 @@ export async function toggleHighlight(id: string, highlighted: boolean): Promise
     .eq('id', id)
   if (error) throw error
 }
+
+export async function reassignCategory(oldName: string, newName: string): Promise<void> {
+  const { data, error } = await bookmarks()
+    .select('id, categories')
+    .contains('categories', [oldName])
+  if (error) throw error
+  if (!data || data.length === 0) return
+  await Promise.all(
+    (data as { id: string; categories: string[] }[]).map(b => {
+      const updated = b.categories.map((c: string) => c === oldName ? newName : c)
+      return bookmarks().update({ categories: updated }).eq('id', b.id)
+    })
+  )
+}
