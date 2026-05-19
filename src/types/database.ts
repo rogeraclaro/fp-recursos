@@ -21,6 +21,7 @@ export interface Bookmark {
   categories: string[]
   user_id: string
   highlighted: boolean
+  admin_reviewed: boolean
   created_at: string
   updated_at: string
   profiles?: { username: string } | null
@@ -41,6 +42,16 @@ export interface BookmarkUpdate {
   url?: string
   categories?: string[]
   highlighted?: boolean
+  admin_reviewed?: boolean
+}
+
+export interface Message {
+  id: string
+  sender_id: string
+  recipient_id: string
+  content: string
+  read_by_recipient: boolean
+  created_at: string
 }
 
 export type Database = {

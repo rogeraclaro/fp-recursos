@@ -3,10 +3,53 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const GROQ_API_KEY = Deno.env.get('GROQ_API_KEY')!
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions'
+const MODEL = 'llama-3.1-8b-instant'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
+
+function extractPageContent(html: string): { title: string; metaDesc: string; bodyText: string } {
+  const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i)
+  const title = titleMatch?.[1]?.trim() ?? ''
+
+  const metaMatch =
+    html.match(/<meta\s+name=["']description["']\s+content=["']([^"']{1,500})["']/i) ??
+    html.match(/<meta\s+content=["']([^"']{1,500})["']\s+name=["']description["']/i)
+  const metaDesc = metaMatch?.[1]?.trim() ?? ''
+
+  const bodyText = html
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+    .replace(/<nav[^>]*>[\s\S]*?<\/nav>/gi, '')
+    .replace(/<header[^>]*>[\s\S]*?<\/header>/gi, '')
+    .replace(/<footer[^>]*>[\s\S]*?<\/footer>/gi, '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&[a-z]+;/gi, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 3000)
+
+  return { title, metaDesc, bodyText }
+}
+
+async function fetchPageContent(url: string): Promise<string | null> {
+  try {
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 6000)
+    const res = await fetch(url, {
+      signal: controller.signal,
+      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; FPRecursos/1.0)' },
+    })
+    clearTimeout(timeout)
+    if (!res.ok) return null
+    const contentType = res.headers.get('content-type') ?? ''
+    if (!contentType.includes('html')) return null
+    return await res.text()
+  } catch {
+    return null
+  }
 }
 
 serve(async (req) => {
@@ -40,16 +83,35 @@ serve(async (req) => {
     const { url, categories } = await req.json()
     if (!url) throw new Error('URL requerida')
 
-    const prompt = `Analitza aquest URL de recurs educatiu per a Formació Professional:
-URL: ${url}
+    // Intentem obtenir el contingut real de la pàgina
+    const html = await fetchPageContent(url)
+    let contextBlock: string
+
+    if (html) {
+      const { title, metaDesc, bodyText } = extractPageContent(html)
+      contextBlock = `URL: ${url}
+Títol de la pàgina: ${title || '(no disponible)'}
+Meta descripció: ${metaDesc || '(no disponible)'}
+Contingut de la pàgina:
+${bodyText}`
+    } else {
+      contextBlock = `URL: ${url}
+(No s'ha pogut obtenir el contingut de la pàgina)`
+    }
+
+    const prompt = `Ets un assistent que ajuda a catalogar recursos educatius per a Formació Professional a Catalunya.
+
+Analitza el següent recurs i genera un títol i una descripció en català per afegir-lo a una biblioteca de recursos FP.
+
+${contextBlock}
 
 Categories disponibles: ${(categories as string[]).join(', ')}
 
-Respon NOMÉS amb JSON vàlid (sense markdown):
+Respon NOMÉS amb JSON vàlid (sense markdown ni text addicional):
 {
-  "title": "títol concís i descriptiu en català",
-  "description": "descripció breu de 1-2 frases en català",
-  "category": "una de les categories disponibles"
+  "title": "títol concís i descriptiu en català (màxim 80 caràcters)",
+  "description": "descripció útil de 2-3 frases en català explicant de què tracta el recurs i per a qui és útil",
+  "category": "una de les categories disponibles que millor s'ajusti"
 }`
 
     const response = await fetch(GROQ_URL, {
@@ -59,10 +121,10 @@ Respon NOMÉS amb JSON vàlid (sense markdown):
         'Authorization': `Bearer ${GROQ_API_KEY}`,
       },
       body: JSON.stringify({
-        model: 'llama-3.1-8b-instant',
+        model: MODEL,
         messages: [{ role: 'user', content: prompt }],
         temperature: 0.3,
-        max_tokens: 300,
+        max_tokens: 400,
       }),
     })
 
@@ -73,7 +135,7 @@ Respon NOMÉS amb JSON vàlid (sense markdown):
     const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
     const result = JSON.parse(cleaned)
 
-    return new Response(JSON.stringify(result), {
+    return new Response(JSON.stringify({ ...result, model: MODEL }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
 

@@ -110,7 +110,7 @@ export const EditorView: React.FC<Props> = ({ categories, onBack, onBookmarksCha
         onCategories={() => setShowCategoryModal(true)}
       />
 
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="max-w-[1600px] mx-auto px-6 py-8">
         <div className="mb-6">
           <h2 className="font-black font-mono text-2xl uppercase">Els meus recursos</h2>
           <p className="font-mono text-sm text-gray-500">{profile?.username} · {myBookmarks.length} recursos</p>
@@ -141,7 +141,7 @@ export const EditorView: React.FC<Props> = ({ categories, onBack, onBookmarksCha
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
             {myBookmarks.map(b => (
               <BookmarkCard
                 key={b.id}

@@ -23,15 +23,15 @@ export const LoginPage: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) =
   }
 
   return (
-    <div className="min-h-screen bg-[#f0f0f0] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
-        <div className="bg-orange-400 border-2 border-black p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+        <div className="bg-orange-400 border-4 border-black p-4 shadow-[8px_8px_0px_0px_#000]">
           <h1 className="font-black font-mono text-xl uppercase tracking-wider">FP Recursos</h1>
           <p className="font-mono text-sm">Accés editors</p>
         </div>
         <form
           onSubmit={handleSubmit}
-          className="bg-white border-2 border-t-0 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
+          className="bg-white border-4 border-t-0 border-black p-6 shadow-[8px_8px_0px_0px_#000]"
         >
           <div className="mb-4">
             <Label>Email</Label>

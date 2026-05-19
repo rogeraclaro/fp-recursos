@@ -19,6 +19,8 @@ export const BookmarkForm: React.FC<Props> = ({ bookmark, categories, userId, on
   const [selectedCats, setSelectedCats] = useState<string[]>(bookmark?.categories ?? [])
   const [saving, setSaving] = useState(false)
   const [suggesting, setSuggesting] = useState(false)
+  const [aiModel, setAiModel] = useState<string | null>(null)
+  const [suggested, setSuggested] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   function toggleCat(name: string) {
@@ -36,6 +38,8 @@ export const BookmarkForm: React.FC<Props> = ({ bookmark, categories, userId, on
       setTitle(result.title)
       setDescription(result.description)
       if (result.category) setSelectedCats([result.category])
+      if (result.model) setAiModel(result.model)
+      setSuggested(true)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error desconegut a la IA.')
     } finally {
@@ -78,11 +82,11 @@ export const BookmarkForm: React.FC<Props> = ({ bookmark, categories, userId, on
           <button
             type="button"
             onClick={handleSuggest}
-            disabled={!url.trim() || suggesting}
+            disabled={!url.trim() || suggesting || suggested}
             className="mt-2 flex items-center gap-1.5 font-mono text-xs px-3 py-1.5 bg-orange-400 border-2 border-black hover:bg-orange-300 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             <Sparkles size={12} />
-            {suggesting ? 'Analitzant...' : 'Suggerir amb IA'}
+            {suggesting ? 'Analitzant...' : `Suggerir amb IA (${aiModel ?? 'llama-3.1-8b-instant'})`}
           </button>
         </div>
         <div>

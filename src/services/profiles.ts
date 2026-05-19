@@ -38,6 +38,11 @@ export async function createEditor(email: string, password: string, username: st
   if (error) throw error
 }
 
+export async function getAdminId(): Promise<string | null> {
+  const { data } = await supabase.from('profiles').select('id').eq('role', 'admin').single()
+  return data?.id ?? null
+}
+
 export async function deleteEditor(userId: string): Promise<void> {
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) throw new Error('Cal estar autenticat.')

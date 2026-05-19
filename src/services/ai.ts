@@ -4,6 +4,7 @@ export interface AISuggestion {
   title: string
   description: string
   category: string
+  model?: string
 }
 
 export async function suggestResource(url: string, categories: string[]): Promise<AISuggestion> {

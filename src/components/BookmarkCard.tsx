@@ -7,20 +7,22 @@ interface Props {
   bookmark: Bookmark
   canEdit: boolean
   canHighlight: boolean
+  isOrphan?: boolean
+  isUnreviewed?: boolean
   onEdit?: (b: Bookmark) => void
   onDelete?: (id: string) => void
   onToggleHighlight?: (id: string, highlighted: boolean) => void
 }
 
 export const BookmarkCard: React.FC<Props> = ({
-  bookmark, canEdit, canHighlight, onEdit, onDelete, onToggleHighlight
+  bookmark, canEdit, canHighlight, isOrphan, isUnreviewed, onEdit, onDelete, onToggleHighlight
 }) => {
   const dateStr = new Date(bookmark.created_at).toISOString().split('T')[0]
 
   return (
     <div
       onClick={() => window.open(bookmark.url, '_blank', 'noopener,noreferrer')}
-      className={`cursor-pointer border-2 border-black p-5 h-full flex flex-col shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 ${bookmark.highlighted ? 'bg-orange-400/50' : 'bg-white'}`}
+      className={`cursor-pointer border-2 border-black p-5 h-full flex flex-col shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 ${bookmark.highlighted ? 'bg-orange-400/50' : (isUnreviewed || isOrphan) ? 'bg-blue-100' : 'bg-white'}`}
     >
       {/* Categories + accions edició */}
       <div className="flex justify-between items-start mb-2">

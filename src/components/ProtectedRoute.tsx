@@ -18,7 +18,7 @@ export const ProtectedRoute: React.FC<Props> = ({ children, requireAdmin = false
     )
   }
 
-  if (!user) return <LoginPage />
+  if (!user) return <><LoginPage /></>
 
   if (requireAdmin && profile?.role !== 'admin') {
     return (
