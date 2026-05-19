@@ -31,17 +31,16 @@ export const BookmarkForm: React.FC<Props> = ({ bookmark, categories, userId, on
     if (!url.trim()) return
     setSuggesting(true)
     setError(null)
-    const result = await suggestResource(url.trim(), categories.map(c => c.name))
-    if (result) {
+    try {
+      const result = await suggestResource(url.trim(), categories.map(c => c.name))
       setTitle(result.title)
       setDescription(result.description)
-      if (result.category && !selectedCats.includes(result.category)) {
-        setSelectedCats([result.category])
-      }
-    } else {
-      setError('No s\'ha pogut obtenir suggeriment. Comprova que la Edge Function està desplegada.')
+      if (result.category) setSelectedCats([result.category])
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error desconegut a la IA.')
+    } finally {
+      setSuggesting(false)
     }
-    setSuggesting(false)
   }
 
   async function handleSubmit(e: React.FormEvent) {

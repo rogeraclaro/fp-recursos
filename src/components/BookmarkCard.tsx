@@ -1,5 +1,5 @@
 import React from 'react'
-import { Edit2, Trash2, Star } from 'lucide-react'
+import { Edit2, Trash2, Link2 } from 'lucide-react'
 import { Badge } from './UI'
 import type { Bookmark } from '../types/database'
 
@@ -15,75 +15,81 @@ interface Props {
 export const BookmarkCard: React.FC<Props> = ({
   bookmark, canEdit, canHighlight, onEdit, onDelete, onToggleHighlight
 }) => {
-  const dateStr = new Date(bookmark.created_at).toLocaleDateString('ca-ES', {
-    day: '2-digit', month: 'short', year: 'numeric'
-  })
+  const dateStr = new Date(bookmark.created_at).toISOString().split('T')[0]
 
   return (
-    <div className={`border-2 border-black p-5 h-full flex flex-col shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 ${bookmark.highlighted ? 'bg-orange-400/30' : 'bg-white'}`}>
-
-      {/* Categories + accions */}
+    <div
+      onClick={() => window.open(bookmark.url, '_blank', 'noopener,noreferrer')}
+      className={`cursor-pointer border-2 border-black p-5 h-full flex flex-col shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 ${bookmark.highlighted ? 'bg-orange-400/50' : 'bg-white'}`}
+    >
+      {/* Categories + accions edició */}
       <div className="flex justify-between items-start mb-2">
         <div className="flex flex-wrap gap-1.5">
           {bookmark.categories.map((cat, idx) => (
-            <Badge key={idx} color="bg-cyan-300">{cat}</Badge>
+            <Badge key={idx} color="bg-orange-400">{cat}</Badge>
           ))}
         </div>
-        {(canEdit || canHighlight) && (
+        {canEdit && (
           <div className="flex gap-1 flex-shrink-0 ml-2">
-            {canHighlight && (
-              <button
-                onClick={() => onToggleHighlight?.(bookmark.id, !bookmark.highlighted)}
-                className={`p-1.5 border border-transparent transition-colors ${bookmark.highlighted ? 'bg-orange-400 border-black' : 'hover:bg-orange-100 hover:border-black'}`}
-                title={bookmark.highlighted ? 'Treure destacat' : 'Destacar'}
-              >
-                <Star size={14} fill={bookmark.highlighted ? 'currentColor' : 'none'} />
-              </button>
-            )}
-            {canEdit && (
-              <>
-                <button
-                  onClick={() => onEdit?.(bookmark)}
-                  className="p-1.5 hover:bg-orange-300 border border-transparent hover:border-black transition-colors"
-                  title="Editar"
-                >
-                  <Edit2 size={14} />
-                </button>
-                <button
-                  onClick={() => onDelete?.(bookmark.id)}
-                  className="p-1.5 hover:bg-red-500 hover:text-white border border-transparent hover:border-black transition-colors"
-                  title="Eliminar"
-                >
-                  <Trash2 size={14} />
-                </button>
-              </>
-            )}
+            <button
+              onClick={e => { e.stopPropagation(); onEdit?.(bookmark) }}
+              className="p-1.5 hover:bg-orange-300 border border-transparent hover:border-black transition-colors"
+              title="Editar"
+            >
+              <Edit2 size={14} />
+            </button>
+            <button
+              onClick={e => { e.stopPropagation(); onDelete?.(bookmark.id) }}
+              className="p-1.5 hover:bg-red-500 hover:text-white border border-transparent hover:border-black transition-colors"
+              title="Eliminar"
+            >
+              <Trash2 size={14} />
+            </button>
           </div>
         )}
       </div>
 
-      {/* Títol + URL */}
-      <a
-        href={bookmark.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="font-bold font-mono text-base hover:underline mb-1 line-clamp-2 flex-shrink-0"
-      >
-        {bookmark.title}
-      </a>
+      {/* Meta: data + autor */}
+      <div className="flex flex-wrap gap-3 mb-3 text-xs font-mono text-gray-500 border-b border-gray-200 pb-2">
+        <span>{dateStr}</span>
+        {bookmark.profiles?.username && (
+          <span className="font-bold text-black">{bookmark.profiles.username}</span>
+        )}
+      </div>
+
+      {/* Títol */}
+      <h3 className="font-bold text-xl leading-tight mb-3">{bookmark.title}</h3>
 
       {/* Descripció */}
-      {bookmark.description && (
-        <p className="text-sm text-gray-600 font-mono line-clamp-3 mb-3 flex-grow">
+      {bookmark.description ? (
+        <p className="text-gray-700 font-mono mb-6 flex-grow leading-relaxed text-sm line-clamp-4">
           {bookmark.description}
         </p>
+      ) : (
+        <div className="flex-grow" />
       )}
-      {!bookmark.description && <div className="flex-grow" />}
 
-      {/* Footer: autor + data */}
-      <div className="mt-auto pt-2 border-t border-gray-200 flex justify-between items-center text-xs font-mono text-gray-500">
-        <span>{bookmark.profiles?.username ?? 'Editor'}</span>
-        <span>{dateStr}</span>
+      {/* Footer */}
+      <div className="mt-auto pt-4 border-t-2 border-black/10 flex items-center justify-between gap-2">
+        <a
+          href={bookmark.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={e => e.stopPropagation()}
+          className="text-xs font-bold uppercase flex items-center gap-2 hover:bg-black hover:text-white w-fit px-2 py-1 transition-colors border border-black"
+        >
+          <Link2 size={14} /> VEURE RECURS
+        </a>
+        {canHighlight && (
+          <button
+            onClick={e => { e.stopPropagation(); onToggleHighlight?.(bookmark.id, !bookmark.highlighted) }}
+            className={`text-xs font-bold uppercase px-2 py-1 border border-black transition-colors whitespace-nowrap font-mono ${
+              bookmark.highlighted ? 'bg-orange-400 hover:bg-white' : 'bg-white hover:bg-orange-400'
+            }`}
+          >
+            {bookmark.highlighted ? '★ DESTACAT' : '☆ DESTACAR'}
+          </button>
+        )}
       </div>
     </div>
   )

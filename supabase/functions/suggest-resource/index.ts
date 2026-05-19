@@ -1,8 +1,8 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY')!
-const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent'
+const GROQ_API_KEY = Deno.env.get('GROQ_API_KEY')!
+const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -52,19 +52,24 @@ Respon NOMÉS amb JSON vàlid (sense markdown):
   "category": "una de les categories disponibles"
 }`
 
-    const response = await fetch(`${GEMINI_URL}?key=${GEMINI_API_KEY}`, {
+    const response = await fetch(GROQ_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${GROQ_API_KEY}`,
+      },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.3, maxOutputTokens: 300 },
+        model: 'llama-3.1-8b-instant',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.3,
+        max_tokens: 300,
       }),
     })
 
-    if (!response.ok) throw new Error(`Gemini error: ${response.status}`)
+    if (!response.ok) throw new Error(`Groq error: ${response.status}`)
 
-    const geminiData = await response.json()
-    const text: string = geminiData.candidates?.[0]?.content?.parts?.[0]?.text ?? ''
+    const groqData = await response.json()
+    const text: string = groqData.choices?.[0]?.message?.content ?? ''
     const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
     const result = JSON.parse(cleaned)
 
