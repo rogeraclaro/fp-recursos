@@ -39,7 +39,7 @@ export async function createEditor(email: string, password: string, username: st
 }
 
 export async function getAdminId(): Promise<string | null> {
-  const { data } = await supabase.from('profiles').select('id').eq('role', 'admin').single()
+  const { data } = await (supabase.from('profiles') as any).select('id').eq('role', 'admin').single()
   return data?.id ?? null
 }
 
