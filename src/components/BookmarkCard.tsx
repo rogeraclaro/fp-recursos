@@ -22,7 +22,7 @@ export const BookmarkCard: React.FC<Props> = ({
   return (
     <div
       onClick={() => window.open(bookmark.url, '_blank', 'noopener,noreferrer')}
-      className={`cursor-pointer border-skin p-5 h-full flex flex-col shadow-skin-card hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-skin-lg transition-all duration-200 ${bookmark.highlighted ? 'bg-accent/50' : (isUnreviewed || isOrphan) ? 'bg-blue-100' : 'bg-surface'}`}
+      className={`cursor-pointer border-skin p-5 h-full flex flex-col shadow-skin-card hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-skin-lg transition-all duration-200 ${bookmark.highlighted ? 'bg-orange-100' : (isUnreviewed || isOrphan) ? 'bg-blue-100' : 'bg-surface'}`}
     >
       {/* Categories + accions edició */}
       <div className="flex justify-between items-start mb-2">

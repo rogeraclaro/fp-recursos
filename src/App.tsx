@@ -416,7 +416,7 @@ export default function App() {
 				<div className='max-w-[1600px] mx-auto flex flex-col xl:flex-row justify-between items-center gap-6'>
 					<div className='flex items-center gap-4'>
 						<h1 className='text-4xl font-black uppercase tracking-tighter bg-black text-white px-3 py-1 inline-block transform -rotate-1 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]'>
-							FP Recursos
+							SSCE0110 LINKS
 						</h1>
 						<div className='hidden md:block h-8 w-0.5 bg-black/20' />
 						<p className='hidden md:block font-skin text-sm text-gray-600 font-bold'>
