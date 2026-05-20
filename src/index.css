@@ -145,6 +145,14 @@
     background-color: rgba(0, 255, 231, 0.4);
 }
 
+[data-skin="cyber"] button.bg-black {
+    background-color: rgba(0, 255, 231, 0.4);
+}
+
+[data-skin="cyber"] .fixed.bottom-20 > button {
+    background-color: rgba(0, 255, 231, 0.4);
+}
+
 [data-skin="corp"] {
     --skin-accent: #2563eb;
     --skin-accent-hover: #3b82f6;
