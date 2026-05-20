@@ -172,6 +172,11 @@
     --skin-font-display: 'Inter', ui-sans-serif, system-ui, sans-serif;
 }
 
+/* Títol de card: mateixa font que el cos per a totes les skins excepte brutal */
+:not([data-skin="brutal"]) h3 {
+    font-family: var(--skin-font-body);
+}
+
 /* Overlay de modals: blur animat en lloc d'enfosquiment */
 @keyframes modal-blur-in {
     from {
