@@ -25,7 +25,7 @@ export const LoginPage: React.FC<{ onSuccess?: () => void; onClose?: () => void 
   return (
     <div className="fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
-        <div className="bg-orange-400 border-4 border-black p-4 shadow-[8px_8px_0px_0px_#000] flex justify-between items-start">
+        <div className="bg-accent border-4 border-black p-4 shadow-[8px_8px_0px_0px_#000] flex justify-between items-start">
           <div>
             <h1 className="font-black font-mono text-xl uppercase tracking-wider">FP Recursos</h1>
             <p className="font-mono text-sm">Accés editors</p>

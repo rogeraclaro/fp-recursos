@@ -153,6 +153,10 @@
     background-color: rgba(0, 255, 231, 0.4);
 }
 
+[data-skin="cyber"] .fixed.bottom-6.right-6 {
+    background-color: rgba(0, 255, 231, 0.5);
+}
+
 [data-skin="corp"] {
     --skin-accent: #2563eb;
     --skin-accent-hover: #3b82f6;
