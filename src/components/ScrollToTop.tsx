@@ -33,7 +33,7 @@ export const ScrollToTop: React.FC = () => {
 	return (
 		<button
 			onClick={scrollToTop}
-			className='fixed bottom-6 right-6 z-40 p-3 bg-accent border-skin shadow-skin-sm hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-skin-md active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-200'
+			className='scroll-to-top fixed bottom-6 right-6 z-40 p-3 border-skin shadow-skin-sm hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-skin-md active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-200'
 			aria-label='Tornar a dalt'
 			title='Tornar a dalt'
 		>
