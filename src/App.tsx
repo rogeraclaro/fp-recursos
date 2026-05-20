@@ -1349,7 +1349,7 @@ export default function App() {
 			)}
 
 			{/* Modal login */}
-			{showLoginModal && <LoginPage />}
+			{showLoginModal && <LoginPage onClose={() => setShowLoginModal(false)} />}
 
 			{/* Modal missatges */}
 			{showMessagesModal && (
