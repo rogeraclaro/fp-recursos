@@ -190,7 +190,7 @@
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     background-color: rgba(0, 0, 0, 0.08);
-    animation: modal-blur-in 0.25s ease-out;
+    animation: modal-blur-in 0.45s ease-out;
 }
 
 /* Utilitats semàntiques */
