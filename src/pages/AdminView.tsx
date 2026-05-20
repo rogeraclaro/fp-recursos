@@ -67,14 +67,14 @@ export const AdminView: React.FC<Props> = ({ onBack }) => {
   }
 
   return (
-    <div className="min-h-screen bg-[#f0f0f0]">
+    <div className="min-h-screen bg-page">
       <Header view="admin" onChangeView={() => onBack()} />
       <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
-        <h2 className="font-black font-mono text-2xl uppercase">Editors</h2>
+        <h2 className="font-black font-skin text-2xl uppercase">Editors</h2>
 
         {/* Formulari nou editor */}
-        <div className="bg-white border-2 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-          <h3 className="font-black font-mono uppercase text-sm mb-4 pb-2 border-b-2 border-black">Nou editor</h3>
+        <div className="bg-surface border-skin p-6 shadow-skin-card">
+          <h3 className="font-black font-skin uppercase text-sm mb-4 pb-2 border-b-2 border-black">Nou editor</h3>
           <form onSubmit={handleCreateEditor} className="space-y-3">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
@@ -109,10 +109,10 @@ export const AdminView: React.FC<Props> = ({ onBack }) => {
               </div>
             </div>
             {editorError && (
-              <p className="font-mono text-xs text-red-600 border border-red-200 bg-red-50 p-2">{editorError}</p>
+              <p className="font-skin text-xs text-red-600 border border-red-200 bg-red-50 p-2">{editorError}</p>
             )}
             {editorSuccess && (
-              <p className="font-mono text-xs text-green-700 border border-green-200 bg-green-50 p-2">{editorSuccess}</p>
+              <p className="font-skin text-xs text-green-700 border border-green-200 bg-green-50 p-2">{editorSuccess}</p>
             )}
             <Button type="submit" disabled={creatingEditor} icon={<Plus size={14} />}>
               {creatingEditor ? 'Creant...' : 'Crear editor'}
@@ -121,13 +121,13 @@ export const AdminView: React.FC<Props> = ({ onBack }) => {
         </div>
 
         {/* Llista editors */}
-        <div className="bg-white border-2 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-          <h3 className="font-black font-mono uppercase text-sm mb-4 pb-2 border-b-2 border-black">
+        <div className="bg-surface border-skin p-6 shadow-skin-card">
+          <h3 className="font-black font-skin uppercase text-sm mb-4 pb-2 border-b-2 border-black">
             Editors ({profiles.length})
           </h3>
           <ul className="space-y-2">
             {profiles.map(p => (
-              <li key={p.id} className="flex flex-col sm:flex-row sm:items-center gap-2 p-3 border-2 border-black">
+              <li key={p.id} className="flex flex-col sm:flex-row sm:items-center gap-2 p-3 border-skin">
                 {editingProfile?.id === p.id ? (
                   <div className="flex items-center gap-2 w-full">
                     <input
@@ -138,7 +138,7 @@ export const AdminView: React.FC<Props> = ({ onBack }) => {
                         if (e.key === 'Enter') handleUpdateUsername(p.id, editingProfile.username)
                         if (e.key === 'Escape') setEditingProfile(null)
                       }}
-                      className="flex-grow border-2 border-black p-1 font-mono text-sm focus:outline-none focus:bg-orange-50"
+                      className="flex-grow border-skin p-1 font-skin text-sm focus:outline-none focus:bg-orange-50"
                     />
                     <button onClick={() => handleUpdateUsername(p.id, editingProfile.username)} className="p-1.5 hover:bg-green-100 border border-transparent hover:border-black transition-colors" title="Guardar"><Check size={14} /></button>
                     <button onClick={() => setEditingProfile(null)} className="p-1.5 hover:bg-gray-100 border border-transparent hover:border-black transition-colors" title="Cancel·lar"><X size={14} /></button>
@@ -146,11 +146,11 @@ export const AdminView: React.FC<Props> = ({ onBack }) => {
                 ) : (
                   <>
                     <div className="flex-grow">
-                      <span className="font-mono font-bold">{p.username}</span>
-                      <span className={`ml-2 font-mono text-xs px-2 py-0.5 border ${p.role === 'admin' ? 'bg-orange-400 border-orange-600' : 'bg-cyan-100 border-cyan-400'}`}>
+                      <span className="font-skin font-bold">{p.username}</span>
+                      <span className={`ml-2 font-skin text-xs px-2 py-0.5 border ${p.role === 'admin' ? 'bg-accent border-orange-600' : 'bg-cyan-100 border-cyan-400'}`}>
                         {p.role}
                       </span>
-                      {!p.active && <span className="ml-2 font-mono text-xs text-red-500">inactiu</span>}
+                      {!p.active && <span className="ml-2 font-skin text-xs text-red-500">inactiu</span>}
                     </div>
                     {p.role !== 'admin' && (
                       <div className="flex gap-2">

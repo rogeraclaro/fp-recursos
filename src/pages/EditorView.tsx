@@ -112,8 +112,8 @@ export const EditorView: React.FC<Props> = ({ categories, onBack, onBookmarksCha
 
       <div className="max-w-[1600px] mx-auto px-6 py-8">
         <div className="mb-6">
-          <h2 className="font-black font-mono text-2xl uppercase">Els meus recursos</h2>
-          <p className="font-mono text-sm text-gray-500">{profile?.username} · {myBookmarks.length} recursos</p>
+          <h2 className="font-black font-skin text-2xl uppercase">Els meus recursos</h2>
+          <p className="font-skin text-sm text-gray-500">{profile?.username} · {myBookmarks.length} recursos</p>
         </div>
 
         {showForm && (
@@ -131,11 +131,11 @@ export const EditorView: React.FC<Props> = ({ categories, onBack, onBookmarksCha
         {loading ? (
           <div className="flex justify-center py-20"><div className={theme.loadingSpinner} /></div>
         ) : myBookmarks.length === 0 ? (
-          <div className="text-center py-20 font-mono text-gray-500">
+          <div className="text-center py-20 font-skin text-gray-500">
             <p className="mb-4">Encara no has afegit cap recurs.</p>
             <button
               onClick={() => setShowForm(true)}
-              className="font-mono text-sm px-4 py-2 bg-orange-400 border-2 border-black"
+              className="font-skin text-sm px-4 py-2 bg-accent border-skin"
             >
               Afegir primer recurs
             </button>
@@ -159,15 +159,14 @@ export const EditorView: React.FC<Props> = ({ categories, onBack, onBookmarksCha
       {/* Modal categories */}
       {showCategoryModal && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <div className="bg-white border-4 border-black w-full max-w-md shadow-[8px_8px_0px_0px_#000]">
-            <div className="flex justify-between items-center p-4 border-b-2 border-black bg-orange-400">
-              <h3 className="font-bold text-xl font-mono uppercase">Les meves categories</h3>
+          <div className="bg-surface border-4 border-black w-full max-w-md shadow-skin-lg">
+            <div className="flex justify-between items-center p-4 border-b-2 border-black bg-accent">
+              <h3 className="font-bold text-xl font-skin uppercase">Les meves categories</h3>
               <button onClick={closeModal} className="p-1 hover:bg-black hover:text-white transition-colors border border-black">
                 <X size={20} />
               </button>
             </div>
             <div className="p-6 space-y-4">
-              {/* Afegir nova */}
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -175,27 +174,26 @@ export const EditorView: React.FC<Props> = ({ categories, onBack, onBookmarksCha
                   onChange={e => setNewCatName(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && handleAddCategory()}
                   placeholder="Nova categoria..."
-                  className="flex-1 font-mono text-sm border-2 border-black px-3 py-2 focus:outline-none focus:bg-orange-50"
+                  className="flex-1 font-skin text-sm border-skin px-3 py-2 focus:outline-none focus:bg-orange-50"
                   autoFocus
                 />
                 <button
                   onClick={handleAddCategory}
                   disabled={!newCatName.trim() || catSaving}
-                  className="font-mono font-bold text-sm px-4 py-2 border-2 border-black bg-orange-400 hover:bg-orange-500 disabled:opacity-40 transition-colors"
+                  className="font-skin font-bold text-sm px-4 py-2 border-skin bg-accent hover:bg-accent-hover disabled:opacity-40 transition-colors"
                 >
                   {catSaving ? '...' : '+ Afegir'}
                 </button>
               </div>
 
               {catError && (
-                <p className="font-mono text-xs text-red-600 border border-red-300 bg-red-50 px-3 py-2">{catError}</p>
+                <p className="font-skin text-xs text-red-600 border border-red-300 bg-red-50 px-3 py-2">{catError}</p>
               )}
 
-              {/* Llista de categories pròpies */}
               {myCategories.length > 0 ? (
                 <ul className="space-y-2 max-h-64 overflow-y-auto">
                   {myCategories.map(cat => (
-                    <li key={cat.id} className="flex items-center gap-2 p-3 border-2 border-black">
+                    <li key={cat.id} className="flex items-center gap-2 p-3 border-skin">
                       {editingCat?.id === cat.id ? (
                         <>
                           <input
@@ -206,14 +204,14 @@ export const EditorView: React.FC<Props> = ({ categories, onBack, onBookmarksCha
                               if (e.key === 'Enter') handleEditCat(cat.id, editingCat.name)
                               if (e.key === 'Escape') setEditingCat(null)
                             }}
-                            className="flex-1 border-2 border-black p-1 font-mono text-sm focus:outline-none focus:bg-orange-50"
+                            className="flex-1 border-skin p-1 font-skin text-sm focus:outline-none focus:bg-orange-50"
                           />
                           <button onClick={() => handleEditCat(cat.id, editingCat.name)} className="p-1.5 hover:bg-green-100 border border-transparent hover:border-black transition-colors" title="Guardar"><Check size={14} /></button>
                           <button onClick={() => setEditingCat(null)} className="p-1.5 hover:bg-gray-100 border border-transparent hover:border-black transition-colors" title="Cancel·lar"><X size={14} /></button>
                         </>
                       ) : (
                         <>
-                          <span className="font-mono flex-1">{cat.name}</span>
+                          <span className="font-skin flex-1">{cat.name}</span>
                           <button onClick={() => setEditingCat({ id: cat.id, name: cat.name })} className="p-1.5 hover:bg-orange-100 border border-transparent hover:border-black transition-colors" title="Editar"><Edit2 size={14} /></button>
                           <button onClick={() => handleDeleteCat(cat.id, cat.name)} className="p-1.5 hover:bg-red-100 border border-transparent hover:border-black transition-colors" title="Eliminar"><Trash2 size={14} /></button>
                         </>
@@ -222,7 +220,7 @@ export const EditorView: React.FC<Props> = ({ categories, onBack, onBookmarksCha
                   ))}
                 </ul>
               ) : (
-                <p className="font-mono text-sm text-gray-400 text-center py-4">Encara no has creat cap categoria.</p>
+                <p className="font-skin text-sm text-gray-400 text-center py-4">Encara no has creat cap categoria.</p>
               )}
             </div>
           </div>

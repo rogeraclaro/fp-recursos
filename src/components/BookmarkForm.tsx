@@ -68,9 +68,9 @@ export const BookmarkForm: React.FC<Props> = ({ bookmark, categories, userId, on
   }
 
   return (
-    <div className="bg-white border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6 max-w-lg w-full">
+    <div className="bg-surface border-skin shadow-skin-lg p-6 max-w-lg w-full">
       <div className="flex justify-between items-center mb-4 pb-3 border-b-2 border-black">
-        <h2 className="font-black font-mono uppercase">{bookmark ? 'Editar recurs' : 'Nou recurs'}</h2>
+        <h2 className="font-black font-skin uppercase">{bookmark ? 'Editar recurs' : 'Nou recurs'}</h2>
         <button onClick={onCancel} className="p-1 hover:bg-red-100 border border-transparent hover:border-black">
           <X size={16} />
         </button>
@@ -83,7 +83,7 @@ export const BookmarkForm: React.FC<Props> = ({ bookmark, categories, userId, on
             type="button"
             onClick={handleSuggest}
             disabled={!url.trim() || suggesting || suggested}
-            className="mt-2 flex items-center gap-1.5 font-mono text-xs px-3 py-1.5 bg-orange-400 border-2 border-black hover:bg-orange-300 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="mt-2 flex items-center gap-1.5 font-skin text-xs px-3 py-1.5 bg-accent border-skin hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             <Sparkles size={12} />
             {suggesting ? 'Analitzant...' : `Suggerir amb IA (${aiModel ?? 'llama-3.1-8b-instant'})`}
@@ -105,14 +105,14 @@ export const BookmarkForm: React.FC<Props> = ({ bookmark, categories, userId, on
                 key={cat.id}
                 type="button"
                 onClick={() => toggleCat(cat.name)}
-                className={`font-mono text-xs px-3 py-1.5 border-2 border-black transition-colors ${selectedCats.includes(cat.name) ? 'bg-orange-400' : 'bg-white hover:bg-orange-100'}`}
+                className={`font-skin text-xs px-3 py-1.5 border-skin transition-colors ${selectedCats.includes(cat.name) ? 'bg-accent' : 'bg-surface hover:bg-orange-100'}`}
               >
                 {cat.name}
               </button>
             ))}
           </div>
         </div>
-        {error && <p className="text-red-600 font-mono text-sm">{error}</p>}
+        {error && <p className="text-red-600 font-skin text-sm">{error}</p>}
         <div className="flex gap-3 pt-2">
           <Button type="submit" disabled={saving}>{saving ? 'Guardant...' : 'Guardar'}</Button>
           <Button type="button" variant="secondary" onClick={onCancel}>Cancel·lar</Button>

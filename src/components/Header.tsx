@@ -15,7 +15,7 @@ export const Header: React.FC<Props> = ({ view, onChangeView, onNewResource, onC
 	const { user, profile, signOut, isAdmin, isEditor } = useAuth()
 
 	return (
-		<header className='bg-white border-b-4 border-black p-4 shadow-md'>
+		<header className='bg-surface border-b-4 border-black p-4 shadow-md'>
 			<div className='max-w-[1600px] mx-auto flex items-center justify-between gap-4'>
 				{/* Logo */}
 				<button onClick={() => onChangeView('public')} className='hover:opacity-80 transition-opacity'>
@@ -29,7 +29,7 @@ export const Header: React.FC<Props> = ({ view, onChangeView, onNewResource, onC
 					{view === 'editor' && (
 						<button
 							onClick={() => onChangeView('public')}
-							className='flex items-center gap-1.5 font-mono font-bold text-sm px-4 py-2.5 border-2 border-black bg-white shadow-[4px_4px_0px_0px_#000] hover:bg-orange-400 transition-colors'
+							className='flex items-center gap-1.5 font-skin font-bold text-sm px-4 py-2.5 border-skin bg-surface shadow-skin-sm hover:bg-accent transition-colors'
 						>
 							<ArrowLeft size={14} />
 							<span className='hidden sm:inline'>Tornar enrere</span>
@@ -38,7 +38,7 @@ export const Header: React.FC<Props> = ({ view, onChangeView, onNewResource, onC
 					{onNewResource && (
 						<button
 							onClick={onNewResource}
-							className='flex items-center gap-1.5 font-mono font-bold text-sm px-4 py-2.5 border-2 border-black bg-white shadow-[4px_4px_0px_0px_#000] hover:bg-orange-400 transition-colors'
+							className='flex items-center gap-1.5 font-skin font-bold text-sm px-4 py-2.5 border-skin bg-surface shadow-skin-sm hover:bg-accent transition-colors'
 						>
 							<Plus size={14} />
 							<span className='hidden sm:inline'>Nou recurs</span>
@@ -47,7 +47,7 @@ export const Header: React.FC<Props> = ({ view, onChangeView, onNewResource, onC
 					{onCategories && (
 						<button
 							onClick={onCategories}
-							className='flex items-center gap-1.5 font-mono font-bold text-sm px-4 py-2.5 border-2 border-black bg-white shadow-[4px_4px_0px_0px_#000] hover:bg-orange-400 transition-colors'
+							className='flex items-center gap-1.5 font-skin font-bold text-sm px-4 py-2.5 border-skin bg-surface shadow-skin-sm hover:bg-accent transition-colors'
 						>
 							<Settings size={14} />
 							<span className='hidden sm:inline'>Categories</span>
@@ -56,7 +56,7 @@ export const Header: React.FC<Props> = ({ view, onChangeView, onNewResource, onC
 					{isEditor && view !== 'editor' && (
 						<button
 							onClick={() => onChangeView('editor')}
-							className='flex items-center gap-1 font-mono text-sm px-3 py-1.5 border-2 border-black hover:bg-orange-400 transition-colors shadow-[2px_2px_0px_0px_#000]'
+							className='flex items-center gap-1 font-skin text-sm px-3 py-1.5 border-skin hover:bg-accent transition-colors shadow-[2px_2px_0px_0px_#000]'
 						>
 							<Plus size={14} />
 							<span className='hidden sm:inline'>Els meus recursos</span>
@@ -66,7 +66,7 @@ export const Header: React.FC<Props> = ({ view, onChangeView, onNewResource, onC
 					{isAdmin && view !== 'admin' && (
 						<button
 							onClick={() => onChangeView('admin')}
-							className='flex items-center gap-1 font-mono text-sm px-3 py-1.5 border-2 border-black hover:bg-orange-400 transition-colors shadow-[2px_2px_0px_0px_#000]'
+							className='flex items-center gap-1 font-skin text-sm px-3 py-1.5 border-skin hover:bg-accent transition-colors shadow-[2px_2px_0px_0px_#000]'
 						>
 							<Settings size={14} />
 							Admin
@@ -74,10 +74,10 @@ export const Header: React.FC<Props> = ({ view, onChangeView, onNewResource, onC
 					)}
 					{user ? (
 						<div className='flex items-center gap-2'>
-							<span className='font-mono text-xs text-gray-500 hidden sm:block'>{profile?.username}</span>
+							<span className='font-skin text-xs text-gray-500 hidden sm:block'>{profile?.username}</span>
 							<button
 								onClick={signOut}
-								className='font-mono font-bold text-sm px-4 py-2.5 border-2 border-black bg-white shadow-[4px_4px_0px_0px_#000] hover:bg-red-500 hover:text-white hover:border-red-500 transition-all flex items-center gap-2'
+								className='font-skin font-bold text-sm px-4 py-2.5 border-skin bg-surface shadow-skin-sm hover:bg-red-500 hover:text-white hover:border-red-500 transition-all flex items-center gap-2'
 								title='Tancar sessió'
 							>
 								<LogOut size={16} /> Logout
@@ -86,7 +86,7 @@ export const Header: React.FC<Props> = ({ view, onChangeView, onNewResource, onC
 					) : (
 						<button
 							onClick={() => onChangeView('editor')}
-							className='font-mono text-sm px-3 py-1.5 border-2 border-black hover:bg-orange-400 transition-colors shadow-[2px_2px_0px_0px_#000]'
+							className='font-skin text-sm px-3 py-1.5 border-skin hover:bg-accent transition-colors shadow-[2px_2px_0px_0px_#000]'
 						>
 							Accés editors
 						</button>

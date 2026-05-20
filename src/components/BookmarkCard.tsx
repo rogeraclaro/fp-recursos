@@ -22,20 +22,20 @@ export const BookmarkCard: React.FC<Props> = ({
   return (
     <div
       onClick={() => window.open(bookmark.url, '_blank', 'noopener,noreferrer')}
-      className={`cursor-pointer border-2 border-black p-5 h-full flex flex-col shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 ${bookmark.highlighted ? 'bg-orange-400/50' : (isUnreviewed || isOrphan) ? 'bg-blue-100' : 'bg-white'}`}
+      className={`cursor-pointer border-skin p-5 h-full flex flex-col shadow-skin-card hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-skin-lg transition-all duration-200 ${bookmark.highlighted ? 'bg-accent/50' : (isUnreviewed || isOrphan) ? 'bg-blue-100' : 'bg-surface'}`}
     >
       {/* Categories + accions edició */}
       <div className="flex justify-between items-start mb-2">
         <div className="flex flex-wrap gap-1.5">
           {bookmark.categories.map((cat, idx) => (
-            <Badge key={idx} color="bg-orange-400">{cat}</Badge>
+            <Badge key={idx} color="bg-accent">{cat}</Badge>
           ))}
         </div>
         {canEdit && (
           <div className="flex gap-1 flex-shrink-0 ml-2">
             <button
               onClick={e => { e.stopPropagation(); onEdit?.(bookmark) }}
-              className="p-1.5 hover:bg-orange-300 border border-transparent hover:border-black transition-colors"
+              className="p-1.5 hover:bg-accent-hover border border-transparent hover:border-black transition-colors"
               title="Editar"
             >
               <Edit2 size={14} />
@@ -52,7 +52,7 @@ export const BookmarkCard: React.FC<Props> = ({
       </div>
 
       {/* Meta: data + autor */}
-      <div className="flex flex-wrap gap-3 mb-3 text-xs font-mono text-gray-500 border-b border-gray-200 pb-2">
+      <div className="flex flex-wrap gap-3 mb-3 text-xs font-skin text-gray-500 border-b border-gray-200 pb-2">
         <span>{dateStr}</span>
         {bookmark.profiles?.username && (
           <span className="font-bold text-black">{bookmark.profiles.username}</span>
@@ -64,7 +64,7 @@ export const BookmarkCard: React.FC<Props> = ({
 
       {/* Descripció */}
       {bookmark.description ? (
-        <p className="text-gray-700 font-mono mb-6 flex-grow leading-relaxed text-sm line-clamp-4">
+        <p className="text-gray-700 font-skin mb-6 flex-grow leading-relaxed text-sm line-clamp-4">
           {bookmark.description}
         </p>
       ) : (
@@ -85,8 +85,8 @@ export const BookmarkCard: React.FC<Props> = ({
         {canHighlight && (
           <button
             onClick={e => { e.stopPropagation(); onToggleHighlight?.(bookmark.id, !bookmark.highlighted) }}
-            className={`text-xs font-bold uppercase px-2 py-1 border border-black transition-colors whitespace-nowrap font-mono ${
-              bookmark.highlighted ? 'bg-orange-400 hover:bg-white' : 'bg-white hover:bg-orange-400'
+            className={`text-xs font-bold uppercase px-2 py-1 border border-black transition-colors whitespace-nowrap font-skin ${
+              bookmark.highlighted ? 'bg-accent hover:bg-surface' : 'bg-surface hover:bg-accent'
             }`}
           >
             {bookmark.highlighted ? '★ DESTACAT' : '☆ DESTACAR'}

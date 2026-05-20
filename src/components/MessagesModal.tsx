@@ -65,7 +65,7 @@ function ThreadView({
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0">
         {messages.length === 0 && (
-          <p className="font-mono text-sm text-gray-400 text-center pt-8">
+          <p className="font-skin text-sm text-gray-400 text-center pt-8">
             Encara no hi ha missatges. Escriu el primer!
           </p>
         )}
@@ -74,7 +74,7 @@ function ThreadView({
           const editable = canModify(m)
           return (
             <div key={m.id} className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
-              <div className={`group max-w-[75%] border-2 border-black px-3 py-2 font-mono text-sm shadow-[2px_2px_0px_0px_#000] ${isOwn ? 'bg-orange-400' : 'bg-white'}`}>
+              <div className={`group max-w-[75%] border-skin px-3 py-2 font-skin text-sm shadow-skin-sm ${isOwn ? 'bg-accent' : 'bg-surface'}`}>
                 {editingId === m.id ? (
                   <div className="flex flex-col gap-1">
                     <textarea
@@ -86,7 +86,7 @@ function ThreadView({
                         if (e.key === 'Escape') setEditingId(null)
                       }}
                       rows={2}
-                      className="w-full border border-black p-1 bg-white text-black resize-none focus:outline-none text-sm font-mono"
+                      className="w-full border border-black p-1 bg-white text-black resize-none focus:outline-none text-sm font-skin"
                     />
                     <div className="flex gap-1 justify-end">
                       <button onClick={() => handleSaveEdit(m.id)} className="p-1 hover:bg-green-100 border border-black transition-colors" title="Guardar"><Check size={12} /></button>
@@ -122,12 +122,12 @@ function ThreadView({
           onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() } }}
           placeholder="Escriu un missatge... (Enter per enviar)"
           rows={2}
-          className="flex-1 border-2 border-black p-2 font-mono text-sm resize-none focus:outline-none focus:bg-orange-50"
+          className="flex-1 border-skin p-2 font-skin text-sm resize-none focus:outline-none focus:bg-orange-50"
         />
         <button
           onClick={handleSend}
           disabled={sending || !text.trim()}
-          className="px-3 py-2 border-2 border-black bg-black text-white hover:bg-gray-800 disabled:opacity-40 transition-colors flex items-center gap-1 self-end"
+          className="px-3 py-2 border-skin bg-black text-white hover:bg-gray-800 disabled:opacity-40 transition-colors flex items-center gap-1 self-end"
         >
           <Send size={14} />
         </button>
@@ -181,7 +181,6 @@ export const MessagesModal: React.FC<Props> = ({ onClose, onUnreadChange }) => {
       return [...otherMsgs, ...msgs]
     })
     await markThreadAsRead(user.id, editorId)
-    // recalculate unread for badge
     const remaining = allMessages.filter(
       m => m.recipient_id === user.id && !m.read_by_recipient && m.sender_id !== editorId
     ).length
@@ -211,7 +210,6 @@ export const MessagesModal: React.FC<Props> = ({ onClose, onUnreadChange }) => {
     setAllMessages(prev => prev.filter(m => m.id !== id))
   }
 
-  // Build thread list for admin
   const editorThreads = React.useMemo(() => {
     if (!isAdmin || !user) return []
     const editorIds = new Set<string>()
@@ -248,10 +246,10 @@ export const MessagesModal: React.FC<Props> = ({ onClose, onUnreadChange }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col sm:bg-black/50 sm:items-center sm:justify-center sm:p-4">
-      <div className={`bg-white border-4 border-black flex flex-col h-full w-full sm:shadow-[8px_8px_0px_0px_#000] ${isAdmin ? 'sm:max-w-3xl sm:h-[600px]' : 'sm:max-w-lg sm:h-[520px]'}`}>
+      <div className={`bg-surface border-4 border-black flex flex-col h-full w-full sm:shadow-skin-lg ${isAdmin ? 'sm:max-w-3xl sm:h-[600px]' : 'sm:max-w-lg sm:h-[520px]'}`}>
         {/* Capçalera */}
-        <div className="flex justify-between items-center p-4 border-b-2 border-black bg-orange-400 flex-shrink-0">
-          <h2 className="font-bold text-xl font-mono uppercase flex items-center gap-2">
+        <div className="flex justify-between items-center p-4 border-b-2 border-black bg-accent flex-shrink-0">
+          <h2 className="font-bold text-xl font-skin uppercase flex items-center gap-2">
             <MessageSquare size={20} /> Missatges
           </h2>
           <button onClick={onClose} className="p-1 hover:bg-black hover:text-white transition-colors border border-black">
@@ -261,14 +259,13 @@ export const MessagesModal: React.FC<Props> = ({ onClose, onUnreadChange }) => {
 
         {loading ? (
           <div className="flex-1 flex items-center justify-center">
-            <div className="w-8 h-8 border-4 border-black border-t-orange-400 rounded-full animate-spin" />
+            <div className="w-8 h-8 border-4 border-black border-t-accent rounded-full animate-spin" />
           </div>
         ) : isAdmin ? (
-          /* Vista admin: llista editors + fil seleccionat */
           <div className="flex flex-1 min-h-0">
             <div className="w-48 border-r-2 border-black flex-shrink-0 overflow-y-auto">
               {editorThreads.length === 0 && (
-                <p className="font-mono text-xs text-gray-400 p-4 text-center">Sense missatges</p>
+                <p className="font-skin text-xs text-gray-400 p-4 text-center">Sense missatges</p>
               )}
               {editorThreads.map(t => (
                 <button
@@ -276,7 +273,7 @@ export const MessagesModal: React.FC<Props> = ({ onClose, onUnreadChange }) => {
                   onClick={() => handleAdminSelectEditor(t.editorId)}
                   className={`w-full text-left p-3 border-b border-gray-200 hover:bg-orange-50 transition-colors flex items-center justify-between gap-2 ${selectedEditorId === t.editorId ? 'bg-orange-100' : ''}`}
                 >
-                  <span className="font-mono text-sm font-bold truncate">{t.username}</span>
+                  <span className="font-skin text-sm font-bold truncate">{t.username}</span>
                   {t.unread > 0 && (
                     <span className="bg-black text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full flex-shrink-0">
                       {t.unread}
@@ -296,14 +293,13 @@ export const MessagesModal: React.FC<Props> = ({ onClose, onUnreadChange }) => {
                   onDelete={handleDelete}
                 />
               ) : (
-                <div className="flex items-center justify-center h-full text-gray-400 font-mono text-sm">
+                <div className="flex items-center justify-center h-full text-gray-400 font-skin text-sm">
                   Selecciona un editor per veure la conversa
                 </div>
               )}
             </div>
           </div>
         ) : (
-          /* Vista editor: fil directe amb admin */
           <div className="flex-1 min-h-0">
             {adminId ? (
               <ThreadView
@@ -315,7 +311,7 @@ export const MessagesModal: React.FC<Props> = ({ onClose, onUnreadChange }) => {
                 onDelete={handleDelete}
               />
             ) : (
-              <p className="font-mono text-sm text-gray-400 p-6 text-center">No s'ha trobat l'administrador.</p>
+              <p className="font-skin text-sm text-gray-400 p-6 text-center">No s'ha trobat l'administrador.</p>
             )}
           </div>
         )}

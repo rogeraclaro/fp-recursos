@@ -2,19 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ============================================== */
-/*          ELS TEUS RETOCS CSS VAN AQUÍ          */
-/* ============================================== */
+/* ══════════════════════════════════════════════════════════
+   SISTEMA DE SKINS — variables CSS
+   Cada skin sobreescriu aquestes variables via [data-skin="id"]
+   ══════════════════════════════════════════════════════════ */
 
-/* Pots fer servir CSS normal o regles de Tailwind amb @apply */
-
-.reset {
-    display: none;
+:root,
+[data-skin="brutal"] {
+  --skin-accent:         #fb923c;
+  --skin-accent-hover:   #fdba74;
+  --skin-accent-active:  #f97316;
+  --skin-bg-page:        #f0f0f0;
+  --skin-bg-surface:     #ffffff;
+  --skin-text:           #000000;
+  --skin-text-muted:     #6b7280;
+  --skin-border-color:   #000000;
+  --skin-border-width:   2px;
+  --skin-radius:         0px;
+  --skin-shadow-sm:      4px 4px 0px 0px #000000;
+  --skin-shadow-md:      6px 6px 0px 0px rgba(0,0,0,1);
+  --skin-shadow-lg:      8px 8px 0px 0px #000000;
+  --skin-shadow-card:    6px 6px 0px 0px rgba(0,0,0,1);
+  --skin-font-body:      ui-monospace, SFMono-Regular, Menlo, monospace;
+  --skin-font-display:   ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
-.bg-white.border-4.border-black.w-full.max-w-lg.shadow-\[8px_8px_0px_0px_\#000\].max-h-\[90vh\].overflow-y-auto.flex.flex-col {
-    max-width: 50rem !important;
-}
+/* Utilitats semàntiques */
+.border-skin        { border-style: solid; border-width: var(--skin-border-width); border-color: var(--skin-border-color); }
+.shadow-skin-sm     { box-shadow: var(--skin-shadow-sm); }
+.shadow-skin-md     { box-shadow: var(--skin-shadow-md); }
+.shadow-skin-lg     { box-shadow: var(--skin-shadow-lg); }
+.shadow-skin-card   { box-shadow: var(--skin-shadow-card); }
+.rounded-skin       { border-radius: var(--skin-radius); }
+.font-skin          { font-family: var(--skin-font-body); }
+.text-skin          { color: var(--skin-text); }
+.text-skin-muted    { color: var(--skin-text-muted); }
+.bg-page-blur       { background-color: var(--skin-bg-page); }
 
 @media only screen and (max-width: 768px) {
     header {
