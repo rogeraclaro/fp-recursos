@@ -117,7 +117,7 @@ export const EditorView: React.FC<Props> = ({ categories, onBack, onBookmarksCha
         </div>
 
         {showForm && (
-          <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
             <BookmarkForm
               bookmark={editing}
               categories={categories}
@@ -158,7 +158,7 @@ export const EditorView: React.FC<Props> = ({ categories, onBack, onBookmarksCha
 
       {/* Modal categories */}
       {showCategoryModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
           <div className="bg-surface border-4 border-black w-full max-w-md shadow-skin-lg">
             <div className="flex justify-between items-center p-4 border-b-2 border-black bg-accent">
               <h3 className="font-bold text-xl font-skin uppercase">Les meves categories</h3>

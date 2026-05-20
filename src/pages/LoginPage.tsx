@@ -23,7 +23,7 @@ export const LoginPage: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) =
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
         <div className="bg-orange-400 border-4 border-black p-4 shadow-[8px_8px_0px_0px_#000]">
           <h1 className="font-black font-mono text-xl uppercase tracking-wider">FP Recursos</h1>

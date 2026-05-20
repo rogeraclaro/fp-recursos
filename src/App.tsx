@@ -632,7 +632,7 @@ export default function App() {
 
 			{/* Modal mòbil menú d'accions (admin/editor) */}
 			{isMobileUserMenuOpen && (
-				<div className='fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm flex items-start justify-start p-4 pt-16'>
+				<div className='fixed inset-0 z-[60] modal-overlay flex items-start justify-start p-4 pt-16'>
 					<div className='bg-surface border-4 border-black w-full max-w-xs flex flex-col shadow-skin-lg'>
 						<div className='p-4 border-b-2 border-black bg-black text-white flex justify-between items-center'>
 							<span className='font-bold font-skin uppercase'>{profile?.username}</span>
@@ -734,7 +734,7 @@ export default function App() {
 
 			{/* Modal mòbil de categories */}
 			{isMobileMenuOpen && (
-				<div className='fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4'>
+				<div className='fixed inset-0 z-[60] modal-overlay flex items-center justify-center p-4'>
 					<div className='bg-surface border-4 border-black w-full max-w-sm max-h-[80vh] overflow-y-auto flex flex-col shadow-[8px_8px_0px_0px_#fff]'>
 						<div className='p-4 border-b-2 border-black bg-accent flex justify-between items-center'>
 							<h2 className='font-bold text-xl uppercase font-skin'>Categories</h2>
@@ -986,7 +986,7 @@ export default function App() {
 
 			{/* Modal d'edició */}
 			{editingBookmark && (
-				<div className='fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4'>
+				<div className='fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4'>
 					<BookmarkForm
 						bookmark={editingBookmark}
 						categories={categories}
@@ -999,7 +999,7 @@ export default function App() {
 
 			{/* Modal de cerca */}
 			{isSearchModalOpen && (
-				<div className='fixed inset-0 z-[100] bg-black/50 flex items-center justify-center p-4'>
+				<div className='fixed inset-0 z-[100] modal-overlay flex items-center justify-center p-4'>
 					<div className='bg-surface border-4 border-black w-full max-w-xl shadow-skin-lg'>
 						<div className='flex justify-between items-center p-4 border-b-2 border-black bg-accent'>
 							<h2 className='font-bold text-xl font-skin uppercase'>Cercar Recursos</h2>
@@ -1043,7 +1043,7 @@ export default function App() {
 
 			{/* Modal categories */}
 			{isCategoryModalOpen && (
-				<div className='fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4'>
+				<div className='fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4'>
 					<div className='bg-surface border-4 border-black w-full max-w-md shadow-skin-lg'>
 						<div className='flex justify-between items-center p-4 border-b-2 border-black bg-accent'>
 							<h2 className='font-bold text-xl font-skin uppercase'>Categories</h2>
@@ -1186,7 +1186,7 @@ export default function App() {
 
 			{/* Modal confirmació eliminar categoria amb recursos */}
 			{deletingCat && (
-				<div className='fixed inset-0 z-[60] bg-black/50 flex items-center justify-center p-4'>
+				<div className='fixed inset-0 z-[60] modal-overlay flex items-center justify-center p-4'>
 					<div className='bg-surface border-4 border-black w-full max-w-sm shadow-skin-lg p-6'>
 						<h3 className='font-black font-skin text-lg uppercase mb-1'>Eliminar categoria</h3>
 						<p className='font-skin text-sm text-gray-600 mb-2'>
@@ -1220,7 +1220,7 @@ export default function App() {
 
 			{/* Modal nou recurs (admin) */}
 			{showNewResourceForm && user && (
-				<div className='fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4'>
+				<div className='fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4'>
 					<BookmarkForm
 						categories={categories}
 						userId={user.id}
@@ -1232,7 +1232,7 @@ export default function App() {
 
 			{/* Modal categories editor */}
 			{showEditorCatModal && (
-				<div className='fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4'>
+				<div className='fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4'>
 					<div className='bg-surface border-4 border-black w-full max-w-md shadow-skin-lg'>
 						<div className='flex justify-between items-center p-4 border-b-2 border-black bg-accent'>
 							<h2 className='font-bold text-xl font-skin uppercase'>Les meves categories</h2>
@@ -1358,7 +1358,7 @@ export default function App() {
 
 			{/* Modal perfil d'usuari */}
 			{showProfileModal && (
-				<div className='fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4'>
+				<div className='fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4'>
 					<div className='bg-surface border-4 border-black w-full max-w-md shadow-skin-lg'>
 						<div className='flex justify-between items-center p-4 border-b-2 border-black bg-accent'>
 							<h2 className='font-bold text-xl font-skin uppercase'>El meu perfil</h2>

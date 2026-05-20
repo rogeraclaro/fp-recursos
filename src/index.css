@@ -172,6 +172,27 @@
     --skin-font-display: 'Inter', ui-sans-serif, system-ui, sans-serif;
 }
 
+/* Overlay de modals: blur animat en lloc d'enfosquiment */
+@keyframes modal-blur-in {
+    from {
+        backdrop-filter: blur(0px);
+        -webkit-backdrop-filter: blur(0px);
+        background-color: transparent;
+    }
+    to {
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        background-color: rgba(0, 0, 0, 0.08);
+    }
+}
+
+.modal-overlay {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background-color: rgba(0, 0, 0, 0.08);
+    animation: modal-blur-in 0.25s ease-out;
+}
+
 /* Utilitats semàntiques */
 .border-skin {
     border-style: solid;

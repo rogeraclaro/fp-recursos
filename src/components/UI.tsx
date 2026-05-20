@@ -88,7 +88,7 @@ export const Modal: React.FC<{
   if (!isOpen) return null;
   const zIndex = priority === 'high' ? 'z-[60]' : 'z-50';
   return (
-    <div className={`fixed inset-0 ${zIndex} flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm`}>
+    <div className={`fixed inset-0 ${zIndex} flex items-center justify-center p-4 modal-overlay`}>
       <div className="bg-surface border-4 border-black w-full max-w-xl shadow-skin-lg max-h-[90vh] flex flex-col">
         <div className="flex-shrink-0 flex justify-between items-center p-4 border-b-2 border-black bg-accent">
           <h2 className="font-bold text-xl font-skin uppercase truncate pr-4">{title}</h2>

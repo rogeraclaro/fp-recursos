@@ -245,7 +245,7 @@ export const MessagesModal: React.FC<Props> = ({ onClose, onUnreadChange }) => {
   }, [allMessages, selectedEditorId, adminId, isAdmin, user])
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col sm:bg-black/50 sm:items-center sm:justify-center sm:p-4">
+    <div className="fixed inset-0 z-50 flex flex-col modal-overlay sm:items-center sm:justify-center sm:p-4">
       <div className={`bg-surface border-4 border-black flex flex-col h-full w-full sm:shadow-skin-lg ${isAdmin ? 'sm:max-w-3xl sm:h-[600px]' : 'sm:max-w-lg sm:h-[520px]'}`}>
         {/* Capçalera */}
         <div className="flex justify-between items-center p-4 border-b-2 border-black bg-accent flex-shrink-0">
