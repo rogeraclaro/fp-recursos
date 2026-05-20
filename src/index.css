@@ -137,6 +137,14 @@
     color: #0a0a0f;
 }
 
+[data-skin="cyber"] .bg-orange-100 {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+[data-skin="cyber"] button.bg-accent {
+    background-color: rgba(0, 255, 231, 0.4);
+}
+
 [data-skin="corp"] {
     --skin-accent: #2563eb;
     --skin-accent-hover: #3b82f6;
