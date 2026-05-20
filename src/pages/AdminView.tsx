@@ -127,9 +127,9 @@ export const AdminView: React.FC<Props> = ({ onBack }) => {
           </h3>
           <ul className="space-y-2">
             {profiles.map(p => (
-              <li key={p.id} className="flex items-center gap-2 p-3 border-2 border-black">
+              <li key={p.id} className="flex flex-col sm:flex-row sm:items-center gap-2 p-3 border-2 border-black">
                 {editingProfile?.id === p.id ? (
-                  <>
+                  <div className="flex items-center gap-2 w-full">
                     <input
                       autoFocus
                       value={editingProfile.username}
@@ -142,7 +142,7 @@ export const AdminView: React.FC<Props> = ({ onBack }) => {
                     />
                     <button onClick={() => handleUpdateUsername(p.id, editingProfile.username)} className="p-1.5 hover:bg-green-100 border border-transparent hover:border-black transition-colors" title="Guardar"><Check size={14} /></button>
                     <button onClick={() => setEditingProfile(null)} className="p-1.5 hover:bg-gray-100 border border-transparent hover:border-black transition-colors" title="Cancel·lar"><X size={14} /></button>
-                  </>
+                  </div>
                 ) : (
                   <>
                     <div className="flex-grow">
@@ -153,7 +153,7 @@ export const AdminView: React.FC<Props> = ({ onBack }) => {
                       {!p.active && <span className="ml-2 font-mono text-xs text-red-500">inactiu</span>}
                     </div>
                     {p.role !== 'admin' && (
-                      <>
+                      <div className="flex gap-2">
                         <button
                           onClick={() => setEditingProfile({ id: p.id, username: p.username })}
                           className="p-1.5 hover:bg-orange-100 border border-transparent hover:border-black transition-colors"
@@ -175,7 +175,7 @@ export const AdminView: React.FC<Props> = ({ onBack }) => {
                         >
                           <Trash2 size={14} />
                         </button>
-                      </>
+                      </div>
                     )}
                   </>
                 )}

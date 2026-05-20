@@ -61,6 +61,7 @@ export default function App() {
 	const [showEditorCatModal, setShowEditorCatModal] = useState(false)
 	const [editorNewCatName, setEditorNewCatName] = useState('')
 	const [showLoginModal, setShowLoginModal] = useState(false)
+	const [isMobileUserMenuOpen, setIsMobileUserMenuOpen] = useState(false)
 	const [showMessagesModal, setShowMessagesModal] = useState(false)
 	const [unreadMessages, setUnreadMessages] = useState(0)
 	const [showProfileModal, setShowProfileModal] = useState(false)
@@ -594,14 +595,141 @@ export default function App() {
 			)}
 
 			{/* Botó burger mòbil (fix, centrat) */}
-			<div className='md:hidden fixed top-4 left-1/2 -translate-x-1/2 z-50'>
+			<div className='md:hidden fixed top-4 left-1/2 -translate-x-1/2 z-50 flex gap-2'>
 				<button
 					onClick={() => setIsMobileMenuOpen(true)}
 					className='bg-orange-400 border-2 border-black px-4 py-2 font-bold font-mono text-sm shadow-[4px_4px_0px_0px_#000] flex items-center gap-2 active:translate-y-[2px] active:shadow-none'
 				>
 					<Menu size={18} /> CATEGORIES
 				</button>
+				{!user && (
+					<button
+						onClick={() => setShowLoginModal(true)}
+						className='bg-black text-white border-2 border-black px-4 py-2 font-bold font-mono text-sm shadow-[4px_4px_0px_0px_#000] active:translate-y-[2px] active:shadow-none'
+					>
+						LOGIN
+					</button>
+				)}
 			</div>
+
+			{/* Botó burger d'accions (fix, esquerra) — visible quan l'usuari és loguejat */}
+			{user && (
+				<div className='md:hidden fixed top-4 left-4 z-50'>
+					<button
+						onClick={() => setIsMobileUserMenuOpen(true)}
+						className='relative bg-white border-2 border-black px-3 py-2 font-bold font-mono text-sm shadow-[4px_4px_0px_0px_#000] flex items-center gap-2 active:translate-y-[2px] active:shadow-none'
+					>
+						<Menu size={18} />
+						{unreadMessages > 0 && (
+							<span className='absolute -top-2 -right-2 bg-orange-400 text-black text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-black'>
+								{unreadMessages}
+							</span>
+						)}
+					</button>
+				</div>
+			)}
+
+			{/* Modal mòbil menú d'accions (admin/editor) */}
+			{isMobileUserMenuOpen && (
+				<div className='fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm flex items-start justify-start p-4 pt-16'>
+					<div className='bg-white border-4 border-black w-full max-w-xs flex flex-col shadow-[8px_8px_0px_0px_#000]'>
+						<div className='p-4 border-b-2 border-black bg-black text-white flex justify-between items-center'>
+							<span className='font-bold font-mono uppercase'>{profile?.username}</span>
+							<button onClick={() => setIsMobileUserMenuOpen(false)}>
+								<X size={24} />
+							</button>
+						</div>
+						<div className='p-4 flex flex-col gap-3'>
+							{isAdmin && (
+								<>
+									<button
+										onClick={() => { setIsMobileUserMenuOpen(false); handleExport() }}
+										disabled={exporting}
+										className='font-bold font-mono text-base border-2 border-black p-3 bg-white hover:bg-orange-400 transition-all flex items-center gap-3 shadow-[4px_4px_0px_0px_#ccc] disabled:opacity-50'
+									>
+										<Download size={18} /> {exporting ? 'Exportant...' : 'Exportar'}
+									</button>
+									<button
+										onClick={() => { setIsMobileUserMenuOpen(false); setShowNewResourceForm(true) }}
+										className='font-bold font-mono text-base border-2 border-black p-3 bg-white hover:bg-orange-400 transition-all flex items-center gap-3 shadow-[4px_4px_0px_0px_#ccc]'
+									>
+										<Plus size={18} /> Nou recurs
+									</button>
+									<button
+										onClick={() => { setIsMobileUserMenuOpen(false); setIsCategoryModalOpen(true) }}
+										className='font-bold font-mono text-base border-2 border-black p-3 bg-white hover:bg-orange-400 transition-all flex items-center gap-3 shadow-[4px_4px_0px_0px_#ccc]'
+									>
+										<Settings size={18} /> Categories
+									</button>
+									<button
+										onClick={() => { setIsMobileUserMenuOpen(false); setView('admin') }}
+										className='font-bold font-mono text-base border-2 border-black p-3 bg-white hover:bg-orange-400 transition-all flex items-center gap-3 shadow-[4px_4px_0px_0px_#ccc]'
+									>
+										<Settings size={18} /> Editors
+									</button>
+									<button
+										onClick={() => { setIsMobileUserMenuOpen(false); setShowMessagesModal(true) }}
+										className='relative font-bold font-mono text-base border-2 border-black p-3 bg-white hover:bg-orange-400 transition-all flex items-center gap-3 shadow-[4px_4px_0px_0px_#ccc]'
+									>
+										<MessageSquare size={18} /> Missatges
+										{unreadMessages > 0 && (
+											<span className='ml-auto bg-orange-400 text-black text-xs font-bold px-2 py-0.5 border border-black rounded-full'>
+												{unreadMessages}
+											</span>
+										)}
+									</button>
+								</>
+							)}
+							{!isAdmin && isEditor && (
+								<>
+									<button
+										onClick={() => { setIsMobileUserMenuOpen(false); setShowNewResourceForm(true) }}
+										className='font-bold font-mono text-base border-2 border-black p-3 bg-white hover:bg-orange-400 transition-all flex items-center gap-3 shadow-[4px_4px_0px_0px_#ccc]'
+									>
+										<Plus size={18} /> Nou recurs
+									</button>
+									<button
+										onClick={() => { setIsMobileUserMenuOpen(false); setShowEditorCatModal(true) }}
+										className='font-bold font-mono text-base border-2 border-black p-3 bg-white hover:bg-orange-400 transition-all flex items-center gap-3 shadow-[4px_4px_0px_0px_#ccc]'
+									>
+										<Settings size={18} /> Categories
+									</button>
+									<button
+										onClick={() => { setIsMobileUserMenuOpen(false); setView('editor') }}
+										className='font-bold font-mono text-base border-2 border-black p-3 bg-white hover:bg-orange-400 transition-all flex items-center gap-3 shadow-[4px_4px_0px_0px_#ccc]'
+									>
+										<Plus size={18} /> Els meus recursos
+									</button>
+									<button
+										onClick={() => { setIsMobileUserMenuOpen(false); setShowMessagesModal(true) }}
+										className='relative font-bold font-mono text-base border-2 border-black p-3 bg-white hover:bg-orange-400 transition-all flex items-center gap-3 shadow-[4px_4px_0px_0px_#ccc]'
+									>
+										<MessageSquare size={18} /> Missatges
+										{unreadMessages > 0 && (
+											<span className='ml-auto bg-orange-400 text-black text-xs font-bold px-2 py-0.5 border border-black rounded-full'>
+												{unreadMessages}
+											</span>
+										)}
+									</button>
+								</>
+							)}
+							<div className='border-t-2 border-black mt-1' />
+							<button
+								onClick={() => { setIsMobileUserMenuOpen(false); openProfileModal() }}
+								className='font-bold font-mono text-base border-2 border-black p-3 bg-white hover:bg-gray-100 transition-all flex items-center gap-3 shadow-[4px_4px_0px_0px_#ccc]'
+							>
+								<User size={18} /> Perfil
+							</button>
+							<button
+								onClick={() => { setIsMobileUserMenuOpen(false); signOut() }}
+								className='font-bold font-mono text-base border-2 border-black p-3 bg-red-500 text-white hover:bg-red-600 transition-all flex items-center gap-3 shadow-[4px_4px_0px_0px_#000]'
+							>
+								<LogOut size={18} /> LOGOUT
+							</button>
+						</div>
+					</div>
+				</div>
+			)}
 
 			{/* Modal mòbil de categories */}
 			{isMobileMenuOpen && (
@@ -664,6 +792,20 @@ export default function App() {
 										{displayHighlighted.length}
 									</span>
 								</button>
+							)}
+							{!user && (
+								<>
+									<div className='border-t-2 border-black mt-1' />
+									<button
+										onClick={() => {
+											setIsMobileMenuOpen(false)
+											setShowLoginModal(true)
+										}}
+										className='font-bold font-mono text-lg border-2 border-black p-3 bg-black text-white hover:bg-gray-800 transition-all flex items-center justify-center shadow-[4px_4px_0px_0px_#000]'
+									>
+										LOGIN
+									</button>
+								</>
 							)}
 						</div>
 					</div>
