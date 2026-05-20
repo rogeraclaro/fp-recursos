@@ -1,0 +1,23 @@
+[     274ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:5176/node_modules/.vite/deps/react-dom_client.js?v=178859aa:23491
+[     309ms] Error: Objects are not valid as a React child (found: object with keys {$$typeof, type, key, props, _owner, _store}). If you meant to render a collection of children, use an array instead.
+    at throwOnInvalidObjectType (http://localhost:5176/node_modules/.vite/deps/react-dom_client.js?v=178859aa:11864:17)
+    at reconcileChildFibers2 (http://localhost:5176/node_modules/.vite/deps/react-dom_client.js?v=178859aa:12494:15)
+    at reconcileChildren (http://localhost:5176/node_modules/.vite/deps/react-dom_client.js?v=178859aa:16223:37)
+    at updateHostRoot (http://localhost:5176/node_modules/.vite/deps/react-dom_client.js?v=178859aa:16711:13)
+    at beginWork (http://localhost:5176/node_modules/.vite/deps/react-dom_client.js?v=178859aa:17864:22)
+    at HTMLUnknownElement.callCallback2 (http://localhost:5176/node_modules/.vite/deps/react-dom_client.js?v=178859aa:5563:22)
+    at Object.invokeGuardedCallbackDev (http://localhost:5176/node_modules/.vite/deps/react-dom_client.js?v=178859aa:5588:24)
+    at invokeGuardedCallback (http://localhost:5176/node_modules/.vite/deps/react-dom_client.js?v=178859aa:5622:39)
+    at beginWork$1 (http://localhost:5176/node_modules/.vite/deps/react-dom_client.js?v=178859aa:21701:15)
+    at performUnitOfWork (http://localhost:5176/node_modules/.vite/deps/react-dom_client.js?v=178859aa:21134:20)
+[     309ms] Error: Objects are not valid as a React child (found: object with keys {$$typeof, type, key, props, _owner, _store}). If you meant to render a collection of children, use an array instead.
+    at throwOnInvalidObjectType (http://localhost:5176/node_modules/.vite/deps/react-dom_client.js?v=178859aa:11864:17)
+    at reconcileChildFibers2 (http://localhost:5176/node_modules/.vite/deps/react-dom_client.js?v=178859aa:12494:15)
+    at reconcileChildren (http://localhost:5176/node_modules/.vite/deps/react-dom_client.js?v=178859aa:16223:37)
+    at updateHostRoot (http://localhost:5176/node_modules/.vite/deps/react-dom_client.js?v=178859aa:16711:13)
+    at beginWork (http://localhost:5176/node_modules/.vite/deps/react-dom_client.js?v=178859aa:17864:22)
+    at beginWork$1 (http://localhost:5176/node_modules/.vite/deps/react-dom_client.js?v=178859aa:21689:22)
+    at performUnitOfWork (http://localhost:5176/node_modules/.vite/deps/react-dom_client.js?v=178859aa:21134:20)
+    at workLoopSync (http://localhost:5176/node_modules/.vite/deps/react-dom_client.js?v=178859aa:21073:13)
+    at renderRootSync (http://localhost:5176/node_modules/.vite/deps/react-dom_client.js?v=178859aa:21052:15)
+    at performConcurrentWorkOnRoot (http://localhost:5176/node_modules/.vite/deps/react-dom_client.js?v=178859aa:20611:83)
