@@ -9,35 +9,198 @@
 
 :root,
 [data-skin="brutal"] {
-  --skin-accent:         #fb923c;
-  --skin-accent-hover:   #fdba74;
-  --skin-accent-active:  #f97316;
-  --skin-bg-page:        #f0f0f0;
-  --skin-bg-surface:     #ffffff;
-  --skin-text:           #000000;
-  --skin-text-muted:     #6b7280;
-  --skin-border-color:   #000000;
-  --skin-border-width:   2px;
-  --skin-radius:         0px;
-  --skin-shadow-sm:      4px 4px 0px 0px #000000;
-  --skin-shadow-md:      6px 6px 0px 0px rgba(0,0,0,1);
-  --skin-shadow-lg:      8px 8px 0px 0px #000000;
-  --skin-shadow-card:    6px 6px 0px 0px rgba(0,0,0,1);
-  --skin-font-body:      ui-monospace, SFMono-Regular, Menlo, monospace;
-  --skin-font-display:   ui-monospace, SFMono-Regular, Menlo, monospace;
+    --skin-accent: #fb923c;
+    --skin-accent-hover: #fdba74;
+    --skin-accent-active: #f97316;
+    --skin-bg-page: #f0f0f0;
+    --skin-bg-surface: #ffffff;
+    --skin-text: #000000;
+    --skin-text-muted: #6b7280;
+    --skin-border-color: #000000;
+    --skin-border-width: 2px;
+    --skin-radius: 0px;
+    --skin-shadow-sm: 4px 4px 0px 0px #000000;
+    --skin-shadow-md: 6px 6px 0px 0px rgba(0, 0, 0, 1);
+    --skin-shadow-lg: 8px 8px 0px 0px #000000;
+    --skin-shadow-card: 6px 6px 0px 0px rgba(0, 0, 0, 1);
+    --skin-font-body: ui-monospace, SFMono-Regular, Menlo, monospace;
+    --skin-font-display: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+
+[data-skin="pastel90s"] {
+    --skin-accent: #f472b6;
+    /* rosa principal */
+    --skin-accent-hover: #f9a8d4;
+    /* rosa clar hover */
+    --skin-accent-active: #ec4899;
+    /* rosa fosc active */
+    --skin-bg-page: #ede9fe;
+    /* lila clar de fons */
+    --skin-bg-surface: #fdf4ff;
+    /* lila molt clar per cards/inputs */
+    --skin-text: #3b1a5e;
+    /* morat fosc per text llegible */
+    --skin-text-muted: #9ca3af;
+    /* gris per text secundari */
+    --skin-border-color: #f472b6;
+    /* borde rosa */
+    --skin-border-width: 2px;
+    --skin-radius: 8px;
+    --skin-shadow-sm: 4px 4px 0px 0px #f9a8d4;
+    --skin-shadow-md: 6px 6px 0px 0px #f9a8d4;
+    --skin-shadow-lg: 8px 8px 0px 0px #f472b6;
+    --skin-shadow-card: 6px 6px 0px 0px #f9a8d4;
+    --skin-font-body: 'Nunito', ui-sans-serif, system-ui, sans-serif;
+    --skin-font-display: 'Nunito', ui-sans-serif, system-ui, sans-serif;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,600;1,400&display=swap');
+
+[data-skin="wabi"] {
+    --skin-accent: #4a6741;
+    /* verd fosc apagat, terrós */
+    --skin-accent-hover: #6b8f67;
+    /* verd mig, suau */
+    --skin-accent-active: #324d30;
+    /* verd molt fosc */
+    --skin-bg-page: #f5f0e8;
+    /* crema càlid */
+    --skin-bg-surface: #faf7f2;
+    /* crema molt clar per cards */
+    --skin-text: #2c2c2c;
+    /* quasi negre, no pur */
+    --skin-text-muted: #8a8680;
+    /* gris càlid per text secundari */
+    --skin-border-color: #c8c3bb;
+    /* gris càlid, subtil */
+    --skin-border-width: 1px;
+    --skin-radius: 2px;
+    /* quasi recte però no brusc */
+    --skin-shadow-sm: 0px 0px 0px 0px transparent;
+    --skin-shadow-md: 0px 0px 0px 0px transparent;
+    --skin-shadow-lg: 0px 0px 0px 0px transparent;
+    --skin-shadow-card: 0px 0px 0px 0px transparent;
+    --skin-font-body: 'Noto Serif', Georgia, 'Times New Roman', serif;
+    --skin-font-display: 'Noto Serif', Georgia, 'Times New Roman', serif;
+}
+
+[data-skin="cyber"] {
+    --skin-accent: #00ffe7;
+    --skin-accent-hover: #7fffd4;
+    --skin-accent-active: #00ccb8;
+    --skin-bg-page: #0a0a0f;
+    --skin-bg-surface: #12121a;
+    --skin-text: #e2e8f0;
+    --skin-text-muted: #8892a4;
+    --skin-border-color: #00ffe7;
+    --skin-border-width: 1px;
+    --skin-radius: 0px;
+    --skin-shadow-sm: 4px 4px 0px 0px #00ffe7;
+    --skin-shadow-md: 6px 6px 0px 0px rgba(0, 255, 231, 0.6);
+    --skin-shadow-lg: 8px 8px 0px 0px rgba(0, 255, 231, 0.8);
+    --skin-shadow-card: 6px 6px 0px 0px rgba(0, 255, 231, 0.4);
+    --skin-font-body: ui-monospace, SFMono-Regular, Menlo, monospace;
+    --skin-font-display: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* Overrides per classes Tailwind hardcoded incompatibles amb dark mode */
+
+[data-skin="cyber"] h1.font-black,
+[data-skin="cyber"] h2.font-black {
+    color: black;
+}
+
+[data-skin="cyber"] h3 {
+    color: var(--skin-text);
+}
+
+[data-skin="cyber"] .text-gray-700 {
+    color: var(--skin-text-muted);
+}
+
+[data-skin="cyber"] .bg-black {
+    background-color: var(--skin-accent);
+}
+
+[data-skin="cyber"] .border-black {
+    border-color: var(--skin-accent);
+    color: var(--skin-accent);
+    background-color: transparent;
+}
+
+[data-skin="cyber"] .hover\:bg-black:hover {
+    background-color: var(--skin-accent);
+}
+
+[data-skin="cyber"] .hover\:text-white:hover {
+    color: #0a0a0f;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+[data-skin="corp"] {
+    --skin-accent: #2563eb;
+    --skin-accent-hover: #3b82f6;
+    --skin-accent-active: #1d4ed8;
+    --skin-bg-page: #f8fafc;
+    --skin-bg-surface: #ffffff;
+    --skin-text: #0f172a;
+    --skin-text-muted: #64748b;
+    --skin-border-color: #cbd5e1;
+    --skin-border-width: 1px;
+    --skin-radius: 6px;
+    --skin-shadow-sm: 0px 1px 3px 0px rgba(0, 0, 0, 0.10);
+    --skin-shadow-md: 0px 4px 8px 0px rgba(0, 0, 0, 0.08);
+    --skin-shadow-lg: 0px 8px 24px 0px rgba(0, 0, 0, 0.10);
+    --skin-shadow-card: 0px 2px 6px 0px rgba(0, 0, 0, 0.07);
+    --skin-font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --skin-font-display: 'Inter', ui-sans-serif, system-ui, sans-serif;
 }
 
 /* Utilitats semàntiques */
-.border-skin        { border-style: solid; border-width: var(--skin-border-width); border-color: var(--skin-border-color); }
-.shadow-skin-sm     { box-shadow: var(--skin-shadow-sm); }
-.shadow-skin-md     { box-shadow: var(--skin-shadow-md); }
-.shadow-skin-lg     { box-shadow: var(--skin-shadow-lg); }
-.shadow-skin-card   { box-shadow: var(--skin-shadow-card); }
-.rounded-skin       { border-radius: var(--skin-radius); }
-.font-skin          { font-family: var(--skin-font-body); }
-.text-skin          { color: var(--skin-text); }
-.text-skin-muted    { color: var(--skin-text-muted); }
-.bg-page-blur       { background-color: var(--skin-bg-page); }
+.border-skin {
+    border-style: solid;
+    border-width: var(--skin-border-width);
+    border-color: var(--skin-border-color);
+}
+
+.shadow-skin-sm {
+    box-shadow: var(--skin-shadow-sm);
+}
+
+.shadow-skin-md {
+    box-shadow: var(--skin-shadow-md);
+}
+
+.shadow-skin-lg {
+    box-shadow: var(--skin-shadow-lg);
+}
+
+.shadow-skin-card {
+    box-shadow: var(--skin-shadow-card);
+}
+
+.rounded-skin {
+    border-radius: var(--skin-radius);
+}
+
+.font-skin {
+    font-family: var(--skin-font-body);
+}
+
+.text-skin {
+    color: var(--skin-text);
+}
+
+.text-skin-muted {
+    color: var(--skin-text-muted);
+}
+
+.bg-page-blur {
+    background-color: var(--skin-bg-page);
+}
 
 @media only screen and (max-width: 768px) {
     header {
