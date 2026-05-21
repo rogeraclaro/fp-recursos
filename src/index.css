@@ -158,9 +158,9 @@
 }
 
 [data-skin="corp"] {
-    --skin-accent: #2563eb;
-    --skin-accent-hover: #3b82f6;
-    --skin-accent-active: #1d4ed8;
+    --skin-accent: color-mix(in srgb, #2563eb 50%, white);
+    --skin-accent-hover: color-mix(in srgb, #3b82f6 50%, white);
+    --skin-accent-active: color-mix(in srgb, #1d4ed8 50%, white);
     --skin-bg-page: #f8fafc;
     --skin-bg-surface: #ffffff;
     --skin-text: #0f172a;
