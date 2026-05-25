@@ -12,6 +12,7 @@ import {
 	Check,
 	User,
 	MessageSquare,
+	Mail,
 } from 'lucide-react'
 import { BookmarkCard } from './components/BookmarkCard'
 import { BookmarkForm } from './components/BookmarkForm'
@@ -507,6 +508,15 @@ export default function App() {
 								</button>
 							</>
 						)}
+						<a
+							href="mailto:roger@lamosca.com?subject=Enviat%20des%20de%20SSCE0110%20Links"
+							target="_blank"
+							rel="noreferrer"
+							className='flex items-center gap-1.5 font-skin font-bold text-sm px-4 py-2.5 border-skin bg-surface shadow-skin-sm hover:bg-accent transition-colors'
+						>
+							<Mail size={16} />
+							<span className='hidden sm:inline'>Contacte</span>
+						</a>
 						{user ? (
 							<div className='flex items-center gap-2'>
 								<button
@@ -603,6 +613,14 @@ export default function App() {
 				>
 					<Menu size={18} /> CATEGORIES
 				</button>
+				<a
+					href="mailto:roger@lamosca.com?subject=Enviat%20des%20de%20SSCE0110%20Links"
+					target="_blank"
+					rel="noreferrer"
+					className='bg-surface border-skin px-3 py-2 font-bold font-skin text-sm shadow-skin-sm flex items-center gap-1.5 active:translate-y-[2px] active:shadow-none hover:bg-accent transition-colors'
+				>
+					<Mail size={18} />
+				</a>
 				{!user && (
 					<button
 						onClick={() => setShowLoginModal(true)}

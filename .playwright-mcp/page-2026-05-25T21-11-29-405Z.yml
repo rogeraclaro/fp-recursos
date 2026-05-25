@@ -1,0 +1,19 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - heading "SSCE0110 LINKS" [level=1] [ref=e7]
+      - link "Contacte" [ref=e9] [cursor=pointer]:
+        - /url: mailto:roger@lamosca.com?subject=Enviat%20des%20de%20SSCE0110%20Links
+        - img [ref=e10]
+        - generic [ref=e13]: Contacte
+  - generic [ref=e14]:
+    - button "CATEGORIES" [ref=e15] [cursor=pointer]:
+      - img [ref=e16]
+      - text: CATEGORIES
+    - link [ref=e17] [cursor=pointer]:
+      - /url: mailto:roger@lamosca.com?subject=Enviat%20des%20de%20SSCE0110%20Links
+      - img [ref=e18]
+    - button "LOGIN" [ref=e21] [cursor=pointer]
+  - main [ref=e22]
+  - button "Canviar skin" [ref=e24] [cursor=pointer]:
+    - img [ref=e25]

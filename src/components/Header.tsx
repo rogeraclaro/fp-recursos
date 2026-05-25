@@ -1,5 +1,5 @@
 import React from 'react'
-import { LogOut, Settings, Plus, ArrowLeft } from 'lucide-react'
+import { LogOut, Settings, Plus, ArrowLeft, Mail } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 
 type View = 'public' | 'editor' | 'admin'
@@ -72,6 +72,13 @@ export const Header: React.FC<Props> = ({ view, onChangeView, onNewResource, onC
 							Admin
 						</button>
 					)}
+					<a
+						href="mailto:roger@lamosca.com?subject=Enviat%20des%20de%20SSCE0110%20Links"
+						className='flex items-center gap-1.5 font-skin text-sm px-3 py-1.5 border-skin hover:bg-accent transition-colors shadow-[2px_2px_0px_0px_#000]'
+					>
+						<Mail size={14} />
+						<span className='hidden sm:inline'>Contacte</span>
+					</a>
 					{user ? (
 						<div className='flex items-center gap-2'>
 							<span className='font-skin text-xs text-gray-500 hidden sm:block'>{profile?.username}</span>
