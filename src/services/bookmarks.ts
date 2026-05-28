@@ -6,7 +6,7 @@ const bookmarks = () => supabase.from('bookmarks') as any
 
 export async function getBookmarks(): Promise<Bookmark[]> {
   const { data, error } = await bookmarks()
-    .select('*, profiles(username)')
+    .select('*, profiles(username, active)')
     .order('highlighted', { ascending: false })
     .order('created_at', { ascending: false })
   if (error) throw error
@@ -16,7 +16,7 @@ export async function getBookmarks(): Promise<Bookmark[]> {
 export async function createBookmark(bookmark: BookmarkInsert): Promise<Bookmark> {
   const { data, error } = await bookmarks()
     .insert(bookmark)
-    .select('*, profiles(username)')
+    .select('*, profiles(username, active)')
     .single()
   if (error) throw error
   return data
@@ -26,7 +26,7 @@ export async function updateBookmark(id: string, updates: BookmarkUpdate): Promi
   const { data, error } = await bookmarks()
     .update(updates)
     .eq('id', id)
-    .select('*, profiles(username)')
+    .select('*, profiles(username, active)')
     .single()
   if (error) throw error
   return data

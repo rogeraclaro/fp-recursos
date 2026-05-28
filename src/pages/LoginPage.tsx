@@ -2,7 +2,11 @@ import React, { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { Button, Input, Label } from '../components/UI'
 
-export const LoginPage: React.FC<{ onSuccess?: () => void; onClose?: () => void }> = ({ onSuccess, onClose }) => {
+export const LoginPage: React.FC<{
+  onSuccess?: () => void
+  onClose?: () => void
+  onRequestAccess?: () => void
+}> = ({ onSuccess, onClose, onRequestAccess }) => {
   const { signIn } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -35,9 +39,20 @@ export const LoginPage: React.FC<{ onSuccess?: () => void; onClose?: () => void 
             </svg>
           </button>
         )}
-        <div className="bg-accent border-4 border-black p-4 shadow-[8px_8px_0px_0px_#000]">
-          <h1 className="font-black font-mono text-xl uppercase tracking-wider">FP Recursos</h1>
-          <p className="font-mono text-sm">Accés editors</p>
+        <div className="bg-accent border-4 border-black p-4 shadow-[8px_8px_0px_0px_#000] flex items-center justify-between gap-4">
+          <div>
+            <h1 className="font-black font-mono text-xl uppercase tracking-wider">FP Recursos</h1>
+            <p className="font-mono text-sm">Accés editors</p>
+          </div>
+          {onRequestAccess && (
+            <button
+              type="button"
+              onClick={onRequestAccess}
+              className="font-mono text-xs font-bold underline hover:no-underline whitespace-nowrap transition-colors"
+            >
+              Encara no ets editor?
+            </button>
+          )}
         </div>
         <form
           onSubmit={handleSubmit}

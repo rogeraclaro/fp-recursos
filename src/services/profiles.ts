@@ -43,6 +43,16 @@ export async function getAdminId(): Promise<string | null> {
   return data?.id ?? null
 }
 
+export async function changeUserPassword(userId: string, password: string): Promise<void> {
+  const { data: { session } } = await supabase.auth.getSession()
+  if (!session) throw new Error('Cal estar autenticat.')
+  const { error } = await supabase.functions.invoke('change-user-password', {
+    body: { userId, password },
+    headers: { Authorization: `Bearer ${session.access_token}` },
+  })
+  if (error) throw error
+}
+
 export async function deleteEditor(userId: string): Promise<void> {
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) throw new Error('Cal estar autenticat.')

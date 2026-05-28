@@ -24,7 +24,7 @@ export interface Bookmark {
   admin_reviewed: boolean
   created_at: string
   updated_at: string
-  profiles?: { username: string } | null
+  profiles?: { username: string; active: boolean } | null
 }
 
 export interface BookmarkInsert {
@@ -52,6 +52,26 @@ export interface Message {
   content: string
   read_by_recipient: boolean
   created_at: string
+}
+
+export interface EditorRequest {
+  id: string
+  name: string
+  email: string
+  comment: string | null
+  status: 'pending' | 'approved' | 'rejected'
+  created_at: string
+  reviewed_at: string | null
+  reviewed_by: string | null
+}
+
+export interface ContactRequest {
+  id: string
+  name: string
+  email: string
+  message: string
+  created_at: string
+  read: boolean
 }
 
 export type Database = {

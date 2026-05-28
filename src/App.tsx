@@ -32,13 +32,30 @@ import { getCategories, createCategory, updateCategory, deleteCategory } from '.
 import { getEditorHighlights, toggleEditorHighlight } from './services/highlights'
 import { updateProfile } from './services/profiles'
 import { getUnreadCount } from './services/messages'
+import { getUnreadContactCount } from './services/contacts'
+import { getPendingEditorRequestCount } from './services/editorRequests'
+import { SetPasswordModal } from './components/SetPasswordModal'
 import { MessagesModal } from './components/MessagesModal'
+import { ContactModal } from './components/ContactModal'
+import { ContactsAdminModal } from './components/ContactsAdminModal'
+import { EditorRequestModal } from './components/EditorRequestModal'
+import { EditorRequestsAdminModal } from './components/EditorRequestsAdminModal'
 import { LoginPage } from './pages/LoginPage'
 import { supabase } from './lib/supabase'
 import type { Bookmark, BookmarkInsert, Category } from './types/database'
 import { theme } from './theme'
 
 type View = 'public' | 'editor' | 'admin'
+
+// Immune a StrictMode (doble-effect) i a Vite HMR (re-avaluació de mòdul).
+// performance.timeOrigin és únic per càrrega real de pàgina (F5), no canvia amb HMR.
+const _pageKey = `fp-lv-${Math.round(performance.timeOrigin)}`
+if (!sessionStorage.getItem(_pageKey)) {
+	Object.keys(sessionStorage).filter((k) => k.startsWith('fp-lv-')).forEach((k) => sessionStorage.removeItem(k))
+	sessionStorage.setItem(_pageKey, JSON.stringify(localStorage.getItem('fp-lastVisit')))
+	localStorage.setItem('fp-lastVisit', new Date().toISOString())
+}
+const LAST_VISIT: string | null = JSON.parse(sessionStorage.getItem(_pageKey)!)
 
 const EditorView = React.lazy(() => import('./pages/EditorView').then((m) => ({ default: m.EditorView })))
 const AdminView = React.lazy(() => import('./pages/AdminView').then((m) => ({ default: m.AdminView })))
@@ -66,6 +83,12 @@ export default function App() {
 	const [isMobileUserMenuOpen, setIsMobileUserMenuOpen] = useState(false)
 	const [showMessagesModal, setShowMessagesModal] = useState(false)
 	const [unreadMessages, setUnreadMessages] = useState(0)
+	const [showContactModal, setShowContactModal] = useState(false)
+	const [showContactsAdminModal, setShowContactsAdminModal] = useState(false)
+	const [unreadContacts, setUnreadContacts] = useState(0)
+	const [showEditorRequestModal, setShowEditorRequestModal] = useState(false)
+	const [showEditorRequestsAdminModal, setShowEditorRequestsAdminModal] = useState(false)
+	const [pendingEditorRequests, setPendingEditorRequests] = useState(0)
 	const [showProfileModal, setShowProfileModal] = useState(false)
 	const [profileUsername, setProfileUsername] = useState('')
 	const [profilePassword, setProfilePassword] = useState('')
@@ -74,6 +97,10 @@ export default function App() {
 	const [profileSaving, setProfileSaving] = useState(false)
 	const [editorCatError, setEditorCatError] = useState('')
 	const [editorEditingCat, setEditorEditingCat] = useState<{ id: string; name: string } | null>(null)
+	const [showSetPasswordModal, setShowSetPasswordModal] = useState(() => {
+		const hash = new URLSearchParams(window.location.hash.slice(1))
+		return hash.get('type') === 'invite'
+	})
 
 	useEffect(() => {
 		if (!user) {
@@ -88,6 +115,10 @@ export default function App() {
 			getEditorHighlights(user.id).then(setEditorHighlights)
 		}
 		getUnreadCount(user.id).then(setUnreadMessages)
+		if (isAdmin) {
+			getUnreadContactCount().then(setUnreadContacts)
+			getPendingEditorRequestCount().then(setPendingEditorRequests)
+		}
 	}, [user, isAdmin, isEditor])
 
 	useEffect(() => {
@@ -162,6 +193,23 @@ export default function App() {
 		})
 		return ids
 	}, [bookmarks, categories])
+
+	const newBookmarkIds = useMemo(() => {
+		if (!LAST_VISIT) return new Set<string>()
+		const lastVisitTime = new Date(LAST_VISIT).getTime()
+		const maxAge = 100 * 24 * 60 * 60 * 1000
+		const now = Date.now()
+		const ids = new Set(
+			bookmarks
+				.filter((b) => {
+					const created = new Date(b.created_at).getTime()
+					const isNew = created > lastVisitTime && now - created < maxAge
+					return isNew
+				})
+				.map((b) => b.id),
+		)
+		return ids
+	}, [bookmarks])
 
 	const searchResults = useMemo(() => {
 		if (!searchQuery.trim()) return []
@@ -247,7 +295,7 @@ export default function App() {
 	async function handleEditBookmark(b: Bookmark) {
 		if (isAdmin && !b.admin_reviewed && b.user_id !== user?.id) {
 			await updateBookmark(b.id, { admin_reviewed: true })
-			setBookmarks((prev) => prev.map((bk) => bk.id === b.id ? { ...bk, admin_reviewed: true } : bk))
+			setBookmarks((prev) => prev.map((bk) => (bk.id === b.id ? { ...bk, admin_reviewed: true } : bk)))
 		}
 		setEditingBookmark(b)
 	}
@@ -454,7 +502,19 @@ export default function App() {
 									onClick={() => setView('admin')}
 									className='flex items-center gap-1.5 font-skin font-bold text-sm px-4 py-2.5 border-skin bg-surface shadow-skin-sm hover:bg-accent transition-colors'
 								>
+									<User size={16} />
+									<span className='hidden sm:inline'>Usuaris</span>
+								</button>
+								<button
+									onClick={() => setShowEditorRequestsAdminModal(true)}
+									className='relative flex items-center gap-1.5 font-skin font-bold text-sm px-4 py-2.5 border-skin bg-surface shadow-skin-sm hover:bg-accent transition-colors'
+								>
 									Editors
+									{pendingEditorRequests > 0 && (
+										<span className='absolute -top-2 -right-2 bg-accent text-black text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-black'>
+											{pendingEditorRequests}
+										</span>
+									)}
 								</button>
 								<button
 									onClick={() => setShowMessagesModal(true)}
@@ -465,6 +525,18 @@ export default function App() {
 									{unreadMessages > 0 && (
 										<span className='absolute -top-2 -right-2 bg-accent text-black text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-black'>
 											{unreadMessages}
+										</span>
+									)}
+								</button>
+								<button
+									onClick={() => setShowContactsAdminModal(true)}
+									className='relative flex items-center gap-1.5 font-skin font-bold text-sm px-4 py-2.5 border-skin bg-surface shadow-skin-sm hover:bg-accent transition-colors'
+								>
+									<Mail size={16} />
+									<span className='hidden sm:inline'>Contactes</span>
+									{unreadContacts > 0 && (
+										<span className='absolute -top-2 -right-2 bg-accent text-black text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-black'>
+											{unreadContacts}
 										</span>
 									)}
 								</button>
@@ -508,15 +580,15 @@ export default function App() {
 								</button>
 							</>
 						)}
-						<a
-							href="mailto:roger@lamosca.com?subject=Enviat%20des%20de%20SSCE0110%20Links"
-							target="_blank"
-							rel="noreferrer"
-							className='flex items-center gap-1.5 font-skin font-bold text-sm px-4 py-2.5 border-skin bg-surface shadow-skin-sm hover:bg-accent transition-colors'
-						>
-							<Mail size={16} />
-							<span className='hidden sm:inline'>Contacte</span>
-						</a>
+						{!user && (
+							<button
+								onClick={() => setShowContactModal(true)}
+								className='flex items-center gap-1.5 font-skin font-bold text-sm px-4 py-2.5 border-skin bg-surface shadow-skin-sm hover:bg-accent transition-colors'
+							>
+								<Mail size={16} />
+								<span className='hidden sm:inline'>Contacte</span>
+							</button>
+						)}
 						{user ? (
 							<div className='flex items-center gap-2'>
 								<button
@@ -613,14 +685,14 @@ export default function App() {
 				>
 					<Menu size={18} /> CATEGORIES
 				</button>
-				<a
-					href="mailto:roger@lamosca.com?subject=Enviat%20des%20de%20SSCE0110%20Links"
-					target="_blank"
-					rel="noreferrer"
-					className='bg-surface border-skin px-3 py-2 font-bold font-skin text-sm shadow-skin-sm flex items-center gap-1.5 active:translate-y-[2px] active:shadow-none hover:bg-accent transition-colors'
-				>
-					<Mail size={18} />
-				</a>
+				{!user && (
+					<button
+						onClick={() => setShowContactModal(true)}
+						className='bg-surface border-skin px-3 py-2 font-bold font-skin text-sm shadow-skin-sm flex items-center gap-1.5 active:translate-y-[2px] active:shadow-none hover:bg-accent transition-colors'
+					>
+						<Mail size={18} />
+					</button>
+				)}
 				{!user && (
 					<button
 						onClick={() => setShowLoginModal(true)}
@@ -662,32 +734,61 @@ export default function App() {
 							{isAdmin && (
 								<>
 									<button
-										onClick={() => { setIsMobileUserMenuOpen(false); handleExport() }}
+										onClick={() => {
+											setIsMobileUserMenuOpen(false)
+											handleExport()
+										}}
 										disabled={exporting}
 										className='font-bold font-skin text-base border-skin p-3 bg-surface hover:bg-accent transition-all flex items-center gap-3 shadow-[4px_4px_0px_0px_#ccc] disabled:opacity-50'
 									>
 										<Download size={18} /> {exporting ? 'Exportant...' : 'Exportar'}
 									</button>
 									<button
-										onClick={() => { setIsMobileUserMenuOpen(false); setShowNewResourceForm(true) }}
+										onClick={() => {
+											setIsMobileUserMenuOpen(false)
+											setShowNewResourceForm(true)
+										}}
 										className='font-bold font-skin text-base border-skin p-3 bg-surface hover:bg-accent transition-all flex items-center gap-3 shadow-[4px_4px_0px_0px_#ccc]'
 									>
 										<Plus size={18} /> Nou recurs
 									</button>
 									<button
-										onClick={() => { setIsMobileUserMenuOpen(false); setIsCategoryModalOpen(true) }}
+										onClick={() => {
+											setIsMobileUserMenuOpen(false)
+											setIsCategoryModalOpen(true)
+										}}
 										className='font-bold font-skin text-base border-skin p-3 bg-surface hover:bg-accent transition-all flex items-center gap-3 shadow-[4px_4px_0px_0px_#ccc]'
 									>
 										<Settings size={18} /> Categories
 									</button>
 									<button
-										onClick={() => { setIsMobileUserMenuOpen(false); setView('admin') }}
+										onClick={() => {
+											setIsMobileUserMenuOpen(false)
+											setView('admin')
+										}}
 										className='font-bold font-skin text-base border-skin p-3 bg-surface hover:bg-accent transition-all flex items-center gap-3 shadow-[4px_4px_0px_0px_#ccc]'
 									>
-										<Settings size={18} /> Editors
+										<User size={18} /> Usuaris
 									</button>
 									<button
-										onClick={() => { setIsMobileUserMenuOpen(false); setShowMessagesModal(true) }}
+										onClick={() => {
+											setIsMobileUserMenuOpen(false)
+											setShowEditorRequestsAdminModal(true)
+										}}
+										className='relative font-bold font-skin text-base border-skin p-3 bg-surface hover:bg-accent transition-all flex items-center gap-3 shadow-[4px_4px_0px_0px_#ccc]'
+									>
+										<Settings size={18} /> Editors
+										{pendingEditorRequests > 0 && (
+											<span className='ml-auto bg-accent text-black text-xs font-bold px-2 py-0.5 border border-black rounded-full'>
+												{pendingEditorRequests}
+											</span>
+										)}
+									</button>
+									<button
+										onClick={() => {
+											setIsMobileUserMenuOpen(false)
+											setShowMessagesModal(true)
+										}}
 										className='relative font-bold font-skin text-base border-skin p-3 bg-surface hover:bg-accent transition-all flex items-center gap-3 shadow-[4px_4px_0px_0px_#ccc]'
 									>
 										<MessageSquare size={18} /> Missatges
@@ -697,30 +798,56 @@ export default function App() {
 											</span>
 										)}
 									</button>
+									<button
+										onClick={() => {
+											setIsMobileUserMenuOpen(false)
+											setShowContactsAdminModal(true)
+										}}
+										className='relative font-bold font-skin text-base border-skin p-3 bg-surface hover:bg-accent transition-all flex items-center gap-3 shadow-[4px_4px_0px_0px_#ccc]'
+									>
+										<Mail size={18} /> Contactes
+										{unreadContacts > 0 && (
+											<span className='ml-auto bg-accent text-black text-xs font-bold px-2 py-0.5 border border-black rounded-full'>
+												{unreadContacts}
+											</span>
+										)}
+									</button>
 								</>
 							)}
 							{!isAdmin && isEditor && (
 								<>
 									<button
-										onClick={() => { setIsMobileUserMenuOpen(false); setShowNewResourceForm(true) }}
+										onClick={() => {
+											setIsMobileUserMenuOpen(false)
+											setShowNewResourceForm(true)
+										}}
 										className='font-bold font-skin text-base border-skin p-3 bg-surface hover:bg-accent transition-all flex items-center gap-3 shadow-[4px_4px_0px_0px_#ccc]'
 									>
 										<Plus size={18} /> Nou recurs
 									</button>
 									<button
-										onClick={() => { setIsMobileUserMenuOpen(false); setShowEditorCatModal(true) }}
+										onClick={() => {
+											setIsMobileUserMenuOpen(false)
+											setShowEditorCatModal(true)
+										}}
 										className='font-bold font-skin text-base border-skin p-3 bg-surface hover:bg-accent transition-all flex items-center gap-3 shadow-[4px_4px_0px_0px_#ccc]'
 									>
 										<Settings size={18} /> Categories
 									</button>
 									<button
-										onClick={() => { setIsMobileUserMenuOpen(false); setView('editor') }}
+										onClick={() => {
+											setIsMobileUserMenuOpen(false)
+											setView('editor')
+										}}
 										className='font-bold font-skin text-base border-skin p-3 bg-surface hover:bg-accent transition-all flex items-center gap-3 shadow-[4px_4px_0px_0px_#ccc]'
 									>
 										<Plus size={18} /> Els meus recursos
 									</button>
 									<button
-										onClick={() => { setIsMobileUserMenuOpen(false); setShowMessagesModal(true) }}
+										onClick={() => {
+											setIsMobileUserMenuOpen(false)
+											setShowMessagesModal(true)
+										}}
 										className='relative font-bold font-skin text-base border-skin p-3 bg-surface hover:bg-accent transition-all flex items-center gap-3 shadow-[4px_4px_0px_0px_#ccc]'
 									>
 										<MessageSquare size={18} /> Missatges
@@ -734,13 +861,19 @@ export default function App() {
 							)}
 							<div className='border-t-2 border-black mt-1' />
 							<button
-								onClick={() => { setIsMobileUserMenuOpen(false); openProfileModal() }}
+								onClick={() => {
+									setIsMobileUserMenuOpen(false)
+									openProfileModal()
+								}}
 								className='font-bold font-skin text-base border-skin p-3 bg-surface hover:bg-gray-100 transition-all flex items-center gap-3 shadow-[4px_4px_0px_0px_#ccc]'
 							>
 								<User size={18} /> Perfil
 							</button>
 							<button
-								onClick={() => { setIsMobileUserMenuOpen(false); signOut() }}
+								onClick={() => {
+									setIsMobileUserMenuOpen(false)
+									signOut()
+								}}
 								className='font-bold font-skin text-base border-skin p-3 bg-red-500 text-white hover:bg-red-600 transition-all flex items-center gap-3 shadow-skin-sm'
 							>
 								<LogOut size={18} /> LOGOUT
@@ -884,6 +1017,7 @@ export default function App() {
 										}
 										isOrphan={orphanBookmarkIds.has(b.id)}
 										isUnreviewed={isAdmin && !b.admin_reviewed && b.user_id !== user?.id}
+										isNew={newBookmarkIds.has(b.id)}
 									/>
 								))}
 							</div>
@@ -926,6 +1060,7 @@ export default function App() {
 												}
 												isOrphan={orphanBookmarkIds.has(b.id)}
 												isUnreviewed={isAdmin && !b.admin_reviewed && b.user_id !== user?.id}
+												isNew={newBookmarkIds.has(b.id)}
 											/>
 										))}
 									</div>
@@ -965,6 +1100,7 @@ export default function App() {
 									onToggleHighlight={isAdmin ? handleToggleHighlight : handleToggleEditorHighlight}
 									isOrphan={orphanBookmarkIds.has(b.id)}
 									isUnreviewed={isAdmin && !b.admin_reviewed && b.user_id !== user?.id}
+									isNew={newBookmarkIds.has(b.id)}
 								/>
 							))}
 						</div>
@@ -995,6 +1131,7 @@ export default function App() {
 									onToggleHighlight={isAdmin ? handleToggleHighlight : handleToggleEditorHighlight}
 									isOrphan={orphanBookmarkIds.has(b.id)}
 									isUnreviewed={isAdmin && !b.admin_reviewed && b.user_id !== user?.id}
+									isNew={newBookmarkIds.has(b.id)}
 								/>
 							))}
 						</div>
@@ -1297,10 +1434,7 @@ export default function App() {
 									{categories
 										.filter((c) => c.created_by === user?.id)
 										.map((cat) => (
-											<li
-												key={cat.id}
-												className='flex items-center gap-2 p-3 border-skin'
-											>
+											<li key={cat.id} className='flex items-center gap-2 p-3 border-skin'>
 												{editorEditingCat?.id === cat.id ? (
 													<>
 														<input
@@ -1367,11 +1501,49 @@ export default function App() {
 			)}
 
 			{/* Modal login */}
-			{showLoginModal && <LoginPage onClose={() => setShowLoginModal(false)} />}
+			{showLoginModal && (
+				<LoginPage
+					onClose={() => setShowLoginModal(false)}
+					onRequestAccess={() => {
+						setShowLoginModal(false)
+						setShowEditorRequestModal(true)
+					}}
+				/>
+			)}
 
 			{/* Modal missatges */}
 			{showMessagesModal && (
 				<MessagesModal onClose={() => setShowMessagesModal(false)} onUnreadChange={setUnreadMessages} />
+			)}
+
+			{/* Modal contacte (públic) */}
+			{showContactModal && <ContactModal onClose={() => setShowContactModal(false)} />}
+
+			{/* Modal sol·licitud editor */}
+			{showEditorRequestModal && (
+				<EditorRequestModal
+					onClose={() => setShowEditorRequestModal(false)}
+					onGoToLogin={() => {
+						setShowEditorRequestModal(false)
+						setShowLoginModal(true)
+					}}
+				/>
+			)}
+
+			{/* Modal sol·licituds admin */}
+			{showEditorRequestsAdminModal && (
+				<EditorRequestsAdminModal
+					onClose={() => setShowEditorRequestsAdminModal(false)}
+					onPendingChange={setPendingEditorRequests}
+				/>
+			)}
+
+			{/* Modal contactes admin */}
+			{showContactsAdminModal && (
+				<ContactsAdminModal
+					onClose={() => setShowContactsAdminModal(false)}
+					onUnreadChange={setUnreadContacts}
+				/>
 			)}
 
 			{/* Modal perfil d'usuari */}
@@ -1457,6 +1629,10 @@ export default function App() {
 						</div>
 					</div>
 				</div>
+			)}
+
+			{showSetPasswordModal && (
+				<SetPasswordModal onSuccess={() => setShowSetPasswordModal(false)} />
 			)}
 
 			<ScrollToTop />

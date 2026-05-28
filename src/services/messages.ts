@@ -28,7 +28,20 @@ export async function sendMessage(senderId: string, recipientId: string, content
     .select()
     .single()
   if (error) throw error
+  await notifyWhatsApp()
   return data
+}
+
+async function notifyWhatsApp(): Promise<void> {
+  const phone = import.meta.env.VITE_CALLMEBOT_PHONE
+  const apikey = import.meta.env.VITE_CALLMEBOT_APIKEY
+  if (!phone || !apikey) return
+  const url = `https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${encodeURIComponent('💬 Nou missatge a fp-recursos')}&apikey=${apikey}`
+  try {
+    await fetch(url, { mode: 'no-cors' })
+  } catch {
+    // best-effort
+  }
 }
 
 export async function markThreadAsRead(recipientId: string, senderId: string): Promise<void> {

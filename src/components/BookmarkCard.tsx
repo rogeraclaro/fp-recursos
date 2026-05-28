@@ -9,21 +9,27 @@ interface Props {
   canHighlight: boolean
   isOrphan?: boolean
   isUnreviewed?: boolean
+  isNew?: boolean
   onEdit?: (b: Bookmark) => void
   onDelete?: (id: string) => void
   onToggleHighlight?: (id: string, highlighted: boolean) => void
 }
 
 export const BookmarkCard: React.FC<Props> = ({
-  bookmark, canEdit, canHighlight, isOrphan, isUnreviewed, onEdit, onDelete, onToggleHighlight
+  bookmark, canEdit, canHighlight, isOrphan, isUnreviewed, isNew, onEdit, onDelete, onToggleHighlight
 }) => {
   const dateStr = new Date(bookmark.created_at).toISOString().split('T')[0]
 
   return (
     <div
       onClick={() => window.open(bookmark.url, '_blank', 'noopener,noreferrer')}
-      className={`cursor-pointer border-skin p-5 h-full flex flex-col shadow-skin-card hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-skin-lg transition-all duration-200 ${bookmark.highlighted ? 'bg-orange-100' : (isUnreviewed || isOrphan) ? 'bg-blue-100' : 'bg-surface'}`}
+      className={`relative cursor-pointer border-skin p-5 h-full flex flex-col shadow-skin-card hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-skin-lg transition-all duration-200 ${bookmark.highlighted ? 'bg-orange-100' : (isUnreviewed || isOrphan) ? 'bg-blue-100' : 'bg-surface'}`}
     >
+      {isNew && (
+        <span className='absolute top-0 right-0 bg-black text-white text-base font-bold px-2 py-1 font-skin z-10 whitespace-nowrap'>
+          ★ NEW!
+        </span>
+      )}
       {/* Categories + accions edició */}
       <div className="flex justify-between items-start mb-2">
         <div className="flex flex-wrap gap-1.5">
@@ -55,7 +61,12 @@ export const BookmarkCard: React.FC<Props> = ({
       <div className="flex flex-wrap gap-3 mb-3 text-xs font-skin text-gray-500 border-b border-gray-200 pb-2">
         <span>{dateStr}</span>
         {bookmark.profiles?.username && (
-          <span className="font-bold text-black">{bookmark.profiles.username}</span>
+          <span className="font-bold text-black">
+            {bookmark.profiles.username}
+            {bookmark.profiles.active === false && (
+              <span className="ml-1 font-normal text-gray-400">(inactiu)</span>
+            )}
+          </span>
         )}
       </div>
 

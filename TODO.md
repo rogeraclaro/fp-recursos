@@ -40,6 +40,116 @@
 
 ## ⚠️ Pendent de fer
 
+### 🆕 Sistema sol·licituds d'editor (sessió 2026-05-28)
+
+#### FASE 1 — Supabase: nova taula + trigger
+Executar al SQL Editor de Supabase:
+
+```sql
+-- Taula de peticions d'alta com a editor
+create table editor_requests (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  email text not null,
+  comment text,
+  status text not null default 'pending', -- 'pending' | 'approved' | 'rejected'
+  created_at timestamptz default now(),
+  reviewed_at timestamptz,
+  reviewed_by uuid references profiles(id)
+);
+
+alter table editor_requests enable row level security;
+
+create policy "Public insert" on editor_requests
+  for insert with check (true);
+
+create policy "Admin read" on editor_requests
+  for select using (
+    exists (select 1 from profiles where id = auth.uid() and role = 'admin')
+  );
+
+create policy "Admin update" on editor_requests
+  for update using (
+    exists (select 1 from profiles where id = auth.uid() and role = 'admin')
+  );
+
+-- Trigger: crea perfil automàticament quan Supabase crea un usuari via invitació
+-- ⚠️ Verificar si ja existeix a Database → Functions abans d'executar
+create or replace function public.handle_new_user()
+returns trigger as $$
+begin
+  insert into public.profiles (id, username, role, active)
+  values (
+    new.id,
+    coalesce(new.raw_user_meta_data->>'username', split_part(new.email, '@', 1)),
+    coalesce(new.raw_user_meta_data->>'role', 'editor'),
+    true
+  )
+  on conflict (id) do nothing;
+  return new;
+end;
+$$ language plpgsql security definer;
+
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
+```
+
+#### FASE 2 — Supabase Edge Function
+Fitxer: `supabase/functions/handle-editor-request/index.ts`
+
+Rep: `{ action: 'approve' | 'reject', requestId: string, email: string, name: string }`
+
+- **approve**: crida `supabase.auth.admin.inviteUserByEmail(email, { data: { username: name, role: 'editor' } })` → Supabase envia email amb link per establir password. Marca `status: 'approved'`.
+- **reject**: envia email de rebuig via Resend. Marca `status: 'rejected'`.
+
+Variables d'entorn a Supabase Dashboard → Settings → Edge Functions → Secrets:
+- `RESEND_API_KEY` (obtenir a resend.com, gratu·ït fins 3000 emails/mes)
+- `SITE_URL` (URL del site)
+- `SUPABASE_SERVICE_ROLE_KEY` ja disponible per defecte
+
+Deploy: `supabase functions deploy handle-editor-request`
+
+Personalitzar template "Invite user" a Supabase → Authentication → Email Templates.
+
+#### FASE 3 — Frontend: nous fitxers a crear
+- [ ] `src/types/database.ts` — afegir interfície `EditorRequest`
+- [ ] `src/services/editorRequests.ts` — `submitEditorRequest`, `getEditorRequests`, `getPendingEditorRequestCount`, `approveEditorRequest`, `rejectEditorRequest`. WhatsApp: missatge "🙋 Petició alta editor:\n👤 NOM\n📧 EMAIL\n💬 COMMENT"
+- [ ] `src/components/EditorRequestModal.tsx` — formulari (Nom*, Email*, Comentari). Confirmació: "Missatge enviat! En breu l'admin revisarà la teva petició." Botó "Ja tinc compte? Iniciar sessió".
+- [ ] `src/components/EditorRequestsAdminModal.tsx` — llista peticions, botons Aprovar/Rebutjar, badge count.
+
+#### FASE 4 — Modificacions fitxers existents
+- [ ] `src/pages/LoginPage.tsx` — a la capçalera, al costat d'on posa "Accés editors", afegir "Encara no ets editor?" + link que obre EditorRequestModal (via prop `onRequestAccess`).
+- [ ] `src/App.tsx`:
+  - Nous estats: `showEditorRequestModal`, `showEditorRequestsAdminModal`, `pendingEditorRequests`
+  - useEffect (isAdmin): carregar `getPendingEditorRequestCount()` → `setPendingEditorRequests`
+  - Botó "Editors" (header desktop + mòbil): afegir badge si `pendingEditorRequests > 0`. Click obre `EditorRequestsAdminModal` (en lloc de navegar a AdminView — AdminView segueix accessible des d'un botó dins el modal).
+  - Botó "Contacte": afegir condició `!user &&` per ocultar quan loguejat (desktop línia ~511 i mòbil burger línia ~616)
+  - Afegir modals EditorRequestModal i EditorRequestsAdminModal al final del JSX
+
+#### FASE 5 — Configuració Resend
+- [ ] Crear compte resend.com
+- [ ] Verificar domini o usar `onboarding@resend.dev` per testing
+- [ ] Afegir `RESEND_API_KEY` + `SITE_URL` a Supabase Edge Functions Secrets
+
+#### Ordre d'implementació
+1. SQL taula + trigger
+2. Types + Service (frontend)
+3. EditorRequestModal
+4. EditorRequestsAdminModal
+5. Modificar LoginPage.tsx
+6. Modificar App.tsx
+7. Edge Function
+8. Resend + Secrets
+9. Test complet flux
+
+#### Notes
+- CallMeBot ja configurat: VITE_CALLMEBOT_PHONE=34627595835, VITE_CALLMEBOT_APIKEY=1519122
+- Supabase URL: https://wmnomhexggvrdvyznini.supabase.co
+- El trigger `handle_new_user` pot ja existir — verificar a Database → Functions
+
+---
+
 - [ ] **Desplegar Edge Function actualitzada**:
   ```bash
   cd "/Users/rogermasellas/AI/FP Recursos/fp-recursos"
