@@ -41,6 +41,7 @@ import { ContactsAdminModal } from './components/ContactsAdminModal'
 import { EditorRequestModal } from './components/EditorRequestModal'
 import { EditorRequestsAdminModal } from './components/EditorRequestsAdminModal'
 import { LoginPage } from './pages/LoginPage'
+import { Button, Input, Label } from './components/UI'
 import { supabase } from './lib/supabase'
 import type { Bookmark, BookmarkInsert, Category } from './types/database'
 import { theme } from './theme'
@@ -302,6 +303,8 @@ export default function App() {
 
 	async function handleEditSave(data: BookmarkInsert) {
 		if (!editingBookmark) return
+		const duplicate = bookmarks.find((b) => b.url === data.url && b.id !== editingBookmark.id)
+		if (duplicate) throw new Error(`Ja existeix un recurs amb aquesta URL: "${duplicate.title}"`)
 		const { user_id: _, ...updates } = data
 		const updated = await updateBookmark(editingBookmark.id, updates)
 		setBookmarks((prev) => prev.map((b) => (b.id === updated.id ? updated : b)))
@@ -327,6 +330,8 @@ export default function App() {
 	}
 
 	async function handleCreateBookmark(data: BookmarkInsert) {
+		const duplicate = bookmarks.find((b) => b.url === data.url)
+		if (duplicate) throw new Error(`Ja existeix un recurs amb aquesta URL: "${duplicate.title}"`)
 		const created = await createBookmark(data)
 		setBookmarks((prev) => [created, ...prev])
 		setShowNewResourceForm(false)
@@ -1155,39 +1160,31 @@ export default function App() {
 			{/* Modal de cerca */}
 			{isSearchModalOpen && (
 				<div className='fixed inset-0 z-[100] modal-overlay flex items-center justify-center p-4'>
-					<div className='bg-surface border-4 border-black w-full max-w-xl shadow-skin-lg'>
-						<div className='flex justify-between items-center p-4 border-b-2 border-black bg-accent'>
-							<h2 className='font-bold text-xl font-skin uppercase'>Cercar Recursos</h2>
-							<button
-								onClick={() => setIsSearchModalOpen(false)}
-								className='p-1 hover:bg-black hover:text-white transition-colors border border-black'
-							>
-								<X size={20} />
-							</button>
+					<div className='w-full max-w-xl relative'>
+						<button
+							onClick={() => setIsSearchModalOpen(false)}
+							className='absolute -top-3 -right-3 z-10 p-1.5 bg-surface border-2 border-black hover:bg-black hover:text-white transition-colors shadow-[2px_2px_0px_0px_#000]'
+						>
+							<X size={18} />
+						</button>
+						<div className='bg-accent border-4 border-black p-4 shadow-[8px_8px_0px_0px_#000]'>
+							<h2 className='font-black font-mono text-xl uppercase tracking-wider'>Cercar Recursos</h2>
 						</div>
-						<div className='p-6 space-y-4'>
+						<div className='bg-white border-4 border-t-0 border-black p-6 shadow-[8px_8px_0px_0px_#000] space-y-4'>
 							<input
 								type='text'
 								autoFocus
 								placeholder='Cercar per títol, descripció o URL...'
 								value={searchQuery}
 								onChange={(e) => setSearchQuery(e.target.value)}
-								onKeyDown={(e) => {
-									if (e.key === 'Enter') handleSearch(searchQuery)
-								}}
-								className='w-full border-skin p-3 font-skin focus:outline-none focus:bg-orange-50'
+								onKeyDown={(e) => { if (e.key === 'Enter') handleSearch(searchQuery) }}
+								className='w-full bg-surface border-skin p-3 font-skin focus:outline-none focus:bg-orange-50 placeholder-gray-500 shadow-[2px_2px_0px_0px_#ccc] focus:shadow-[2px_2px_0px_0px_#000] transition-all'
 							/>
 							<div className='flex justify-end gap-3'>
-								<button
-									onClick={() => setIsSearchModalOpen(false)}
-									className='font-skin font-bold text-sm px-4 py-2 border-skin bg-surface hover:bg-gray-100 transition-colors'
-								>
+								<button onClick={() => setIsSearchModalOpen(false)} className='font-skin font-bold text-sm px-4 py-2 border-skin bg-surface shadow-skin-sm hover:bg-gray-100 transition-colors'>
 									Cancel·lar
 								</button>
-								<button
-									onClick={() => handleSearch(searchQuery)}
-									className='font-skin font-bold text-sm px-4 py-2 border-skin bg-black text-white hover:bg-gray-800 flex items-center gap-2 transition-colors'
-								>
+								<button onClick={() => handleSearch(searchQuery)} className='font-skin font-bold text-sm px-4 py-2 border-skin bg-black text-white shadow-skin-sm hover:bg-gray-800 flex items-center gap-2 transition-colors'>
 									<Search size={16} /> Cercar
 								</button>
 							</div>
@@ -1199,19 +1196,17 @@ export default function App() {
 			{/* Modal categories */}
 			{isCategoryModalOpen && (
 				<div className='fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4'>
-					<div className='bg-surface border-4 border-black w-full max-w-md shadow-skin-lg'>
-						<div className='flex justify-between items-center p-4 border-b-2 border-black bg-accent'>
-							<h2 className='font-bold text-xl font-skin uppercase'>Categories</h2>
-							<button
-								onClick={() => {
-									setIsCategoryModalOpen(false)
-									setNewCategoryName('')
-								}}
-								className='p-1 hover:bg-black hover:text-white transition-colors border border-black'
-							>
-								<X size={20} />
-							</button>
+					<div className='w-full max-w-md relative'>
+						<button
+							onClick={() => { setIsCategoryModalOpen(false); setNewCategoryName('') }}
+							className='absolute -top-3 -right-3 z-10 p-1.5 bg-surface border-2 border-black hover:bg-black hover:text-white transition-colors shadow-[2px_2px_0px_0px_#000]'
+						>
+							<X size={18} />
+						</button>
+						<div className='bg-accent border-4 border-black p-4 shadow-[8px_8px_0px_0px_#000]'>
+							<h2 className='font-black font-mono text-xl uppercase tracking-wider'>Categories</h2>
 						</div>
+						<div className='bg-white border-4 border-t-0 border-black shadow-[8px_8px_0px_0px_#000]'>
 						<div className='p-6 space-y-4'>
 							<div className='flex gap-2'>
 								<input
@@ -1342,32 +1337,32 @@ export default function App() {
 			{/* Modal confirmació eliminar categoria amb recursos */}
 			{deletingCat && (
 				<div className='fixed inset-0 z-[60] modal-overlay flex items-center justify-center p-4'>
-					<div className='bg-surface border-4 border-black w-full max-w-sm shadow-skin-lg p-6'>
-						<h3 className='font-black font-skin text-lg uppercase mb-1'>Eliminar categoria</h3>
-						<p className='font-skin text-sm text-gray-600 mb-2'>
-							La categoria <strong>"{deletingCat.name}"</strong> s'usa en{' '}
-							<strong>
-								{bookmarks.filter((b) => b.categories.includes(deletingCat.name)).length} recursos
-							</strong>
-							.
-						</p>
-						<p className='font-skin text-sm text-blue-700 bg-blue-50 border border-blue-200 px-3 py-2 mb-4'>
-							Els recursos quedaran sense categoria i es mostraran a "Altres" amb fons blau fins que els
-							editeu i n'assigneu una de nova.
-						</p>
-						<div className='flex gap-3 justify-end'>
-							<button
-								onClick={() => setDeletingCat(null)}
-								className='font-skin font-bold text-sm px-4 py-2 border-skin bg-surface hover:bg-gray-100 transition-colors'
-							>
-								Cancel·lar
-							</button>
-							<button
-								onClick={handleConfirmDelete}
-								className='font-skin font-bold text-sm px-4 py-2 border-skin bg-red-500 text-white hover:bg-red-600 transition-colors'
-							>
-								Eliminar
-							</button>
+					<div className='w-full max-w-sm relative'>
+						<button
+							onClick={() => setDeletingCat(null)}
+							className='absolute -top-3 -right-3 z-10 p-1.5 bg-surface border-2 border-black hover:bg-black hover:text-white transition-colors shadow-[2px_2px_0px_0px_#000]'
+						>
+							<X size={18} />
+						</button>
+						<div className='bg-accent border-4 border-black p-4 shadow-[8px_8px_0px_0px_#000]'>
+							<h2 className='font-black font-mono text-xl uppercase tracking-wider'>Eliminar categoria</h2>
+						</div>
+						<div className='bg-white border-4 border-t-0 border-black p-6 shadow-[8px_8px_0px_0px_#000] space-y-4'>
+							<p className='font-skin text-sm text-gray-600'>
+								La categoria <strong>"{deletingCat.name}"</strong> s'usa en{' '}
+								<strong>
+									{bookmarks.filter((b) => b.categories.includes(deletingCat.name)).length} recursos
+								</strong>
+								.
+							</p>
+							<p className='font-skin text-sm text-blue-700 bg-blue-50 border border-blue-200 px-3 py-2'>
+								Els recursos quedaran sense categoria i es mostraran a "Altres" amb fons blau fins que els
+								editeu i n'assigneu una de nova.
+							</p>
+							<div className='flex gap-3 justify-end'>
+								<Button variant='secondary' onClick={() => setDeletingCat(null)}>Cancel·lar</Button>
+								<Button variant='danger' onClick={handleConfirmDelete}>Eliminar</Button>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -1388,22 +1383,22 @@ export default function App() {
 			{/* Modal categories editor */}
 			{showEditorCatModal && (
 				<div className='fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4'>
-					<div className='bg-surface border-4 border-black w-full max-w-md shadow-skin-lg'>
-						<div className='flex justify-between items-center p-4 border-b-2 border-black bg-accent'>
-							<h2 className='font-bold text-xl font-skin uppercase'>Les meves categories</h2>
-							<button
-								onClick={() => {
-									setShowEditorCatModal(false)
-									setEditorNewCatName('')
-									setEditorCatError('')
-									setEditorEditingCat(null)
-								}}
-								className='p-1 hover:bg-black hover:text-white transition-colors border border-black'
-							>
-								<X size={20} />
-							</button>
+					<div className='w-full max-w-md relative'>
+						<button
+							onClick={() => {
+								setShowEditorCatModal(false)
+								setEditorNewCatName('')
+								setEditorCatError('')
+								setEditorEditingCat(null)
+							}}
+							className='absolute -top-3 -right-3 z-10 p-1.5 bg-surface border-2 border-black hover:bg-black hover:text-white transition-colors shadow-[2px_2px_0px_0px_#000]'
+						>
+							<X size={18} />
+						</button>
+						<div className='bg-accent border-4 border-black p-4 shadow-[8px_8px_0px_0px_#000]'>
+							<h2 className='font-black font-mono text-xl uppercase tracking-wider'>Les meves categories</h2>
 						</div>
-						<div className='p-6 space-y-4'>
+						<div className='bg-white border-4 border-t-0 border-black p-6 shadow-[8px_8px_0px_0px_#000] space-y-4'>
 							<div className='flex gap-2'>
 								<input
 									type='text'
@@ -1549,61 +1544,50 @@ export default function App() {
 			{/* Modal perfil d'usuari */}
 			{showProfileModal && (
 				<div className='fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4'>
-					<div className='bg-surface border-4 border-black w-full max-w-md shadow-skin-lg'>
-						<div className='flex justify-between items-center p-4 border-b-2 border-black bg-accent'>
-							<h2 className='font-bold text-xl font-skin uppercase'>El meu perfil</h2>
-							<button
-								onClick={() => setShowProfileModal(false)}
-								className='p-1 hover:bg-black hover:text-white transition-colors border border-black'
-							>
-								<X size={20} />
-							</button>
+					<div className='w-full max-w-md relative'>
+						<button
+							onClick={() => setShowProfileModal(false)}
+							className='absolute -top-3 -right-3 z-10 p-1.5 bg-surface border-2 border-black hover:bg-black hover:text-white transition-colors shadow-[2px_2px_0px_0px_#000]'
+						>
+							<X size={18} />
+						</button>
+						<div className='bg-accent border-4 border-black p-4 shadow-[8px_8px_0px_0px_#000]'>
+							<h2 className='font-black font-mono text-xl uppercase tracking-wider'>El meu perfil</h2>
 						</div>
-						<div className='p-6 space-y-4'>
+						<div className='bg-white border-4 border-t-0 border-black p-6 shadow-[8px_8px_0px_0px_#000] space-y-4'>
 							<div>
-								<label className='font-skin text-xs font-bold uppercase text-gray-500 block mb-1'>
-									Nom d'usuari
-								</label>
-								<input
+								<Label>Nom d'usuari</Label>
+								<Input
 									type='text'
 									value={profileUsername}
 									onChange={(e) => setProfileUsername(e.target.value)}
-									className='w-full border-skin p-2.5 font-skin text-sm focus:outline-none focus:bg-orange-50'
 								/>
 							</div>
 							<div>
-								<label className='font-skin text-xs font-bold uppercase text-gray-500 block mb-1'>
-									Email
-								</label>
-								<input
+								<Label>Email</Label>
+								<Input
 									type='email'
 									value={user?.email ?? ''}
 									readOnly
-									className='w-full border-skin p-2.5 font-skin text-sm bg-gray-50 text-gray-400 cursor-not-allowed'
+									className='w-full bg-surface border-skin p-3 font-skin focus:outline-none bg-gray-50 text-gray-400 cursor-not-allowed shadow-[2px_2px_0px_0px_#ccc]'
 								/>
 							</div>
 							<div>
-								<label className='font-skin text-xs font-bold uppercase text-gray-500 block mb-1'>
-									Contrasenya nova
-								</label>
-								<input
+								<Label>Contrasenya nova</Label>
+								<Input
 									type='password'
 									value={profilePassword}
 									onChange={(e) => setProfilePassword(e.target.value)}
 									placeholder='Deixa en blanc per no canviar'
-									className='w-full border-skin p-2.5 font-skin text-sm focus:outline-none focus:bg-orange-50'
 								/>
 							</div>
 							<div>
-								<label className='font-skin text-xs font-bold uppercase text-gray-500 block mb-1'>
-									Confirma la contrasenya
-								</label>
-								<input
+								<Label>Confirma la contrasenya</Label>
+								<Input
 									type='password'
 									value={profileConfirmPassword}
 									onChange={(e) => setProfileConfirmPassword(e.target.value)}
 									placeholder='Repeteix la contrasenya nova'
-									className='w-full border-skin p-2.5 font-skin text-sm focus:outline-none focus:bg-orange-50'
 								/>
 							</div>
 							{profileError && (
@@ -1612,19 +1596,13 @@ export default function App() {
 								</p>
 							)}
 							<div className='flex justify-end gap-3 pt-2'>
-								<button
-									onClick={() => setShowProfileModal(false)}
-									className='font-skin font-bold text-sm px-4 py-2.5 border-skin bg-surface hover:bg-gray-100 transition-colors'
-								>
-									Cancel·lar
-								</button>
-								<button
+								<Button variant='secondary' onClick={() => setShowProfileModal(false)}>Cancel·lar</Button>
+								<Button
 									onClick={handleSaveProfile}
 									disabled={profileSaving || !profileUsername.trim()}
-									className='font-skin font-bold text-sm px-4 py-2.5 border-skin bg-black text-white hover:bg-gray-800 disabled:opacity-50 transition-colors'
 								>
 									{profileSaving ? 'Guardant...' : 'Guardar'}
-								</button>
+								</Button>
 							</div>
 						</div>
 					</div>

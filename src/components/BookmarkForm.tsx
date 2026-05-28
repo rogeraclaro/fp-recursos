@@ -68,13 +68,14 @@ export const BookmarkForm: React.FC<Props> = ({ bookmark, categories, userId, on
   }
 
   return (
-    <div className="bg-surface border-skin shadow-skin-lg p-6 max-w-lg w-full">
-      <div className="flex justify-between items-center mb-4 pb-3 border-b-2 border-black">
-        <h2 className="font-black font-skin uppercase">{bookmark ? 'Editar recurs' : 'Nou recurs'}</h2>
-        <button onClick={onCancel} className="p-1 hover:bg-red-100 border border-transparent hover:border-black">
-          <X size={16} />
-        </button>
+    <div className="w-full max-w-lg relative">
+      <button onClick={onCancel} className="absolute -top-3 -right-3 z-10 p-1.5 bg-surface border-2 border-black hover:bg-black hover:text-white transition-colors shadow-[2px_2px_0px_0px_#000]">
+        <X size={18} />
+      </button>
+      <div className="bg-accent border-4 border-black p-4 shadow-[8px_8px_0px_0px_#000]">
+        <h2 className="font-black font-mono text-xl uppercase tracking-wider">{bookmark ? 'Editar recurs' : 'Nou recurs'}</h2>
       </div>
+      <div className="bg-white border-4 border-t-0 border-black p-6 shadow-[8px_8px_0px_0px_#000]">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <Label>URL *</Label>
@@ -118,6 +119,7 @@ export const BookmarkForm: React.FC<Props> = ({ bookmark, categories, userId, on
           <Button type="button" variant="secondary" onClick={onCancel}>Cancel·lar</Button>
         </div>
       </form>
+      </div>
     </div>
   )
 }

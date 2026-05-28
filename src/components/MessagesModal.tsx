@@ -246,14 +246,20 @@ export const MessagesModal: React.FC<Props> = ({ onClose, onUnreadChange }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col modal-overlay sm:items-center sm:justify-center sm:p-4">
-      <div className={`bg-surface border-4 border-black flex flex-col h-full w-full sm:shadow-skin-lg ${isAdmin ? 'sm:max-w-3xl sm:h-[600px]' : 'sm:max-w-lg sm:h-[520px]'}`}>
+      <div className={`bg-surface border-4 border-black flex flex-col h-full w-full sm:shadow-[8px_8px_0px_0px_#000] relative ${isAdmin ? 'sm:max-w-3xl sm:h-[600px]' : 'sm:max-w-lg sm:h-[520px]'}`}>
+        <button
+          onClick={onClose}
+          className='hidden sm:block absolute -top-3 -right-3 z-10 p-1.5 bg-surface border-2 border-black hover:bg-black hover:text-white transition-colors shadow-[2px_2px_0px_0px_#000]'
+        >
+          <X size={18} />
+        </button>
         {/* Capçalera */}
         <div className="flex justify-between items-center p-4 border-b-2 border-black bg-accent flex-shrink-0">
-          <h2 className="font-bold text-xl font-skin uppercase flex items-center gap-2">
+          <h2 className="font-black font-mono text-xl uppercase tracking-wider flex items-center gap-2">
             <MessageSquare size={20} /> Missatges
           </h2>
-          <button onClick={onClose} className="p-1 hover:bg-black hover:text-white transition-colors border border-black">
-            <X size={20} />
+          <button onClick={onClose} className="sm:hidden p-1 hover:bg-black hover:text-white transition-colors border-2 border-black shadow-[2px_2px_0px_0px_#000]">
+            <X size={18} />
           </button>
         </div>
 

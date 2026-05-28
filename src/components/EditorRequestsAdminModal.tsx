@@ -70,9 +70,15 @@ export const EditorRequestsAdminModal: React.FC<Props> = ({ onClose, onPendingCh
 
   return (
     <div className='fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4'>
-      <div className='bg-surface border-4 border-black w-full max-w-xl shadow-skin-lg flex flex-col max-h-[85vh]'>
-        <div className='flex justify-between items-center p-4 border-b-2 border-black bg-accent flex-shrink-0'>
-          <h2 className='font-bold text-xl font-skin uppercase flex items-center gap-2'>
+      <div className='bg-surface border-4 border-black w-full max-w-xl shadow-[8px_8px_0px_0px_#000] flex flex-col max-h-[85vh] relative'>
+        <button
+          onClick={onClose}
+          className='absolute -top-3 -right-3 z-10 p-1.5 bg-surface border-2 border-black hover:bg-black hover:text-white transition-colors shadow-[2px_2px_0px_0px_#000]'
+        >
+          <X size={18} />
+        </button>
+        <div className='flex items-center p-4 border-b-2 border-black bg-accent flex-shrink-0'>
+          <h2 className='font-black font-mono text-xl uppercase tracking-wider flex items-center gap-2'>
             <Clock size={20} /> Sol·licituds d'editor
             {pendingCount > 0 && (
               <span className='bg-black text-accent text-xs font-bold px-2 py-0.5 border border-black rounded-full'>
@@ -80,12 +86,6 @@ export const EditorRequestsAdminModal: React.FC<Props> = ({ onClose, onPendingCh
               </span>
             )}
           </h2>
-          <button
-            onClick={onClose}
-            className='p-1 hover:bg-black hover:text-white transition-colors border border-black'
-          >
-            <X size={20} />
-          </button>
         </div>
 
         {error && (

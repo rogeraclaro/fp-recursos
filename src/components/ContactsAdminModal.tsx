@@ -36,9 +36,15 @@ export const ContactsAdminModal: React.FC<Props> = ({ onClose, onUnreadChange })
 
   return (
     <div className='fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4'>
-      <div className='bg-surface border-4 border-black w-full max-w-xl shadow-skin-lg flex flex-col max-h-[80vh]'>
+      <div className='bg-surface border-4 border-black w-full max-w-xl shadow-[8px_8px_0px_0px_#000] flex flex-col max-h-[80vh] relative'>
+        <button
+          onClick={onClose}
+          className='absolute -top-3 -right-3 z-10 p-1.5 bg-surface border-2 border-black hover:bg-black hover:text-white transition-colors shadow-[2px_2px_0px_0px_#000]'
+        >
+          <X size={18} />
+        </button>
         <div className='flex justify-between items-center p-4 border-b-2 border-black bg-accent flex-shrink-0'>
-          <h2 className='font-bold text-xl font-skin uppercase flex items-center gap-2'>
+          <h2 className='font-black font-mono text-xl uppercase tracking-wider flex items-center gap-2'>
             <Mail size={20} /> Contactes
             {unreadCount > 0 && (
               <span className='bg-black text-accent text-xs font-bold px-2 py-0.5 border border-black rounded-full'>
@@ -46,23 +52,15 @@ export const ContactsAdminModal: React.FC<Props> = ({ onClose, onUnreadChange })
               </span>
             )}
           </h2>
-          <div className='flex items-center gap-2'>
-            {unreadCount > 0 && (
-              <button
-                onClick={handleMarkAllRead}
-                className='font-skin text-xs font-bold px-3 py-1.5 border-skin bg-surface hover:bg-gray-100 transition-colors flex items-center gap-1'
-                title='Marcar tots com llegits'
-              >
-                <CheckCheck size={14} /> Tots llegits
-              </button>
-            )}
+          {unreadCount > 0 && (
             <button
-              onClick={onClose}
-              className='p-1 hover:bg-black hover:text-white transition-colors border border-black'
+              onClick={handleMarkAllRead}
+              className='font-skin text-xs font-bold px-3 py-1.5 border-skin bg-surface hover:bg-gray-100 transition-colors flex items-center gap-1'
+              title='Marcar tots com llegits'
             >
-              <X size={20} />
+              <CheckCheck size={14} /> Tots llegits
             </button>
-          </div>
+          )}
         </div>
 
         <div className='flex-1 overflow-y-auto'>

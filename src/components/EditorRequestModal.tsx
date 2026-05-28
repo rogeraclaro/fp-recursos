@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { X, Send, CheckCircle } from 'lucide-react'
 import { submitEditorRequest } from '../services/editorRequests'
+import { Button, Input, Label, TextArea } from './UI'
 
 interface Props {
   onClose: () => void
@@ -32,76 +33,61 @@ export const EditorRequestModal: React.FC<Props> = ({ onClose, onGoToLogin }) =>
 
   return (
     <div className='fixed inset-0 z-[70] modal-overlay flex items-center justify-center p-4'>
-      <div className='bg-surface border-4 border-black w-full max-w-md shadow-skin-lg'>
-        <div className='flex justify-between items-center p-4 border-b-2 border-black bg-accent'>
-          <h2 className='font-bold text-xl font-skin uppercase'>Sol·licitar accés d'editor</h2>
-          <button
-            onClick={onClose}
-            className='p-1 hover:bg-black hover:text-white transition-colors border border-black'
-          >
-            <X size={20} />
-          </button>
+      <div className='w-full max-w-md relative'>
+        <button
+          onClick={onClose}
+          className='absolute -top-3 -right-3 z-10 p-1.5 bg-surface border-2 border-black hover:bg-black hover:text-white transition-colors shadow-[2px_2px_0px_0px_#000]'
+        >
+          <X size={18} />
+        </button>
+
+        <div className='bg-accent border-4 border-black p-4 shadow-[8px_8px_0px_0px_#000]'>
+          <h2 className='font-black font-mono text-xl uppercase tracking-wider'>Sol·licitar accés d'editor</h2>
         </div>
 
         {sent ? (
-          <div className='p-8 flex flex-col items-center gap-4 text-center'>
+          <div className='bg-white border-4 border-t-0 border-black p-8 shadow-[8px_8px_0px_0px_#000] flex flex-col items-center gap-4 text-center'>
             <CheckCircle size={48} className='text-green-600' />
-            <p className='font-skin font-bold text-lg'>Missatge enviat!</p>
+            <p className='font-skin font-bold text-lg'>Sol·licitud enviada!</p>
             <p className='font-skin text-sm text-gray-600'>
               En breu l'admin revisarà la teva petició i rebràs una resposta per correu electrònic.
             </p>
-            <button
-              onClick={onClose}
-              className='font-skin font-bold text-sm px-6 py-2.5 border-skin bg-black text-white hover:bg-gray-800 transition-colors'
-            >
-              Tancar
-            </button>
+            <Button onClick={onClose} className='w-full'>Tancar</Button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className='p-6 space-y-4'>
+          <form onSubmit={handleSubmit} className='bg-white border-4 border-t-0 border-black p-6 shadow-[8px_8px_0px_0px_#000] space-y-4'>
             <div>
-              <label className='font-skin text-xs font-bold uppercase text-gray-500 block mb-1'>
-                Nom *
-              </label>
-              <input
+              <Label>Nom *</Label>
+              <Input
                 type='text'
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
                 autoFocus
-                className='w-full border-skin p-2.5 font-skin text-sm focus:outline-none focus:bg-orange-50'
                 placeholder='El teu nom'
               />
             </div>
             <div>
-              <label className='font-skin text-xs font-bold uppercase text-gray-500 block mb-1'>
-                Email *
-              </label>
-              <input
+              <Label>Email *</Label>
+              <Input
                 type='email'
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className='w-full border-skin p-2.5 font-skin text-sm focus:outline-none focus:bg-orange-50'
                 placeholder='el-teu@email.com'
               />
             </div>
             <div>
-              <label className='font-skin text-xs font-bold uppercase text-gray-500 block mb-1'>
-                Comentari
-              </label>
-              <textarea
+              <Label>Comentari</Label>
+              <TextArea
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 rows={3}
-                className='w-full border-skin p-2.5 font-skin text-sm focus:outline-none focus:bg-orange-50 resize-none'
                 placeholder='Per què vols ser editor? (opcional)'
               />
             </div>
             {error && (
-              <p className='font-skin text-xs text-red-600 border border-red-300 bg-red-50 px-3 py-2'>
-                {error}
-              </p>
+              <p className='font-skin text-xs text-red-600 border border-red-300 bg-red-50 px-3 py-2'>{error}</p>
             )}
             <div className='flex justify-between items-center pt-1'>
               <button
@@ -112,21 +98,14 @@ export const EditorRequestModal: React.FC<Props> = ({ onClose, onGoToLogin }) =>
                 Ja tinc compte → Iniciar sessió
               </button>
               <div className='flex gap-2'>
-                <button
-                  type='button'
-                  onClick={onClose}
-                  className='font-skin font-bold text-sm px-4 py-2.5 border-skin bg-surface hover:bg-gray-100 transition-colors'
-                >
-                  Cancel·lar
-                </button>
-                <button
+                <Button type='button' variant='secondary' onClick={onClose}>Cancel·lar</Button>
+                <Button
                   type='submit'
                   disabled={sending || !name.trim() || !email.trim()}
-                  className='font-skin font-bold text-sm px-4 py-2.5 border-skin bg-black text-white hover:bg-gray-800 disabled:opacity-50 transition-colors flex items-center gap-2'
+                  icon={<Send size={14} />}
                 >
-                  <Send size={14} />
                   {sending ? 'Enviant...' : 'Enviar'}
-                </button>
+                </Button>
               </div>
             </div>
           </form>
