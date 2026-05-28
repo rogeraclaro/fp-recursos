@@ -31,7 +31,10 @@ Biblioteca de recursos educatius per al mòdul **SSCE0110** de Formació Profess
 - **Gestió de categories** — Admins i editors poden crear, editar i eliminar categories.
 - **Afegir recursos amb IA** — El formulari d'afegir recursos pot analitzar una URL i generar automàticament títol, descripció i categoria en català (via Groq / Llama 3.1).
 - **Missatgeria interna** — Els editors es comuniquen amb l'admin mitjançant fils de conversa privats.
-- **Gestió d'editors** — L'admin pot crear i eliminar comptes d'editor.
+- **Sol·licitud d'editor** — Qualsevol visitant pot sol·licitar accés com a editor. L'admin rep les peticions i les pot aprovar (envia invitació per email) o rebutjar.
+- **Gestió d'editors** — L'admin pot crear, eliminar, activar/desactivar i canviar la contrasenya de comptes d'editor. En reactivar un compte se li envia un email de restabliment de contrasenya via Resend.
+- **Formulari de contacte** — Qualsevol visitant pot enviar un missatge a l'admin. L'admin rep una notificació per WhatsApp (CallMeBot, opcional) i les consultes es gestionen des del panell.
+- **Restabliment de contrasenya** — Flux complet de "He oblidat la contrasenya" des del login, amb email de recuperació.
 - **Exportació** — L'admin pot exportar tots els recursos en format JSON.
 - **Sistema de skins** — 5 estils visuals canviables en temps real sense recarregar la pàgina.
 - **Disseny responsiu** — Adaptat a mòbil i escriptori.
@@ -122,11 +125,16 @@ L'aplicació estarà disponible a `http://localhost:5173`.
 Crea un fitxer `.env.local` a l'arrel del projecte amb:
 
 ```env
+# Obligatòries
 VITE_SUPABASE_URL=https://<projecte>.supabase.co
 VITE_SUPABASE_ANON_KEY=<anon-key-del-projecte>
+
+# Opcionals — notificació WhatsApp en rebre contacte (via CallMeBot)
+VITE_CALLMEBOT_PHONE=<número-amb-prefix-internacional>
+VITE_CALLMEBOT_APIKEY=<clau-callmebot>
 ```
 
-Trobas aquests valors a **Supabase Dashboard → Project Settings → API**.
+Trobaràs `VITE_SUPABASE_URL` i `VITE_SUPABASE_ANON_KEY` a **Supabase Dashboard → Project Settings → API**.
 
 ---
 
@@ -159,6 +167,8 @@ Trobas aquests valors a **Supabase Dashboard → Project Settings → API**.
 | `bookmarks` | Recursos amb títol, descripció, URL, categories i destacat |
 | `messages` | Missatges interns entre editors i admin |
 | `editor_highlights` | Destacats personals de cada editor |
+| `editor_requests` | Sol·licituds de rol editor enviades per visitants |
+| `contact_requests` | Missatges de contacte públics; `read` indica si l'admin les ha vistes |
 
 Totes les taules tenen **Row Level Security (RLS)** activat.
 
@@ -177,11 +187,17 @@ supabase functions deploy <nom-de-la-funcio>
 | `suggest-resource` | Analitza una URL amb Groq/Llama i retorna títol, descripció i categoria en català |
 | `create-editor` | Crea un nou compte d'editor (només admin) |
 | `delete-editor` | Elimina un compte d'editor i les seves dades (només admin) |
+| `handle-editor-request` | Aprova/rebutja sol·licituds d'editor i envia emails via Resend; també reactiva comptes (només admin) |
+| `change-user-password` | Canvia la contrasenya d'un editor des del panell d'admin (només admin) |
 
-La funció `suggest-resource` requereix la variable d'entorn `GROQ_API_KEY` configurada a Supabase:
+Totes les funcions excepte `suggest-resource` requereixen un token JWT d'admin a la capçalera `Authorization`.
+
+Secrets necessaris a Supabase (`supabase secrets set`):
 
 ```bash
-supabase secrets set GROQ_API_KEY=<la-teva-clau>
+supabase secrets set GROQ_API_KEY=<clau-groq>
+supabase secrets set RESEND_API_KEY=<clau-resend>   # per a emails d'invitació i recuperació
+supabase secrets set SITE_URL=https://<domini>       # URL de redirecció en links d'email
 ```
 
 ---
@@ -204,13 +220,19 @@ npm run test      # Tests amb Vitest
 fp-recursos/
 ├── src/
 │   ├── components/
-│   │   ├── BookmarkCard.tsx     # Card individual de recurs
-│   │   ├── BookmarkForm.tsx     # Formulari crear/editar recurs (+ IA)
+│   │   ├── BookmarkCard.tsx              # Card individual de recurs
+│   │   ├── BookmarkForm.tsx              # Formulari crear/editar recurs (+ IA)
+│   │   ├── ContactModal.tsx              # Formulari de contacte públic
+│   │   ├── ContactsAdminModal.tsx        # Gestió de contactes (admin)
+│   │   ├── EditorRequestModal.tsx        # Formulari sol·licitud d'editor
+│   │   ├── EditorRequestsAdminModal.tsx  # Gestió de sol·licituds (admin)
 │   │   ├── Header.tsx
-│   │   ├── MessagesModal.tsx    # Sistema de missatgeria intern
-│   │   ├── ScrollToTop.tsx      # Botó tornar al capdamunt
-│   │   ├── SkinPicker.tsx       # Selector de skin flotant
-│   │   └── UI.tsx               # Components UI reutilitzables
+│   │   ├── MessagesModal.tsx             # Sistema de missatgeria intern
+│   │   ├── ProtectedRoute.tsx            # Guard de ruta per rol
+│   │   ├── ScrollToTop.tsx              # Botó tornar al capdamunt
+│   │   ├── SetPasswordModal.tsx          # Modal establir/canviar contrasenya
+│   │   ├── SkinPicker.tsx               # Selector de skin flotant
+│   │   └── UI.tsx                       # Components UI reutilitzables
 │   ├── context/
 │   │   ├── AuthContext.tsx      # Autenticació i perfil d'usuari
 │   │   └── SkinContext.tsx      # Skin activa (persistida a localStorage)
@@ -222,9 +244,11 @@ fp-recursos/
 │   │   ├── ai.ts                # Crida a la Edge Function suggest-resource
 │   │   ├── bookmarks.ts         # CRUD de bookmarks
 │   │   ├── categories.ts        # CRUD de categories
+│   │   ├── contacts.ts          # Formulari de contacte + notificació WhatsApp
+│   │   ├── editorRequests.ts    # CRUD sol·licituds d'editor
 │   │   ├── highlights.ts        # Destacats personals d'editor
 │   │   ├── messages.ts          # Missatgeria interna
-│   │   └── profiles.ts          # Gestió de perfils
+│   │   └── profiles.ts          # Gestió de perfils i accions admin
 │   ├── types/
 │   │   └── database.ts          # Tipus TypeScript de la BD
 │   ├── lib/
@@ -234,9 +258,11 @@ fp-recursos/
 │   └── theme.ts                 # Classes Tailwind reutilitzables
 ├── supabase/
 │   ├── functions/
-│   │   ├── suggest-resource/    # IA per suggerir metadades
-│   │   ├── create-editor/       # Crear editor
-│   │   └── delete-editor/       # Eliminar editor
+│   │   ├── suggest-resource/         # IA per suggerir metadades
+│   │   ├── create-editor/            # Crear editor (admin)
+│   │   ├── delete-editor/            # Eliminar editor (admin)
+│   │   ├── handle-editor-request/    # Aprovar/rebutjar sol·licituds i reactivar comptes (admin)
+│   │   └── change-user-password/     # Canviar contrasenya d'editor (admin)
 │   ├── migrations/
 │   │   └── 001_initial_schema.sql
 │   └── seed.sql
@@ -278,7 +304,10 @@ Educational resource library for the **SSCE0110** module of Vocational Training 
 - **Category management** — Admins and editors can create, edit and delete categories.
 - **AI-assisted resource creation** — The add-resource form can analyse a URL and automatically generate a title, description and category in Catalan (via Groq / Llama 3.1).
 - **Internal messaging** — Editors communicate with the admin through private conversation threads.
-- **Editor management** — The admin can create and delete editor accounts.
+- **Editor request flow** — Any visitor can apply for editor access. The admin receives requests and can approve (sends an invitation email) or reject them.
+- **Editor management** — The admin can create, delete, activate/deactivate, and change the password of editor accounts. Reactivating an account sends a password-reset email via Resend.
+- **Contact form** — Any visitor can send a message to the admin. The admin receives an optional WhatsApp notification (CallMeBot) and manages queries from the panel.
+- **Password reset** — Full "Forgot password" flow from the login screen, with a recovery email.
 - **Export** — The admin can export all resources as JSON.
 - **Skin system** — 5 visual themes switchable in real time without page reload.
 - **Responsive design** — Adapted for mobile and desktop.
@@ -369,11 +398,16 @@ The app will be available at `http://localhost:5173`.
 Create a `.env.local` file at the project root:
 
 ```env
+# Required
 VITE_SUPABASE_URL=https://<project>.supabase.co
 VITE_SUPABASE_ANON_KEY=<project-anon-key>
+
+# Optional — WhatsApp notification on contact form submission (via CallMeBot)
+VITE_CALLMEBOT_PHONE=<number-with-country-code>
+VITE_CALLMEBOT_APIKEY=<callmebot-api-key>
 ```
 
-Find these values in **Supabase Dashboard → Project Settings → API**.
+Find `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in **Supabase Dashboard → Project Settings → API**.
 
 ---
 
@@ -406,6 +440,8 @@ Find these values in **Supabase Dashboard → Project Settings → API**.
 | `bookmarks` | Resources with title, description, URL, categories and highlight flag |
 | `messages` | Internal messages between editors and admin |
 | `editor_highlights` | Personal highlights per editor |
+| `editor_requests` | Editor-access requests submitted by visitors |
+| `contact_requests` | Public contact messages; `read` flag tracks admin review |
 
 All tables have **Row Level Security (RLS)** enabled.
 
@@ -424,11 +460,17 @@ supabase functions deploy <function-name>
 | `suggest-resource` | Analyses a URL with Groq/Llama and returns a title, description and category in Catalan |
 | `create-editor` | Creates a new editor account (admin only) |
 | `delete-editor` | Deletes an editor account and their data (admin only) |
+| `handle-editor-request` | Approves/rejects editor requests and sends emails via Resend; also reactivates accounts (admin only) |
+| `change-user-password` | Changes an editor's password from the admin panel (admin only) |
 
-The `suggest-resource` function requires the `GROQ_API_KEY` secret set in Supabase:
+All functions except `suggest-resource` require an admin JWT in the `Authorization` header.
+
+Required secrets in Supabase (`supabase secrets set`):
 
 ```bash
-supabase secrets set GROQ_API_KEY=<your-key>
+supabase secrets set GROQ_API_KEY=<groq-key>
+supabase secrets set RESEND_API_KEY=<resend-key>   # for invitation and recovery emails
+supabase secrets set SITE_URL=https://<domain>      # redirect URL in email links
 ```
 
 ---
@@ -451,13 +493,19 @@ npm run test      # Tests with Vitest
 fp-recursos/
 ├── src/
 │   ├── components/
-│   │   ├── BookmarkCard.tsx     # Individual resource card
-│   │   ├── BookmarkForm.tsx     # Create/edit resource form (+ AI)
+│   │   ├── BookmarkCard.tsx              # Individual resource card
+│   │   ├── BookmarkForm.tsx              # Create/edit resource form (+ AI)
+│   │   ├── ContactModal.tsx              # Public contact form
+│   │   ├── ContactsAdminModal.tsx        # Contact management (admin)
+│   │   ├── EditorRequestModal.tsx        # Editor access request form
+│   │   ├── EditorRequestsAdminModal.tsx  # Request management (admin)
 │   │   ├── Header.tsx
-│   │   ├── MessagesModal.tsx    # Internal messaging system
-│   │   ├── ScrollToTop.tsx      # Scroll-to-top button
-│   │   ├── SkinPicker.tsx       # Floating skin selector
-│   │   └── UI.tsx               # Reusable UI components
+│   │   ├── MessagesModal.tsx             # Internal messaging system
+│   │   ├── ProtectedRoute.tsx            # Role-based route guard
+│   │   ├── ScrollToTop.tsx              # Scroll-to-top button
+│   │   ├── SetPasswordModal.tsx          # Set/change password modal
+│   │   ├── SkinPicker.tsx               # Floating skin selector
+│   │   └── UI.tsx                       # Reusable UI components
 │   ├── context/
 │   │   ├── AuthContext.tsx      # Auth and user profile
 │   │   └── SkinContext.tsx      # Active skin (persisted to localStorage)
@@ -469,9 +517,11 @@ fp-recursos/
 │   │   ├── ai.ts                # Calls the suggest-resource Edge Function
 │   │   ├── bookmarks.ts         # Bookmark CRUD
 │   │   ├── categories.ts        # Category CRUD
+│   │   ├── contacts.ts          # Contact form + WhatsApp notification
+│   │   ├── editorRequests.ts    # Editor request CRUD
 │   │   ├── highlights.ts        # Editor personal highlights
 │   │   ├── messages.ts          # Internal messaging
-│   │   └── profiles.ts          # Profile management
+│   │   └── profiles.ts          # Profile management and admin actions
 │   ├── types/
 │   │   └── database.ts          # TypeScript DB types
 │   ├── lib/
@@ -481,9 +531,11 @@ fp-recursos/
 │   └── theme.ts                 # Reusable Tailwind class strings
 ├── supabase/
 │   ├── functions/
-│   │   ├── suggest-resource/    # AI metadata suggestions
-│   │   ├── create-editor/       # Create editor account
-│   │   └── delete-editor/       # Delete editor account
+│   │   ├── suggest-resource/         # AI metadata suggestions
+│   │   ├── create-editor/            # Create editor account (admin)
+│   │   ├── delete-editor/            # Delete editor account (admin)
+│   │   ├── handle-editor-request/    # Approve/reject requests and reactivate accounts (admin)
+│   │   └── change-user-password/     # Change editor password (admin)
 │   ├── migrations/
 │   │   └── 001_initial_schema.sql
 │   └── seed.sql
