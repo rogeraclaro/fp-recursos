@@ -616,7 +616,7 @@ export default function App() {
 								onClick={() => setShowLoginModal(true)}
 								className='font-skin font-bold text-sm px-5 py-2.5 border-skin bg-accent shadow-skin-sm hover:translate-x-[-1px] hover:translate-y-[-1px] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all'
 							>
-								Login
+								Accés
 							</button>
 						)}
 					</div>
@@ -703,7 +703,7 @@ export default function App() {
 						onClick={() => setShowLoginModal(true)}
 						className='bg-black text-white border-skin px-4 py-2 font-bold font-skin text-sm shadow-skin-sm active:translate-y-[2px] active:shadow-none'
 					>
-						LOGIN
+						ACCÉS
 					</button>
 				)}
 			</div>
@@ -960,7 +960,7 @@ export default function App() {
 										}}
 										className='font-bold font-skin text-lg border-skin p-3 bg-black text-white hover:bg-gray-800 transition-all flex items-center justify-center shadow-skin-sm'
 									>
-										LOGIN
+										ACCÉS
 									</button>
 								</>
 							)}
