@@ -37,7 +37,11 @@ export async function approveEditorRequest(
   const { data, error } = await supabase.functions.invoke('handle-editor-request', {
     body: { action: 'approve', requestId, email, name },
   })
-  if (error) throw error
+  if (error) {
+    // Extreure el missatge real del cos de la resposta
+    const body = await (error as any).context?.json?.().catch(() => null)
+    throw new Error(body?.error ?? error.message)
+  }
   if (data?.error) throw new Error(data.error)
 }
 
