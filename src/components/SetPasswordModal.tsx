@@ -23,7 +23,12 @@ export const SetPasswordModal: React.FC<{ onSuccess: () => void }> = ({ onSucces
     const { error } = await supabase.auth.updateUser({ password })
     setLoading(false)
     if (error) {
-      setError('Error en desar la contrasenya. Torna-ho a provar.')
+      const msg = error.message?.toLowerCase() ?? ''
+      if (msg.includes('same password') || msg.includes('different from the old password') || msg.includes('should be different')) {
+        setError('No pots fer servir la mateixa contrasenya que l\'anterior.')
+      } else {
+        setError('Error en desar la contrasenya. Torna-ho a provar.')
+      }
     } else {
       window.location.hash = ''
       onSuccess()

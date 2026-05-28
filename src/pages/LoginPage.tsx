@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { Button, Input, Label } from '../components/UI'
+import { supabase } from '../lib/supabase'
 
 export const LoginPage: React.FC<{
   onSuccess?: () => void
@@ -13,6 +14,11 @@ export const LoginPage: React.FC<{
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
+  const [showReset, setShowReset] = useState(false)
+  const [resetEmail, setResetEmail] = useState('')
+  const [resetSent, setResetSent] = useState(false)
+  const [resetLoading, setResetLoading] = useState(false)
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError(null)
@@ -24,6 +30,16 @@ export const LoginPage: React.FC<{
     } else {
       onSuccess?.()
     }
+  }
+
+  async function handleReset(e: React.FormEvent) {
+    e.preventDefault()
+    setResetLoading(true)
+    await supabase.auth.resetPasswordForEmail(resetEmail, {
+      redirectTo: 'https://fp-recursos.masellas.info',
+    })
+    setResetLoading(false)
+    setResetSent(true)
   }
 
   return (
@@ -54,40 +70,82 @@ export const LoginPage: React.FC<{
             </button>
           )}
         </div>
-        <form
-          onSubmit={handleSubmit}
-          className="bg-white border-4 border-t-0 border-black p-6 shadow-[8px_8px_0px_0px_#000]"
-        >
-          <div className="mb-4">
-            <Label>Email</Label>
-            <Input
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              placeholder="editor@centre.cat"
-              required
-              autoFocus
-            />
+
+        {showReset ? (
+          <div className="bg-white border-4 border-t-0 border-black p-6 shadow-[8px_8px_0px_0px_#000]">
+            {resetSent ? (
+              <p className="font-mono text-sm text-green-700 border border-green-300 bg-green-50 p-3">
+                Si l'email existeix, rebràs un enllaç en breus.
+              </p>
+            ) : (
+              <form onSubmit={handleReset}>
+                <div className="mb-4">
+                  <Label>Email</Label>
+                  <Input
+                    type="email"
+                    value={resetEmail}
+                    onChange={e => setResetEmail(e.target.value)}
+                    placeholder="editor@centre.cat"
+                    required
+                    autoFocus
+                  />
+                </div>
+                <Button type="submit" className="w-full mb-3" disabled={resetLoading}>
+                  {resetLoading ? 'Enviant...' : 'Enviar'}
+                </Button>
+              </form>
+            )}
+            <button
+              type="button"
+              onClick={() => { setShowReset(false); setResetSent(false); setResetEmail('') }}
+              className="font-mono text-xs font-bold underline hover:no-underline mt-2 block"
+            >
+              Tornar a l'inici de sessió
+            </button>
           </div>
-          <div className="mb-6">
-            <Label>Contrasenya</Label>
-            <Input
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-            />
-          </div>
-          {error && (
-            <p className="text-red-600 font-mono text-sm mb-4 border border-red-300 bg-red-50 p-2">
-              {error}
-            </p>
-          )}
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Entrant...' : 'Entrar'}
-          </Button>
-        </form>
+        ) : (
+          <form
+            onSubmit={handleSubmit}
+            className="bg-white border-4 border-t-0 border-black p-6 shadow-[8px_8px_0px_0px_#000]"
+          >
+            <div className="mb-4">
+              <Label>Email</Label>
+              <Input
+                type="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                placeholder="editor@centre.cat"
+                required
+                autoFocus
+              />
+            </div>
+            <div className="mb-6">
+              <Label>Contrasenya</Label>
+              <Input
+                type="password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+              />
+            </div>
+            {error && (
+              <p className="text-red-600 font-mono text-sm mb-4 border border-red-300 bg-red-50 p-2">
+                {error}
+              </p>
+            )}
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? 'Entrant...' : 'Entrar'}
+            </Button>
+            <button
+              type="button"
+              onClick={() => setShowReset(true)}
+              className="font-mono text-xs font-bold underline hover:no-underline mt-4 block w-full text-center"
+            >
+              He oblidat la contrasenya
+            </button>
+          </form>
+        )}
       </div>
     </div>
   )
