@@ -47,6 +47,12 @@ Deno.serve(async (req) => {
           .update({ active: true, role: 'editor' })
           .eq('id', existingUser.id)
         if (reactivateError) throw reactivateError
+
+        // Enviar email de restabliment de contrasenya
+        const { error: resetError } = await supabaseAdmin.auth.resetPasswordForEmail(email, {
+          redirectTo: Deno.env.get('SITE_URL'),
+        })
+        if (resetError) throw resetError
       }
 
       // Marcar petició com aprovada
