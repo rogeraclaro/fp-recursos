@@ -100,7 +100,8 @@ export default function App() {
 	const [editorEditingCat, setEditorEditingCat] = useState<{ id: string; name: string } | null>(null)
 	const [showSetPasswordModal, setShowSetPasswordModal] = useState(() => {
 		const hash = new URLSearchParams(window.location.hash.slice(1))
-		return hash.get('type') === 'invite'
+		const type = hash.get('type')
+		return type === 'invite' || type === 'recovery'
 	})
 
 	useEffect(() => {

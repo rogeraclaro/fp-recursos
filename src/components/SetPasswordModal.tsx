@@ -34,8 +34,8 @@ export const SetPasswordModal: React.FC<{ onSuccess: () => void }> = ({ onSucces
     <div className="fixed inset-0 z-[100] modal-overlay flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
         <div className="bg-accent border-4 border-black p-4 shadow-[8px_8px_0px_0px_#000]">
-          <h1 className="font-black font-mono text-xl uppercase tracking-wider">Benvingut/da!</h1>
-          <p className="font-mono text-sm mt-1">Crea la teva contrasenya per continuar.</p>
+          <h1 className="font-black font-mono text-xl uppercase tracking-wider">Nova contrasenya</h1>
+          <p className="font-mono text-sm mt-1">Estableix la teva contrasenya per continuar.</p>
         </div>
         <form
           onSubmit={handleSubmit}
