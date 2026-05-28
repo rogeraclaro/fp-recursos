@@ -19,12 +19,35 @@ Deno.serve(async (req) => {
     )
 
     if (action === 'approve') {
-      // Invitar l'usuari — Supabase envia l'email amb link per establir password
+      // Intentar convidar (cas usuari nou)
       const { error: inviteError } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
         data: { username: name, role: 'editor' },
         redirectTo: Deno.env.get('SITE_URL'),
       })
-      if (inviteError) throw inviteError
+
+      if (inviteError) {
+        // Si l'usuari ja existeix, reactivar el perfil en lloc de tornar a convidar
+        const alreadyExists =
+          inviteError.message?.toLowerCase().includes('already') ||
+          inviteError.message?.toLowerCase().includes('registered') ||
+          (inviteError as any).status === 422
+
+        if (!alreadyExists) throw inviteError
+
+        // Buscar l'usuari existent per email
+        const { data: listData, error: listError } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 })
+        if (listError) throw listError
+
+        const existingUser = listData.users.find((u) => u.email === email)
+        if (!existingUser) throw new Error(`Usuari amb email ${email} no trobat a Auth`)
+
+        // Reactivar el perfil
+        const { error: reactivateError } = await supabaseAdmin
+          .from('profiles')
+          .update({ active: true, role: 'editor' })
+          .eq('id', existingUser.id)
+        if (reactivateError) throw reactivateError
+      }
 
       // Marcar petició com aprovada
       const { error: updateError } = await supabaseAdmin
