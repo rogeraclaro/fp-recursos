@@ -19,6 +19,12 @@ export async function setUserActive(id: string, active: boolean): Promise<void> 
     .select('id')
   if (error) throw error
   if (!data || data.length === 0) throw new Error('No s\'ha pogut actualitzar (RLS policy?)')
+
+  if (active) {
+    await supabase.functions.invoke('handle-editor-request', {
+      body: { action: 'reactivate', userId: id },
+    })
+  }
 }
 
 export async function updateProfile(id: string, username: string): Promise<Profile> {

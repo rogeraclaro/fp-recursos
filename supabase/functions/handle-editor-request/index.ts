@@ -11,7 +11,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { action, requestId, email, name } = await req.json()
+    const { action, requestId, email, name, userId } = await req.json()
 
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL')!,
@@ -115,6 +115,63 @@ Deno.serve(async (req) => {
         .update({ status: 'approved', reviewed_at: new Date().toISOString() })
         .eq('id', requestId)
       if (updateError) throw updateError
+    }
+
+    if (action === 'reactivate') {
+      // Obtenir email i nom de l'usuari via Auth Admin
+      const { data: userData, error: userError } = await supabaseAdmin.auth.admin.getUserById(userId)
+      if (userError) throw userError
+
+      const userEmail = userData.user.email!
+      const userName = userData.user.user_metadata?.username ?? userEmail
+
+      // Generar link de recuperació
+      const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+        type: 'recovery',
+        email: userEmail,
+        options: { redirectTo: Deno.env.get('SITE_URL') },
+      })
+      if (linkError) throw linkError
+
+      const resendApiKey = Deno.env.get('RESEND_API_KEY')
+      if (!resendApiKey) throw new Error('RESEND_API_KEY no configurada')
+
+      const recoveryUrl = linkData.properties?.action_link
+      const res = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${resendApiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: 'SSCE0110 Links <noreply@masellas.info>',
+          to: userEmail,
+          subject: 'SSCE0110 Links — Compte reactivat',
+          html: `
+            <div style="font-family: monospace; max-width: 520px; margin: 40px auto; background: #fff; border: 3px solid #000; box-shadow: 6px 6px 0 #000;">
+              <div style="background: #f5c842; border-bottom: 3px solid #000; padding: 20px 28px;">
+                <h1 style="margin: 0; font-size: 20px; font-weight: 900; text-transform: uppercase;">SSCE0110 Links</h1>
+              </div>
+              <div style="padding: 28px;">
+                <p style="margin: 0 0 16px; font-size: 15px;">Hola ${userName},</p>
+                <p style="margin: 0 0 16px; font-size: 15px;">El teu compte a <strong>SSCE0110 Links</strong> ha estat reactivat.</p>
+                <p style="margin: 0 0 24px; font-size: 15px;">Fes clic al botó per establir una nova contrasenya i accedir:</p>
+                <a href="${recoveryUrl}" style="display: inline-block; background: #000; color: #fff; font-family: monospace; font-weight: 700; font-size: 14px; text-transform: uppercase; padding: 12px 28px; text-decoration: none; border: 2px solid #000; box-shadow: 3px 3px 0 #f5c842;">
+                  Establir nova contrasenya
+                </a>
+                <p style="margin: 24px 0 8px; font-size: 12px; color: #666;">Si el botó no funciona, copia i enganxa aquest enllaç:</p>
+                <p style="margin: 0 0 24px; font-size: 12px; word-break: break-all;"><a href="${recoveryUrl}" style="color:#000;">${recoveryUrl}</a></p>
+                <hr style="border: none; border-top: 2px solid #000; margin: 24px 0;">
+                <p style="margin: 0; font-size: 12px; color: #666;"><a href="https://fp-recursos.masellas.info/" style="color:#000;">fp-recursos.masellas.info</a></p>
+              </div>
+            </div>
+          `,
+        }),
+      })
+      if (!res.ok) {
+        const body = await res.text()
+        throw new Error(`Resend error: ${body}`)
+      }
     }
 
     if (action === 'reject') {
