@@ -34,10 +34,11 @@ export async function approveEditorRequest(
   email: string,
   name: string,
 ): Promise<void> {
-  const { error } = await supabase.functions.invoke('handle-editor-request', {
+  const { data, error } = await supabase.functions.invoke('handle-editor-request', {
     body: { action: 'approve', requestId, email, name },
   })
   if (error) throw error
+  if (data?.error) throw new Error(data.error)
 }
 
 export async function rejectEditorRequest(

@@ -44,8 +44,9 @@ export const EditorRequestsAdminModal: React.FC<Props> = ({ onClose, onPendingCh
         prev.map((x) => (x.id === r.id ? { ...x, status: 'approved' as const } : x)),
       )
       onPendingChange(Math.max(0, pendingCount - 1))
-    } catch {
-      setError(`Error en aprovar "${r.name}". Comprova que la Edge Function està desplegada.`)
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err)
+      setError(`Error en aprovar "${r.name}": ${msg}`)
     } finally {
       setProcessingId(null)
     }
