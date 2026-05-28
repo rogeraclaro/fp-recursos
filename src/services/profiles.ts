@@ -21,8 +21,12 @@ export async function setUserActive(id: string, active: boolean): Promise<void> 
   if (!data || data.length === 0) throw new Error('No s\'ha pogut actualitzar (RLS policy?)')
 
   if (active) {
+    // Cal passar el JWT perquè la funció ara requereix autenticació admin
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) throw new Error('Cal estar autenticat.')
     await supabase.functions.invoke('handle-editor-request', {
       body: { action: 'reactivate', userId: id },
+      headers: { Authorization: `Bearer ${session.access_token}` },
     })
   }
 }
