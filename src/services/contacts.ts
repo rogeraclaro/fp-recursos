@@ -26,9 +26,8 @@ export async function getUnreadContactCount(): Promise<number> {
 }
 
 export async function markContactAsRead(id: string): Promise<void> {
-  const { data, error } = await tbl().update({ read: true }).eq('id', id).select('id')
+  const { error } = await tbl().update({ read: true }).eq('id', id)
   if (error) throw error
-  if (!data || data.length === 0) throw new Error('No s\'ha pogut marcar com llegit (RLS policy?)')
 }
 
 async function sendWhatsApp(name: string, email: string, message: string): Promise<void> {
