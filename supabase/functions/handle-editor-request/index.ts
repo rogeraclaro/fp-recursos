@@ -67,7 +67,7 @@ Deno.serve(async (req) => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            from: 'SSCE0110 Links <onboarding@resend.dev>',
+            from: 'SSCE0110 Links <noreply@masellas.info>',
             to: email,
             subject: 'SSCE0110 Links — Compte reactivat',
             html: `
