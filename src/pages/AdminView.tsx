@@ -43,8 +43,12 @@ export const AdminView: React.FC<Props> = ({ onBack }) => {
   }
 
   async function handleToggleActive(id: string, active: boolean) {
-    await setUserActive(id, active)
-    setProfiles(prev => prev.map(p => p.id === id ? { ...p, active } : p))
+    try {
+      await setUserActive(id, active)
+      setProfiles(prev => prev.map(p => p.id === id ? { ...p, active } : p))
+    } catch (err: any) {
+      alert(`Error en canviar l'estat: ${err.message}`)
+    }
   }
 
   async function handleUpdateUsername(id: string, username: string) {

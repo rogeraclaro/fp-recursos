@@ -13,10 +13,12 @@ export async function getProfiles(): Promise<Profile[]> {
 }
 
 export async function setUserActive(id: string, active: boolean): Promise<void> {
-  const { error } = await profiles()
+  const { data, error } = await profiles()
     .update({ active })
     .eq('id', id)
+    .select('id')
   if (error) throw error
+  if (!data || data.length === 0) throw new Error('No s\'ha pogut actualitzar (RLS policy?)')
 }
 
 export async function updateProfile(id: string, username: string): Promise<Profile> {
