@@ -95,7 +95,7 @@ export const Header: React.FC<Props> = ({ view, onChangeView, onNewResource, onC
 							onClick={() => onChangeView('editor')}
 							className='font-skin text-sm px-3 py-1.5 border-skin hover:bg-accent transition-colors shadow-[2px_2px_0px_0px_#000]'
 						>
-							Accés editors
+							Accés
 						</button>
 					)}
 				</div>
