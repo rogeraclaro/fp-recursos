@@ -1332,6 +1332,7 @@ export default function App() {
 						</div>
 					</div>
 				</div>
+			</div>
 			)}
 
 			{/* Modal confirmació eliminar categoria amb recursos */}
