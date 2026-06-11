@@ -1,0 +1,650 @@
+- generic [ref=e39]:
+  - banner [ref=e40]:
+    - generic [ref=e41]:
+      - generic [ref=e42]:
+        - heading "SSCE0110 LINKS" [level=1] [ref=e43]
+        - paragraph [ref=e45]: "Total: 28 | Categories: 9"
+      - generic [ref=e46]:
+        - button "Changelog" [ref=e47] [cursor=pointer]:
+          - generic [ref=e48]: Changelog
+        - button "Contacte" [ref=e49] [cursor=pointer]:
+          - img [ref=e50]
+          - generic [ref=e53]: Contacte
+        - button "Accés" [ref=e54] [cursor=pointer]
+  - generic [ref=e56]:
+    - generic [ref=e57]: "SALTAR A:"
+    - button "CERCAR" [ref=e58] [cursor=pointer]:
+      - img [ref=e59]
+      - text: CERCAR
+    - generic [ref=e62]:
+      - button "Altres 0" [ref=e63] [cursor=pointer]:
+        - text: Altres
+        - generic [ref=e64]: "0"
+      - button "Cursos 8" [ref=e65] [cursor=pointer]:
+        - text: Cursos
+        - generic [ref=e66]: "8"
+      - button "Didactica 0" [ref=e67] [cursor=pointer]:
+        - text: Didactica
+        - generic [ref=e68]: "0"
+      - button "Graus 5" [ref=e69] [cursor=pointer]:
+        - text: Graus
+        - generic [ref=e70]: "5"
+      - button "IA 6" [ref=e71] [cursor=pointer]:
+        - text: IA
+        - generic [ref=e72]: "6"
+      - button "Informació 9" [ref=e73] [cursor=pointer]:
+        - text: Informació
+        - generic [ref=e74]: "9"
+      - button "Institucional 4" [ref=e75] [cursor=pointer]:
+        - text: Institucional
+        - generic [ref=e76]: "4"
+      - button "Legislació 3" [ref=e77] [cursor=pointer]:
+        - text: Legislació
+        - generic [ref=e78]: "3"
+      - button "Videos alumnes SSCE0110 7" [ref=e79] [cursor=pointer]:
+        - text: Videos alumnes SSCE0110
+        - generic [ref=e80]: "7"
+      - button "DESTACAT 3" [ref=e81] [cursor=pointer]:
+        - text: DESTACAT
+        - generic [ref=e82]: "3"
+  - main [ref=e83]:
+    - generic [ref=e84]:
+      - generic [ref=e85]:
+        - heading "Cursos" [level=2] [ref=e86]
+        - generic [ref=e87]: "8"
+      - generic [ref=e89]:
+        - generic [ref=e90] [cursor=pointer]:
+          - generic [ref=e92]:
+            - generic [ref=e93]: Cursos
+            - generic [ref=e94]: Videos alumnes SSCE0110
+          - generic [ref=e95]:
+            - generic [ref=e96]: 2026-06-04
+            - generic [ref=e97]: Patricia
+          - heading "Gestió Documental amb la IA" [level=3] [ref=e98]
+          - paragraph [ref=e99]: Com faig servir la IA y el DUA a la meva aula.
+          - link "VEURE RECURS" [ref=e101]:
+            - /url: https://youtu.be/ZrEsEj9gKEA?is=X1ni4rHOogWLD8yp
+            - img [ref=e102]
+            - text: VEURE RECURS
+        - generic [ref=e105] [cursor=pointer]:
+          - generic [ref=e107]:
+            - generic [ref=e108]: Cursos
+            - generic [ref=e109]: IA
+          - generic [ref=e110]:
+            - generic [ref=e111]: 2026-05-20
+            - generic [ref=e112]: Roger
+          - 'heading "UOC: Inteligència Artificial a la Educació, un nou paradigma" [level=3] [ref=e113]'
+          - paragraph [ref=e114]: Aquest recurs ofereix un curs online sobre Inteligència Artificial generativa i la seva aplicació en la educació. És útil per als docents que volen aprendre a utilitzar aquesta tecnologia per innovar en la seva pràctica pedagògica i millorar l'aprenentatge dels estudiants.
+          - link "VEURE RECURS" [ref=e116]:
+            - /url: https://www.uoc.edu/es/estudios/formacion-continua/curso-posgrado-inteligencia-artificial-educacion
+            - img [ref=e117]
+            - text: VEURE RECURS
+        - generic [ref=e120] [cursor=pointer]:
+          - generic [ref=e123]: Cursos
+          - generic [ref=e124]:
+            - generic [ref=e125]: 2026-05-20
+            - generic [ref=e126]: Roger
+          - heading "Tutorització en Teleformació" [level=3] [ref=e127]
+          - paragraph [ref=e128]: Aquest recurs ofereix una formació en teleformació per a professionals que volen adquirir o millorar les seves competències docents en l'àmbit de la formació online. La formació té una durada de 50 hores i es divideix en dos mòduls que cobreixen temes com l'aprenentatge mitjançant teleformació, les eines i estratègies metodològiques per a l'aprenentatge en teleformació.
+          - link "VEURE RECURS" [ref=e130]:
+            - /url: https://serveiocupacio.gencat.cat/ca/soc/com-ens-organitzem/centres-propis-formacio-cifo-cfpa/centres-dinnovacio-i-formacio-ocupacional-cifo/cifo-hospitalet-de-llobregat/detall/TUTORITZACIO-EN-TELEFORMACIO-00001
+            - img [ref=e131]
+            - text: VEURE RECURS
+        - generic [ref=e134] [cursor=pointer]:
+          - generic [ref=e137]: Cursos
+          - generic [ref=e138]:
+            - generic [ref=e139]: 2026-05-20
+            - generic [ref=e140]: Roger
+          - heading "Buscador de cursos i especialitats formatives del SOC" [level=3] [ref=e141]
+          - paragraph [ref=e142]: El buscador de cursos i especialitats formatives del Servei Públic d'Ocupació de Catalunya ofereix una eina per trobar cursos, especialitats i centres de formació acreditats. És útil per a persones que volen formar-se o buscar treball.
+          - link "VEURE RECURS" [ref=e144]:
+            - /url: https://serveiocupacio.gencat.cat/es/persones/vull-formar-me/cercadors-formacio-especialitats/index.html
+            - img [ref=e145]
+            - text: VEURE RECURS
+        - generic [ref=e148] [cursor=pointer]:
+          - generic [ref=e150]:
+            - generic [ref=e151]: Legislació
+            - generic [ref=e152]: Informació
+            - generic [ref=e153]: Institucional
+            - generic [ref=e154]: Cursos
+          - generic [ref=e155]:
+            - generic [ref=e156]: 2026-05-20
+            - generic [ref=e157]: Roger
+          - heading "Catàleg del Departament de Treball de la Gencat" [level=3] [ref=e158]
+          - paragraph [ref=e159]: Aquest catàleg ofereix formularis i documents oficials del Departament de Treball de la Generalitat de Catalunya, útils per a empresaris, treballadors i professionals de la formació professional.
+          - link "VEURE RECURS" [ref=e161]:
+            - /url: https://treball.gencat.cat/ca/tramits/formularis_documents/impresos_departament/
+            - img [ref=e162]
+            - text: VEURE RECURS
+        - generic [ref=e165] [cursor=pointer]:
+          - generic [ref=e168]: Cursos
+          - generic [ref=e169]:
+            - generic [ref=e170]: 2026-05-20
+            - generic [ref=e171]: Roger
+          - heading "Consorci per a la Formació Contínua de Catalunya" [level=3] [ref=e172]
+          - paragraph [ref=e173]: El Consorci per a la Formació Contínua de Catalunya ofereix recursos i informació sobre formació professional, certificats professionals i convocatòries per a persones treballadores, persones formadores i empreses. Aquest recurs és útil per a qui busca informació sobre formació contínua a Catalunya.
+          - link "VEURE RECURS" [ref=e175]:
+            - /url: https://conforcat.gencat.cat/ca/inici
+            - img [ref=e176]
+            - text: VEURE RECURS
+        - generic [ref=e179] [cursor=pointer]:
+          - generic [ref=e181]:
+            - generic [ref=e182]: Informació
+            - generic [ref=e183]: Cursos
+          - generic [ref=e184]:
+            - generic [ref=e185]: 2026-05-20
+            - generic [ref=e186]: Roger
+          - heading "Contractes de formació en alternança amb el programa FPO Dual" [level=3] [ref=e187]
+          - paragraph [ref=e188]: El Servei d'Ocupació de la Generalitat de Catalunya ofereix contrats de formació en alternança amb el programa FPO Dual, que permet a les persones treballar i estudiar alhora. Aquest programa és útil per a aquells que busquen combinar la formació professional amb la pràctica laboral.
+          - link "VEURE RECURS" [ref=e190]:
+            - /url: https://serveiocupacio.gencat.cat/es/detall/noticia/Contratos-de-formacion-en-alternancia-durante-un-ano-con-el-programa-de-FPO-Dual
+            - img [ref=e191]
+            - text: VEURE RECURS
+        - generic [ref=e194] [cursor=pointer]:
+          - generic [ref=e197]: Cursos
+          - generic [ref=e198]:
+            - generic [ref=e199]: 2026-05-20
+            - generic [ref=e200]: Roger
+          - heading "Oferta formativa de cursos SEPE" [level=3] [ref=e201]
+          - paragraph [ref=e202]: El buscador de cursos SEPE ofereix cursos i centres autoritzats per a desempleats i treballadors. Es pot buscar cursos per àmbit geogràfic i tipus de curs.
+          - link "VEURE RECURS" [ref=e204]:
+            - /url: https://sede.sepe.gob.es/portalSede/es/procedimientos-y-servicios/personas/formacion
+            - img [ref=e205]
+            - text: VEURE RECURS
+    - generic [ref=e208]:
+      - generic [ref=e209]:
+        - heading "Graus" [level=2] [ref=e210]
+        - generic [ref=e211]: "5"
+      - generic [ref=e213]:
+        - generic [ref=e214] [cursor=pointer]:
+          - generic [ref=e216]:
+            - generic [ref=e217]: Informació
+            - generic [ref=e218]: Graus
+          - generic [ref=e219]:
+            - generic [ref=e220]: 2026-05-20
+            - generic [ref=e221]: Roger
+          - heading "Acreditació de competències professionals" [level=3] [ref=e222]
+          - paragraph [ref=e223]: Aquest recurs explica com acreditar competències professionals adquirides a través de l'experiència laboral o altres vies no formals. És útil per a persones que no tenen certificats oficials però han desenvolupat coneixements professionals en el món laboral.
+          - link "VEURE RECURS" [ref=e225]:
+            - /url: https://todofp.es/acreditacion-de-competencias/acreditacion-de-competencias-profesionales.html#cla-03-08
+            - img [ref=e226]
+            - text: VEURE RECURS
+        - generic [ref=e229] [cursor=pointer]:
+          - generic [ref=e231]:
+            - generic [ref=e232]: Informació
+            - generic [ref=e233]: Graus
+          - generic [ref=e234]:
+            - generic [ref=e235]: 2026-05-20
+            - generic [ref=e236]: Roger
+          - heading "Requisits d'accés a la Formació Professional" [level=3] [ref=e237]
+          - paragraph [ref=e238]: Conèixer els requisits d'accés a la Formació Professional per a poder estudiar ciclos formatius, cursos de especialització i certificats de professionalitat. Aquest recurs és útil per a aquells que volen iniciar-se en la Formació Professional.
+          - link "VEURE RECURS" [ref=e240]:
+            - /url: https://todofp.es/como-cuando-y-donde-estudiar/acceso-fp-desde-fp/como-accedo-a-fp.html#cla-00-010
+            - img [ref=e241]
+            - text: VEURE RECURS
+        - generic [ref=e244] [cursor=pointer]:
+          - generic [ref=e247]: Graus
+          - generic [ref=e248]:
+            - generic [ref=e249]: 2026-05-20
+            - generic [ref=e250]: Roger
+          - heading "Catàleg de Formació Professional a Catalunya" [level=3] [ref=e251]
+          - paragraph [ref=e252]: Consulta el catàleg complet de Formació Professional a Catalunya, incloent ciclos, certificats de professionalitat i cursos de especialització. Aquest recurs és útil per a qui vol saber què estudiar per a una carrera professional.
+          - link "VEURE RECURS" [ref=e254]:
+            - /url: https://todofp.es/que-estudiar.html
+            - img [ref=e255]
+            - text: VEURE RECURS
+        - generic [ref=e258] [cursor=pointer]:
+          - generic [ref=e261]: Graus
+          - generic [ref=e262]:
+            - generic [ref=e263]: 2026-05-18
+            - generic [ref=e264]: Roger
+          - heading "TodoFP" [level=3] [ref=e265]
+          - paragraph [ref=e266]: La web oficial del ministeri d'educació sobre la FP
+          - link "VEURE RECURS" [ref=e268]:
+            - /url: https://todofp.es/inicio.html
+            - img [ref=e269]
+            - text: VEURE RECURS
+        - generic [ref=e272] [cursor=pointer]:
+          - generic [ref=e275]: Graus
+          - generic [ref=e276]:
+            - generic [ref=e277]: 2026-05-18
+            - generic [ref=e278]: Roger
+          - heading "Graus FP" [level=3] [ref=e279]
+          - paragraph [ref=e280]: Cercador unificat per explorar tots els graus disponibles a l'estat espanyol.
+          - link "VEURE RECURS" [ref=e282]:
+            - /url: https://grausfp.masellas.info/
+            - img [ref=e283]
+            - text: VEURE RECURS
+    - generic [ref=e286]:
+      - generic [ref=e287]:
+        - heading "IA" [level=2] [ref=e288]
+        - generic [ref=e289]: "6"
+      - generic [ref=e291]:
+        - generic [ref=e292] [cursor=pointer]:
+          - generic [ref=e294]:
+            - generic [ref=e295]: IA
+            - generic [ref=e296]: Informació
+            - generic [ref=e297]: Institucional
+          - generic [ref=e298]:
+            - generic [ref=e299]: 2026-06-01
+            - generic [ref=e300]: Roger
+          - 'heading "UNESCO: Guia per l''ús de la IA generativa en educació" [level=3] [ref=e301]'
+          - paragraph [ref=e302]: La UNESCO ofereix aquesta guia per ajudar als països a implementar accions immediates i a planificar polítiques de llarg plazo per al desenvolupament de la IA generativa en educació. La guia analitza les tecnologies disponibles, identifica qüestions ètiques i polítiques, i proposa mesures per regular l'ús de la IA generativa de manera segura i equitativa.
+          - link "VEURE RECURS" [ref=e304]:
+            - /url: https://www.unesco.org/es/articles/guia-para-el-uso-de-ia-generativa-en-educacion-e-investigacion
+            - img [ref=e305]
+            - text: VEURE RECURS
+        - generic [ref=e308] [cursor=pointer]:
+          - generic [ref=e310]:
+            - generic [ref=e311]: Informació
+            - generic [ref=e312]: IA
+          - generic [ref=e313]:
+            - generic [ref=e314]: 2026-05-21
+            - generic [ref=e315]: Roger
+          - heading "Plataformes per a la creació de material educatiu" [level=3] [ref=e316]
+          - paragraph [ref=e317]: Trello colaboratiu del Curs SSCE0110 2026 de Merins.
+          - link "VEURE RECURS" [ref=e319]:
+            - /url: https://trello.com/b/I12inRUE/plataformas-para-creacion-de-material-2026
+            - img [ref=e320]
+            - text: VEURE RECURS
+        - generic [ref=e323] [cursor=pointer]:
+          - generic [ref=e325]:
+            - generic [ref=e326]: Cursos
+            - generic [ref=e327]: IA
+          - generic [ref=e328]:
+            - generic [ref=e329]: 2026-05-20
+            - generic [ref=e330]: Roger
+          - 'heading "UOC: Inteligència Artificial a la Educació, un nou paradigma" [level=3] [ref=e331]'
+          - paragraph [ref=e332]: Aquest recurs ofereix un curs online sobre Inteligència Artificial generativa i la seva aplicació en la educació. És útil per als docents que volen aprendre a utilitzar aquesta tecnologia per innovar en la seva pràctica pedagògica i millorar l'aprenentatge dels estudiants.
+          - link "VEURE RECURS" [ref=e334]:
+            - /url: https://www.uoc.edu/es/estudios/formacion-continua/curso-posgrado-inteligencia-artificial-educacion
+            - img [ref=e335]
+            - text: VEURE RECURS
+        - generic [ref=e338] [cursor=pointer]:
+          - generic [ref=e341]: IA
+          - generic [ref=e342]:
+            - generic [ref=e343]: 2026-05-18
+            - generic [ref=e344]: Roger
+          - heading "NotebookLM" [level=3] [ref=e345]
+          - paragraph [ref=e346]: NotebookLM és un assistent virtual de recerca i redacció basat en intel·ligència artificial desenvolupat per Google. La seva principal diferència amb altres xats d'IA (com ChatGPT) és que utilitza exclusivament els documents que tu puges com a base de dades (un procés anomenat grounding), garantint que les respostes siguin personalitzades, precises i sense invencions externes.
+          - link "VEURE RECURS" [ref=e348]:
+            - /url: https://notebooklm.google.com/
+            - img [ref=e349]
+            - text: VEURE RECURS
+        - generic [ref=e352] [cursor=pointer]:
+          - generic [ref=e355]: IA
+          - generic [ref=e356]:
+            - generic [ref=e357]: 2026-05-18
+            - generic [ref=e358]: Roger
+          - heading "Docència i aprenentatge" [level=3] [ref=e359]
+          - paragraph [ref=e360]: La IA aplicada a l'aprenentatge. Documents de la Universitat de Girona. Enllaços molt interessants sobre docencia.
+          - link "VEURE RECURS" [ref=e362]:
+            - /url: https://www.udg.edu/ca/ia/ia-per-ambits/docencia
+            - img [ref=e363]
+            - text: VEURE RECURS
+        - generic [ref=e366] [cursor=pointer]:
+          - generic [ref=e369]: IA
+          - generic [ref=e370]:
+            - generic [ref=e371]: 2026-05-12
+            - generic [ref=e372]: Roger
+          - heading "Google AI Studio" [level=3] [ref=e373]
+          - paragraph [ref=e374]: Google AI *Studio és una plataforma gratuïta basada en el navegador per a crear prototips i desenvolupar aplicacions amb els models d'IA generativa de Google, com *Gemini 1.5 Pro i Flaix, sense necessitat de configuracions complexes. Permet provar *prompts, ajustar paràmetres, generar imatges/vídeos i obtenir codi *API per a integrar IA en projectes propis.
+          - link "VEURE RECURS" [ref=e376]:
+            - /url: https://aistudio.google.com/
+            - img [ref=e377]
+            - text: VEURE RECURS
+    - generic [ref=e380]:
+      - generic [ref=e381]:
+        - heading "Informació" [level=2] [ref=e382]
+        - generic [ref=e383]: "9"
+      - generic [ref=e385]:
+        - generic [ref=e386] [cursor=pointer]:
+          - generic [ref=e388]:
+            - generic [ref=e389]: IA
+            - generic [ref=e390]: Informació
+            - generic [ref=e391]: Institucional
+          - generic [ref=e392]:
+            - generic [ref=e393]: 2026-06-01
+            - generic [ref=e394]: Roger
+          - 'heading "UNESCO: Guia per l''ús de la IA generativa en educació" [level=3] [ref=e395]'
+          - paragraph [ref=e396]: La UNESCO ofereix aquesta guia per ajudar als països a implementar accions immediates i a planificar polítiques de llarg plazo per al desenvolupament de la IA generativa en educació. La guia analitza les tecnologies disponibles, identifica qüestions ètiques i polítiques, i proposa mesures per regular l'ús de la IA generativa de manera segura i equitativa.
+          - link "VEURE RECURS" [ref=e398]:
+            - /url: https://www.unesco.org/es/articles/guia-para-el-uso-de-ia-generativa-en-educacion-e-investigacion
+            - img [ref=e399]
+            - text: VEURE RECURS
+        - generic [ref=e402] [cursor=pointer]:
+          - generic [ref=e404]:
+            - generic [ref=e405]: Videos alumnes SSCE0110
+            - generic [ref=e406]: Informació
+          - generic [ref=e407]:
+            - generic [ref=e408]: 2026-06-01
+            - generic [ref=e409]: Roger
+          - heading "Tutorial per aprendre a fer servir bé aquesta Web" [level=3] [ref=e410]
+          - paragraph [ref=e411]: Com aprofitar totes les funcionalitats d' aquesta App? Totes les possibilitats explicades i resumides una per una...
+          - link "VEURE RECURS" [ref=e413]:
+            - /url: https://www.youtube.com/watch?v=1ahKXm9LJVE
+            - img [ref=e414]
+            - text: VEURE RECURS
+        - generic [ref=e417] [cursor=pointer]:
+          - generic [ref=e419]:
+            - generic [ref=e420]: Informació
+            - generic [ref=e421]: IA
+          - generic [ref=e422]:
+            - generic [ref=e423]: 2026-05-21
+            - generic [ref=e424]: Roger
+          - heading "Plataformes per a la creació de material educatiu" [level=3] [ref=e425]
+          - paragraph [ref=e426]: Trello colaboratiu del Curs SSCE0110 2026 de Merins.
+          - link "VEURE RECURS" [ref=e428]:
+            - /url: https://trello.com/b/I12inRUE/plataformas-para-creacion-de-material-2026
+            - img [ref=e429]
+            - text: VEURE RECURS
+        - generic [ref=e432] [cursor=pointer]:
+          - generic [ref=e434]:
+            - generic [ref=e435]: Legislació
+            - generic [ref=e436]: Informació
+            - generic [ref=e437]: Institucional
+            - generic [ref=e438]: Cursos
+          - generic [ref=e439]:
+            - generic [ref=e440]: 2026-05-20
+            - generic [ref=e441]: Roger
+          - heading "Catàleg del Departament de Treball de la Gencat" [level=3] [ref=e442]
+          - paragraph [ref=e443]: Aquest catàleg ofereix formularis i documents oficials del Departament de Treball de la Generalitat de Catalunya, útils per a empresaris, treballadors i professionals de la formació professional.
+          - link "VEURE RECURS" [ref=e445]:
+            - /url: https://treball.gencat.cat/ca/tramits/formularis_documents/impresos_departament/
+            - img [ref=e446]
+            - text: VEURE RECURS
+        - generic [ref=e449] [cursor=pointer]:
+          - generic [ref=e451]:
+            - generic [ref=e452]: Legislació
+            - generic [ref=e453]: Informació
+          - generic [ref=e454]:
+            - generic [ref=e455]: 2026-05-20
+            - generic [ref=e456]: Roger
+          - heading "Formació per a empreses. Bonificació de les cuotes de la Seguretat Social" [level=3] [ref=e457]
+          - paragraph [ref=e458]: Aquest recurs explica com bonificar les cuotes de la Seguretat Social per a les empreses catalanes. Inclou vídeos, documents i normativa per ajudar a gestionar la formació bonificada.
+          - link "VEURE RECURS" [ref=e460]:
+            - /url: https://www.fundae.es/empresas/home/como-bonificarte?gad_source=1&gclid=Cj0KCQjw4cS-BhDGARIsABg4_J17oii7JfIDRcGIsSEQZxsUg1urmVnNSigdhConcuzrEFyOBHOtXDsaAsD2EALw_wcB
+            - img [ref=e461]
+            - text: VEURE RECURS
+        - generic [ref=e464] [cursor=pointer]:
+          - generic [ref=e466]:
+            - generic [ref=e467]: Informació
+            - generic [ref=e468]: Cursos
+          - generic [ref=e469]:
+            - generic [ref=e470]: 2026-05-20
+            - generic [ref=e471]: Roger
+          - heading "Contractes de formació en alternança amb el programa FPO Dual" [level=3] [ref=e472]
+          - paragraph [ref=e473]: El Servei d'Ocupació de la Generalitat de Catalunya ofereix contrats de formació en alternança amb el programa FPO Dual, que permet a les persones treballar i estudiar alhora. Aquest programa és útil per a aquells que busquen combinar la formació professional amb la pràctica laboral.
+          - link "VEURE RECURS" [ref=e475]:
+            - /url: https://serveiocupacio.gencat.cat/es/detall/noticia/Contratos-de-formacion-en-alternancia-durante-un-ano-con-el-programa-de-FPO-Dual
+            - img [ref=e476]
+            - text: VEURE RECURS
+        - generic [ref=e479] [cursor=pointer]:
+          - generic [ref=e481]:
+            - generic [ref=e482]: Informació
+            - generic [ref=e483]: Graus
+          - generic [ref=e484]:
+            - generic [ref=e485]: 2026-05-20
+            - generic [ref=e486]: Roger
+          - heading "Acreditació de competències professionals" [level=3] [ref=e487]
+          - paragraph [ref=e488]: Aquest recurs explica com acreditar competències professionals adquirides a través de l'experiència laboral o altres vies no formals. És útil per a persones que no tenen certificats oficials però han desenvolupat coneixements professionals en el món laboral.
+          - link "VEURE RECURS" [ref=e490]:
+            - /url: https://todofp.es/acreditacion-de-competencias/acreditacion-de-competencias-profesionales.html#cla-03-08
+            - img [ref=e491]
+            - text: VEURE RECURS
+        - generic [ref=e494] [cursor=pointer]:
+          - generic [ref=e496]:
+            - generic [ref=e497]: Informació
+            - generic [ref=e498]: Graus
+          - generic [ref=e499]:
+            - generic [ref=e500]: 2026-05-20
+            - generic [ref=e501]: Roger
+          - heading "Requisits d'accés a la Formació Professional" [level=3] [ref=e502]
+          - paragraph [ref=e503]: Conèixer els requisits d'accés a la Formació Professional per a poder estudiar ciclos formatius, cursos de especialització i certificats de professionalitat. Aquest recurs és útil per a aquells que volen iniciar-se en la Formació Professional.
+          - link "VEURE RECURS" [ref=e505]:
+            - /url: https://todofp.es/como-cuando-y-donde-estudiar/acceso-fp-desde-fp/como-accedo-a-fp.html#cla-00-010
+            - img [ref=e506]
+            - text: VEURE RECURS
+        - generic [ref=e509] [cursor=pointer]:
+          - generic [ref=e511]:
+            - generic [ref=e512]: Informació
+            - generic [ref=e513]: Institucional
+          - generic [ref=e514]:
+            - generic [ref=e515]: 2026-05-20
+            - generic [ref=e516]: Roger
+          - heading "Sistema Nacional de Cualificaciones y Formación Profesional" [level=3] [ref=e517]
+          - paragraph [ref=e518]: El Sistema Nacional de Cualificaciones y Formació Profesional (SNCFP) és un instrument que avalua i acredita les competències professionals adquirides a través de l'experiència laboral o la formació. És útil per als professionals que volen conèixer les qualificacions professionals més significatives i per als formadors que volen crear ofertes formatives adequades.
+          - link "VEURE RECURS" [ref=e520]:
+            - /url: https://todofp.es/sobre-fp/informacion-general/sistema-nacional-cualificaciones-fp.html
+            - img [ref=e521]
+            - text: VEURE RECURS
+    - generic [ref=e524]:
+      - generic [ref=e525]:
+        - heading "Institucional" [level=2] [ref=e526]
+        - generic [ref=e527]: "4"
+      - generic [ref=e529]:
+        - generic [ref=e530] [cursor=pointer]:
+          - generic [ref=e532]:
+            - generic [ref=e533]: IA
+            - generic [ref=e534]: Informació
+            - generic [ref=e535]: Institucional
+          - generic [ref=e536]:
+            - generic [ref=e537]: 2026-06-01
+            - generic [ref=e538]: Roger
+          - 'heading "UNESCO: Guia per l''ús de la IA generativa en educació" [level=3] [ref=e539]'
+          - paragraph [ref=e540]: La UNESCO ofereix aquesta guia per ajudar als països a implementar accions immediates i a planificar polítiques de llarg plazo per al desenvolupament de la IA generativa en educació. La guia analitza les tecnologies disponibles, identifica qüestions ètiques i polítiques, i proposa mesures per regular l'ús de la IA generativa de manera segura i equitativa.
+          - link "VEURE RECURS" [ref=e542]:
+            - /url: https://www.unesco.org/es/articles/guia-para-el-uso-de-ia-generativa-en-educacion-e-investigacion
+            - img [ref=e543]
+            - text: VEURE RECURS
+        - generic [ref=e546] [cursor=pointer]:
+          - generic [ref=e548]:
+            - generic [ref=e549]: Legislació
+            - generic [ref=e550]: Informació
+            - generic [ref=e551]: Institucional
+            - generic [ref=e552]: Cursos
+          - generic [ref=e553]:
+            - generic [ref=e554]: 2026-05-20
+            - generic [ref=e555]: Roger
+          - heading "Catàleg del Departament de Treball de la Gencat" [level=3] [ref=e556]
+          - paragraph [ref=e557]: Aquest catàleg ofereix formularis i documents oficials del Departament de Treball de la Generalitat de Catalunya, útils per a empresaris, treballadors i professionals de la formació professional.
+          - link "VEURE RECURS" [ref=e559]:
+            - /url: https://treball.gencat.cat/ca/tramits/formularis_documents/impresos_departament/
+            - img [ref=e560]
+            - text: VEURE RECURS
+        - generic [ref=e563] [cursor=pointer]:
+          - generic [ref=e565]:
+            - generic [ref=e566]: Informació
+            - generic [ref=e567]: Institucional
+          - generic [ref=e568]:
+            - generic [ref=e569]: 2026-05-20
+            - generic [ref=e570]: Roger
+          - heading "Sistema Nacional de Cualificaciones y Formación Profesional" [level=3] [ref=e571]
+          - paragraph [ref=e572]: El Sistema Nacional de Cualificaciones y Formació Profesional (SNCFP) és un instrument que avalua i acredita les competències professionals adquirides a través de l'experiència laboral o la formació. És útil per als professionals que volen conèixer les qualificacions professionals més significatives i per als formadors que volen crear ofertes formatives adequades.
+          - link "VEURE RECURS" [ref=e574]:
+            - /url: https://todofp.es/sobre-fp/informacion-general/sistema-nacional-cualificaciones-fp.html
+            - img [ref=e575]
+            - text: VEURE RECURS
+        - generic [ref=e578] [cursor=pointer]:
+          - generic [ref=e581]: Institucional
+          - generic [ref=e582]:
+            - generic [ref=e583]: 2026-05-20
+            - generic [ref=e584]: Roger
+          - heading "Catálogo Nacional de Estandares de Competencias Profesionales" [level=3] [ref=e585]
+          - paragraph [ref=e586]: El Catàleg Nacional d'Estandards de Competències Profesionals (CNECP) és un instrument del Sistema Nacional de Formació Professional que ordena els estàndards de competències professionals identificats en el sistema productiu espanyol. És útil per a professionals, formadors i estudiants que volen conèixer els estàndards de competència professionals i la seva estructura.
+          - link "VEURE RECURS" [ref=e588]:
+            - /url: https://incual.educacion.gob.es/bdc
+            - img [ref=e589]
+            - text: VEURE RECURS
+    - generic [ref=e592]:
+      - generic [ref=e593]:
+        - heading "Legislació" [level=2] [ref=e594]
+        - generic [ref=e595]: "3"
+      - generic [ref=e597]:
+        - generic [ref=e598] [cursor=pointer]:
+          - generic [ref=e600]:
+            - generic [ref=e601]: Legislació
+            - generic [ref=e602]: Informació
+            - generic [ref=e603]: Institucional
+            - generic [ref=e604]: Cursos
+          - generic [ref=e605]:
+            - generic [ref=e606]: 2026-05-20
+            - generic [ref=e607]: Roger
+          - heading "Catàleg del Departament de Treball de la Gencat" [level=3] [ref=e608]
+          - paragraph [ref=e609]: Aquest catàleg ofereix formularis i documents oficials del Departament de Treball de la Generalitat de Catalunya, útils per a empresaris, treballadors i professionals de la formació professional.
+          - link "VEURE RECURS" [ref=e611]:
+            - /url: https://treball.gencat.cat/ca/tramits/formularis_documents/impresos_departament/
+            - img [ref=e612]
+            - text: VEURE RECURS
+        - generic [ref=e615] [cursor=pointer]:
+          - generic [ref=e617]:
+            - generic [ref=e618]: Legislació
+            - generic [ref=e619]: Informació
+          - generic [ref=e620]:
+            - generic [ref=e621]: 2026-05-20
+            - generic [ref=e622]: Roger
+          - heading "Formació per a empreses. Bonificació de les cuotes de la Seguretat Social" [level=3] [ref=e623]
+          - paragraph [ref=e624]: Aquest recurs explica com bonificar les cuotes de la Seguretat Social per a les empreses catalanes. Inclou vídeos, documents i normativa per ajudar a gestionar la formació bonificada.
+          - link "VEURE RECURS" [ref=e626]:
+            - /url: https://www.fundae.es/empresas/home/como-bonificarte?gad_source=1&gclid=Cj0KCQjw4cS-BhDGARIsABg4_J17oii7JfIDRcGIsSEQZxsUg1urmVnNSigdhConcuzrEFyOBHOtXDsaAsD2EALw_wcB
+            - img [ref=e627]
+            - text: VEURE RECURS
+        - generic [ref=e630] [cursor=pointer]:
+          - generic [ref=e633]: Legislació
+          - generic [ref=e634]:
+            - generic [ref=e635]: 2026-05-20
+            - generic [ref=e636]: Roger
+          - heading "Estructura i elements de la Formació Professional actualitzada" [level=3] [ref=e637]
+          - paragraph [ref=e638]: Conèixer els canvis introduïts pel Real Decreto 69/2025 és important per als estudiants i impartidors de formació professional. Aquest recurs explica les novedats més rellevants i els mecanismes de transició.
+          - link "VEURE RECURS" [ref=e640]:
+            - /url: https://todofp.es/sobre-fp/informacion-general/elementos-estructura-formacion-profesional.html
+            - img [ref=e641]
+            - text: VEURE RECURS
+    - generic [ref=e644]:
+      - generic [ref=e645]:
+        - heading "Videos alumnes SSCE0110" [level=2] [ref=e646]
+        - generic [ref=e647]: "7"
+      - generic [ref=e649]:
+        - generic [ref=e650] [cursor=pointer]:
+          - generic [ref=e652]:
+            - generic [ref=e653]: Cursos
+            - generic [ref=e654]: Videos alumnes SSCE0110
+          - generic [ref=e655]:
+            - generic [ref=e656]: 2026-06-04
+            - generic [ref=e657]: Patricia
+          - heading "Gestió Documental amb la IA" [level=3] [ref=e658]
+          - paragraph [ref=e659]: Com faig servir la IA y el DUA a la meva aula.
+          - link "VEURE RECURS" [ref=e661]:
+            - /url: https://youtu.be/ZrEsEj9gKEA?is=X1ni4rHOogWLD8yp
+            - img [ref=e662]
+            - text: VEURE RECURS
+        - generic [ref=e665] [cursor=pointer]:
+          - generic [ref=e668]: Videos alumnes SSCE0110
+          - generic [ref=e669]:
+            - generic [ref=e670]: 2026-06-04
+            - generic [ref=e671]: Sandra
+          - heading "Tu voz, tu motor" [level=3] [ref=e672]
+          - paragraph [ref=e673]: Aquí teniu els consells per cuidar la vostra veu
+          - link "VEURE RECURS" [ref=e675]:
+            - /url: https://youtu.be/q0oeQwX5zF0
+            - img [ref=e676]
+            - text: VEURE RECURS
+        - generic [ref=e679] [cursor=pointer]:
+          - generic [ref=e682]: Videos alumnes SSCE0110
+          - generic [ref=e683]:
+            - generic [ref=e684]: 2026-06-02
+            - generic [ref=e685]: Oliver
+          - heading "Instalació d'endoll i totes les seves parts" [level=3] [ref=e686]
+          - paragraph [ref=e687]: i ja sabeu noies i nois si seguiu aquests passos això és fàcil senzill i per a tota la família.
+          - link "VEURE RECURS" [ref=e689]:
+            - /url: https://canva.link/b0t429j76z5zwfw
+            - img [ref=e690]
+            - text: VEURE RECURS
+        - generic [ref=e693] [cursor=pointer]:
+          - generic [ref=e695]:
+            - generic [ref=e696]: Videos alumnes SSCE0110
+            - generic [ref=e697]: Informació
+          - generic [ref=e698]:
+            - generic [ref=e699]: 2026-06-01
+            - generic [ref=e700]: Roger
+          - heading "Tutorial per aprendre a fer servir bé aquesta Web" [level=3] [ref=e701]
+          - paragraph [ref=e702]: Com aprofitar totes les funcionalitats d' aquesta App? Totes les possibilitats explicades i resumides una per una...
+          - link "VEURE RECURS" [ref=e704]:
+            - /url: https://www.youtube.com/watch?v=1ahKXm9LJVE
+            - img [ref=e705]
+            - text: VEURE RECURS
+        - generic [ref=e708] [cursor=pointer]:
+          - generic [ref=e711]: Videos alumnes SSCE0110
+          - generic [ref=e712]:
+            - generic [ref=e713]: 2026-05-31
+            - generic [ref=e714]: Roger
+          - heading "Cómo llegan los productos al supermercado | Supply Chain básica" [level=3] [ref=e715]
+          - paragraph [ref=e716]: "Per Antonietta Sigigliano En este videotutorial explico de forma sencilla qué es la supply chain y cómo funciona la planificación desde la demanda hasta el cliente final. Veremos conceptos como: previsión de demanda planificación de materiales producción distribución stockout y overstock Todo ello acompañado de ejemplos prácticos y visuales para entender cómo llegan los productos al supermercado y a nuestras casas."
+          - link "VEURE RECURS" [ref=e718]:
+            - /url: https://www.youtube.com/watch?v=7TK7lzbVgRE
+            - img [ref=e719]
+            - text: VEURE RECURS
+        - generic [ref=e722] [cursor=pointer]:
+          - generic [ref=e725]: Videos alumnes SSCE0110
+          - generic [ref=e726]:
+            - generic [ref=e727]: 2026-05-31
+            - generic [ref=e728]: Roger
+          - heading "Rompiendo los mitos del sinhogarismo" [level=3] [ref=e729]
+          - paragraph [ref=e730]: Video presentació de l'Anna de los Riscos per al curs SSCE0110 2026 a Merin's
+          - link "VEURE RECURS" [ref=e732]:
+            - /url: https://www.youtube.com/watch?v=Z-pZdlxrsYc
+            - img [ref=e733]
+            - text: VEURE RECURS
+        - generic [ref=e736] [cursor=pointer]:
+          - generic [ref=e739]: Videos alumnes SSCE0110
+          - generic [ref=e740]:
+            - generic [ref=e741]: 2026-05-31
+            - generic [ref=e742]: Roger
+          - heading "Marketing i Empleabilitat amb Eva LaMaga" [level=3] [ref=e743]
+          - paragraph [ref=e744]: Aquest canal de YouTube ofereix recursos educatius sobre marketing i empleabilitat, amb l'objectiu d'ajudar a les persones a millorar les seves habilitats professionals i a trobar treball. Són útils per a qui busca actualitzar les seves coneixences en aquests àmbits.
+          - link "VEURE RECURS" [ref=e746]:
+            - /url: https://www.youtube.com/@LaMaga_Marketing_Empleo
+            - img [ref=e747]
+            - text: VEURE RECURS
+    - generic [ref=e750]:
+      - generic [ref=e751]:
+        - heading "DESTACAT" [level=2] [ref=e752]
+        - generic [ref=e753]: "3"
+      - generic [ref=e755]:
+        - generic [ref=e756] [cursor=pointer]:
+          - generic [ref=e758]:
+            - generic [ref=e759]: Videos alumnes SSCE0110
+            - generic [ref=e760]: Informació
+          - generic [ref=e761]:
+            - generic [ref=e762]: 2026-06-01
+            - generic [ref=e763]: Roger
+          - heading "Tutorial per aprendre a fer servir bé aquesta Web" [level=3] [ref=e764]
+          - paragraph [ref=e765]: Com aprofitar totes les funcionalitats d' aquesta App? Totes les possibilitats explicades i resumides una per una...
+          - link "VEURE RECURS" [ref=e767]:
+            - /url: https://www.youtube.com/watch?v=1ahKXm9LJVE
+            - img [ref=e768]
+            - text: VEURE RECURS
+        - generic [ref=e771] [cursor=pointer]:
+          - generic [ref=e774]: Cursos
+          - generic [ref=e775]:
+            - generic [ref=e776]: 2026-05-20
+            - generic [ref=e777]: Roger
+          - heading "Tutorització en Teleformació" [level=3] [ref=e778]
+          - paragraph [ref=e779]: Aquest recurs ofereix una formació en teleformació per a professionals que volen adquirir o millorar les seves competències docents en l'àmbit de la formació online. La formació té una durada de 50 hores i es divideix en dos mòduls que cobreixen temes com l'aprenentatge mitjançant teleformació, les eines i estratègies metodològiques per a l'aprenentatge en teleformació.
+          - link "VEURE RECURS" [ref=e781]:
+            - /url: https://serveiocupacio.gencat.cat/ca/soc/com-ens-organitzem/centres-propis-formacio-cifo-cfpa/centres-dinnovacio-i-formacio-ocupacional-cifo/cifo-hospitalet-de-llobregat/detall/TUTORITZACIO-EN-TELEFORMACIO-00001
+            - img [ref=e782]
+            - text: VEURE RECURS
+        - generic [ref=e785] [cursor=pointer]:
+          - generic [ref=e788]: Graus
+          - generic [ref=e789]:
+            - generic [ref=e790]: 2026-05-18
+            - generic [ref=e791]: Roger
+          - heading "Graus FP" [level=3] [ref=e792]
+          - paragraph [ref=e793]: Cercador unificat per explorar tots els graus disponibles a l'estat espanyol.
+          - link "VEURE RECURS" [ref=e795]:
+            - /url: https://grausfp.masellas.info/
+            - img [ref=e796]
+            - text: VEURE RECURS
+  - button "Canviar skin" [ref=e819] [cursor=pointer]:
+    - img [ref=e820]

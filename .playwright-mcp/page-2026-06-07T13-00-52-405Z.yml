@@ -1,0 +1,9 @@
+- generic [ref=e784]:
+  - banner [ref=e785]:
+    - generic [ref=e787]:
+      - button "Tornar" [ref=e788] [cursor=pointer]:
+        - img [ref=e789]
+        - text: Tornar
+      - heading "Changelog" [level=1] [ref=e791]
+  - main [ref=e792]:
+    - paragraph [ref=e794]: Sense posts
