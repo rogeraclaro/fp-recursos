@@ -22,6 +22,7 @@ export const BookmarkCard: React.FC<Props> = ({
 
   return (
     <div
+      id={`bookmark-${bookmark.id}`}
       onClick={() => window.open(bookmark.url, '_blank', 'noopener,noreferrer')}
       className={`relative cursor-pointer border-skin p-5 h-full flex flex-col shadow-skin-card hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-skin-lg transition-all duration-200 ${bookmark.highlighted ? 'bg-orange-100' : (isUnreviewed || isOrphan) ? 'bg-blue-100' : 'bg-surface'}`}
     >

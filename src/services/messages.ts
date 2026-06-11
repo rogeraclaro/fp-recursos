@@ -1,5 +1,6 @@
 import { supabase } from '../lib/supabase'
 import type { Message } from '../types/database'
+import { notifyWhatsApp } from './notify'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const msg = () => supabase.from('messages') as any
@@ -28,20 +29,8 @@ export async function sendMessage(senderId: string, recipientId: string, content
     .select()
     .single()
   if (error) throw error
-  await notifyWhatsApp()
+  await notifyWhatsApp('💬 Nou missatge a fp-recursos')
   return data
-}
-
-async function notifyWhatsApp(): Promise<void> {
-  const phone = import.meta.env.VITE_CALLMEBOT_PHONE
-  const apikey = import.meta.env.VITE_CALLMEBOT_APIKEY
-  if (!phone || !apikey) return
-  const url = `https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${encodeURIComponent('💬 Nou missatge a fp-recursos')}&apikey=${apikey}`
-  try {
-    await fetch(url, { mode: 'no-cors' })
-  } catch {
-    // best-effort
-  }
 }
 
 export async function markThreadAsRead(recipientId: string, senderId: string): Promise<void> {

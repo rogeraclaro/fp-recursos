@@ -1,5 +1,6 @@
 import { supabase } from '../lib/supabase'
 import type { Bookmark, BookmarkInsert, BookmarkUpdate } from '../types/database'
+import { notifyWhatsApp } from './notify'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const bookmarks = () => supabase.from('bookmarks') as any
@@ -19,6 +20,8 @@ export async function createBookmark(bookmark: BookmarkInsert): Promise<Bookmark
     .select('*, profiles(username, active)')
     .single()
   if (error) throw error
+  const username = (data.profiles as { username: string } | null)?.username ?? 'desconegut'
+  await notifyWhatsApp(`📎 Nou recurs afegit per ${username}:\n${data.title}`)
   return data
 }
 

@@ -1,5 +1,6 @@
 import { supabase } from '../lib/supabase'
 import type { Category } from '../types/database'
+import { notifyWhatsApp } from './notify'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const categories = () => supabase.from('categories') as any
@@ -18,6 +19,7 @@ export async function createCategory(name: string, userId: string): Promise<Cate
     .select()
     .single()
   if (error) throw error
+  await notifyWhatsApp(`🗂️ Nova categoria creada:\n${data.name}`)
   return data
 }
 

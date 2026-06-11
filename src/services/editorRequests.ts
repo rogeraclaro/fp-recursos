@@ -1,5 +1,6 @@
 import { supabase } from '../lib/supabase'
 import type { EditorRequest } from '../types/database'
+import { notifyWhatsApp } from './notify'
 
 const tbl = () => supabase.from('editor_requests') as any
 
@@ -10,7 +11,8 @@ export async function submitEditorRequest(
 ): Promise<void> {
   const { error } = await tbl().insert({ name, email, comment: comment || null })
   if (error) throw error
-  await sendWhatsApp(name, email, comment)
+  const text = `🙋 Petició alta editor SSCE0110:\n👤 ${name}\n📧 ${email}${comment ? `\n💬 ${comment}` : ''}`
+  await notifyWhatsApp(text)
 }
 
 export async function getEditorRequests(): Promise<EditorRequest[]> {
@@ -56,17 +58,3 @@ export async function rejectEditorRequest(
   if (error) throw error
 }
 
-async function sendWhatsApp(name: string, email: string, comment: string): Promise<void> {
-  const phone = import.meta.env.VITE_CALLMEBOT_PHONE
-  const apikey = import.meta.env.VITE_CALLMEBOT_APIKEY
-  if (!phone || !apikey) return
-
-  const text = `🙋 Petició alta editor SSCE0110:\n👤 ${name}\n📧 ${email}${comment ? `\n💬 ${comment}` : ''}`
-  const url = `https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${encodeURIComponent(text)}&apikey=${apikey}`
-
-  try {
-    await fetch(url, { mode: 'no-cors' })
-  } catch {
-    // best-effort
-  }
-}
