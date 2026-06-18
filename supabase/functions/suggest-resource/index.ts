@@ -6,7 +6,7 @@ const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions'
 const MODEL = 'llama-3.1-8b-instant'
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': 'https://fp-recursos.masellas.info',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
