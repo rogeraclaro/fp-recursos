@@ -1,0 +1,16 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - heading "SSCE0110 LINKS" [level=1] [ref=e7]
+        - paragraph [ref=e9]: "Total: 0 | Categories: 0"
+      - generic [ref=e10]:
+        - button "Changelog" [ref=e11] [cursor=pointer]:
+          - generic [ref=e12]: Changelog
+        - button "Contacte" [ref=e13] [cursor=pointer]:
+          - img [ref=e14]
+          - generic [ref=e17]: Contacte
+        - button "Accés" [ref=e18] [cursor=pointer]
+  - main [ref=e19]
+  - button "Canviar skin" [ref=e21] [cursor=pointer]:
+    - img [ref=e22]

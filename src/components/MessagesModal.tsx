@@ -149,7 +149,7 @@ export const MessagesModal: React.FC<Props> = ({ onClose, onUnreadChange }) => {
     if (isAdmin) {
       Promise.all([getProfiles(), getAllAdminMessages(user.id)])
         .then(([profs, msgs]) => {
-          setProfiles(profs.filter(p => p.role === 'editor'))
+          setProfiles(profs.filter(p => p.role === 'editor' && p.active))
           setAllMessages(msgs)
         })
         .finally(() => setLoading(false))
@@ -212,24 +212,20 @@ export const MessagesModal: React.FC<Props> = ({ onClose, onUnreadChange }) => {
 
   const editorThreads = React.useMemo(() => {
     if (!isAdmin || !user) return []
-    const editorIds = new Set<string>()
-    allMessages.forEach(m => {
-      if (m.sender_id !== user.id) editorIds.add(m.sender_id)
-      if (m.recipient_id !== user.id) editorIds.add(m.recipient_id)
-    })
-    return [...editorIds].map(editorId => {
-      const profile = profiles.find(p => p.id === editorId)
+    return profiles.map(profile => {
+      const editorId = profile.id
       const unread = allMessages.filter(
         m => m.sender_id === editorId && m.recipient_id === user.id && !m.read_by_recipient
       ).length
       const lastMsg = allMessages
         .filter(m => m.sender_id === editorId || m.recipient_id === editorId)
         .at(-1)
-      return { editorId, username: profile?.username ?? editorId.slice(0, 8), unread, lastMsg }
+      return { editorId, username: profile.username, unread, lastMsg }
     }).sort((a, b) => {
-      const aTime = a.lastMsg?.created_at ?? ''
-      const bTime = b.lastMsg?.created_at ?? ''
-      return bTime.localeCompare(aTime)
+      if (a.lastMsg && !b.lastMsg) return -1
+      if (!a.lastMsg && b.lastMsg) return 1
+      if (a.lastMsg && b.lastMsg) return b.lastMsg.created_at.localeCompare(a.lastMsg.created_at)
+      return a.username.localeCompare(b.username)
     })
   }, [allMessages, profiles, isAdmin, user])
 
@@ -271,7 +267,7 @@ export const MessagesModal: React.FC<Props> = ({ onClose, onUnreadChange }) => {
           <div className="flex flex-1 min-h-0">
             <div className="w-48 border-r-2 border-black flex-shrink-0 overflow-y-auto">
               {editorThreads.length === 0 && (
-                <p className="font-skin text-xs text-gray-400 p-4 text-center">Sense missatges</p>
+                <p className="font-skin text-xs text-gray-400 p-4 text-center">Sense editors actius</p>
               )}
               {editorThreads.map(t => (
                 <button

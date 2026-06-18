@@ -6,7 +6,7 @@ const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions'
 const MODEL = 'llama-3.1-8b-instant'
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': 'https://fp-recursos.masellas.info',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
@@ -32,6 +32,76 @@ function extractPageContent(html: string): { title: string; metaDesc: string; bo
     .slice(0, 3000)
 
   return { title, metaDesc, bodyText }
+}
+
+function ipv4ToParts(host: string): number[] | null {
+  const m = host.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/)
+  if (!m) return null
+  const parts = m.slice(1).map(Number)
+  if (parts.some((p) => p > 255)) return null
+  return parts
+}
+
+function isPrivateIpv4(parts: number[]): boolean {
+  const [a, b] = parts
+  if (a === 10) return true                         // 10.0.0.0/8
+  if (a === 127) return true                        // loopback
+  if (a === 0) return true                          // 0.0.0.0/8
+  if (a === 169 && b === 254) return true           // link-local + metadata
+  if (a === 172 && b >= 16 && b <= 31) return true  // 172.16.0.0/12
+  if (a === 192 && b === 168) return true           // 192.168.0.0/16
+  if (a === 100 && b >= 64 && b <= 127) return true // CGNAT 100.64.0.0/10
+  return false
+}
+
+async function assertSafeUrl(raw: string): Promise<URL> {
+  let u: URL
+  try {
+    u = new URL(raw)
+  } catch {
+    throw new Error('URL invàlida')
+  }
+  if (u.protocol !== 'http:' && u.protocol !== 'https:') {
+    throw new Error('Esquema d\'URL no permès')
+  }
+  const host = u.hostname.toLowerCase()
+
+  // Bloqueig directe de hostnames comuns interns
+  const blockedHosts = ['localhost', '0.0.0.0', '::1', 'metadata.google.internal']
+  if (blockedHosts.includes(host) || host.endsWith('.localhost') || host.endsWith('.internal')) {
+    throw new Error('Adreça no permesa')
+  }
+
+  // IP literal IPv4 → comprovar rangs privats
+  const v4 = ipv4ToParts(host)
+  if (v4 && isPrivateIpv4(v4)) {
+    throw new Error('Adreça no permesa')
+  }
+  // IPv6 literal entre claudàtors → bloquejar loopback/link-local bàsics
+  if (host.startsWith('[')) {
+    const inner = host.slice(1, -1)
+    if (inner === '::1' || inner.startsWith('fe80') || inner.startsWith('fc') || inner.startsWith('fd')) {
+      throw new Error('Adreça no permesa')
+    }
+  }
+
+  // Intent de resolució DNS (si l'entorn ho permet) per a hostnames que resolen a IP interna
+  try {
+    // @ts-ignore — Deno.resolveDns pot no estar disponible a Edge Runtime
+    if (typeof Deno?.resolveDns === 'function') {
+      // @ts-ignore
+      const addrs: string[] = await Deno.resolveDns(host, 'A')
+      for (const addr of addrs) {
+        const p = ipv4ToParts(addr)
+        if (p && isPrivateIpv4(p)) throw new Error('Adreça no permesa')
+      }
+    }
+  } catch (e) {
+    // Si la resolució falla per permisos/entorn, ja hem aplicat el bloqueig per nom/IP literal.
+    if (e instanceof Error && e.message === 'Adreça no permesa') throw e
+  }
+
+  return u
 }
 
 async function fetchPageContent(url: string): Promise<string | null> {
@@ -82,6 +152,13 @@ serve(async (req) => {
 
     const { url, categories } = await req.json()
     if (!url) throw new Error('URL requerida')
+    if (typeof url !== 'string' || url.length > 2000) {
+      return new Response(JSON.stringify({ error: 'URL invàlida' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+    await assertSafeUrl(url)
 
     // Intentem obtenir el contingut real de la pàgina
     const html = await fetchPageContent(url)

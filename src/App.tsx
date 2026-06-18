@@ -34,6 +34,7 @@ import { updateProfile } from './services/profiles'
 import { getUnreadCount } from './services/messages'
 import { getUnreadContactCount } from './services/contacts'
 import { getPendingEditorRequestCount } from './services/editorRequests'
+import { getNewPostsCount } from './services/changelog'
 import { SetPasswordModal } from './components/SetPasswordModal'
 import { MessagesModal } from './components/MessagesModal'
 import { ContactModal } from './components/ContactModal'
@@ -46,7 +47,7 @@ import { supabase } from './lib/supabase'
 import type { Bookmark, BookmarkInsert, Category } from './types/database'
 import { theme } from './theme'
 
-type View = 'public' | 'editor' | 'admin'
+type View = 'public' | 'editor' | 'admin' | 'changelog'
 
 // Immune a StrictMode (doble-effect) i a Vite HMR (re-avaluació de mòdul).
 // performance.timeOrigin és únic per càrrega real de pàgina (F5), no canvia amb HMR.
@@ -60,6 +61,7 @@ const LAST_VISIT: string | null = JSON.parse(sessionStorage.getItem(_pageKey)!)
 
 const EditorView = React.lazy(() => import('./pages/EditorView').then((m) => ({ default: m.EditorView })))
 const AdminView = React.lazy(() => import('./pages/AdminView').then((m) => ({ default: m.AdminView })))
+const ChangelogPage = React.lazy(() => import('./pages/ChangelogPage').then((m) => ({ default: m.ChangelogPage })))
 
 export default function App() {
 	const { isAdmin, isEditor, user, profile, signOut, refreshProfile } = useAuth()
@@ -90,6 +92,7 @@ export default function App() {
 	const [showEditorRequestModal, setShowEditorRequestModal] = useState(false)
 	const [showEditorRequestsAdminModal, setShowEditorRequestsAdminModal] = useState(false)
 	const [pendingEditorRequests, setPendingEditorRequests] = useState(0)
+	const [changelogBadge, setChangelogBadge] = useState(0)
 	const [showProfileModal, setShowProfileModal] = useState(false)
 	const [profileUsername, setProfileUsername] = useState('')
 	const [profilePassword, setProfilePassword] = useState('')
@@ -122,6 +125,11 @@ export default function App() {
 			getPendingEditorRequestCount().then(setPendingEditorRequests)
 		}
 	}, [user, isAdmin, isEditor])
+
+	useEffect(() => {
+		const lastSeen = localStorage.getItem('fp-changelog-last-seen') ?? new Date(0).toISOString()
+		getNewPostsCount(lastSeen).then(setChangelogBadge)
+	}, [])
 
 	useEffect(() => {
 		Promise.all([getBookmarks(), getCategories()])
@@ -223,6 +231,19 @@ export default function App() {
 				b.url.toLowerCase().includes(lq),
 		)
 	}, [bookmarks, searchQuery])
+
+	function handleChangelogOpen() {
+		setView('changelog')
+		setChangelogBadge(0)
+		localStorage.setItem('fp-changelog-last-seen', new Date().toISOString())
+	}
+
+	function handleNavigateToBookmark(bookmarkId: string) {
+		setView('public')
+		setTimeout(() => {
+			document.getElementById(`bookmark-${bookmarkId}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+		}, 150)
+	}
 
 	function scrollToCategory(cat: string) {
 		const el = document.getElementById(`category-${cat}`)
@@ -437,6 +458,13 @@ export default function App() {
 		</div>
 	)
 
+	if (view === 'changelog')
+		return (
+			<React.Suspense fallback={<Fallback />}>
+				<ChangelogPage onBack={() => setView('public')} onNavigateToBookmark={handleNavigateToBookmark} />
+			</React.Suspense>
+		)
+
 	if (view === 'editor')
 		return (
 			<ProtectedRoute>
@@ -482,6 +510,18 @@ export default function App() {
 					<div className='flex flex-wrap gap-2 items-center justify-end'>
 						{isAdmin && (
 							<>
+								<button
+									onClick={() => handleChangelogOpen()}
+									className='relative flex items-center gap-1.5 font-skin font-bold text-sm px-4 py-2.5 border-skin bg-surface shadow-skin-sm hover:bg-accent transition-colors'
+								>
+									<span className='hidden sm:inline'>Changelog</span>
+									<span className='sm:hidden'>Log</span>
+									{changelogBadge > 0 && (
+										<span className='absolute -top-2 -right-2 bg-accent text-black text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-black'>
+											{changelogBadge > 9 ? '9+' : changelogBadge}
+										</span>
+									)}
+								</button>
 								<button
 									onClick={handleExport}
 									disabled={exporting}
@@ -551,6 +591,18 @@ export default function App() {
 						{!isAdmin && isEditor && (
 							<>
 								<button
+									onClick={() => handleChangelogOpen()}
+									className='relative flex items-center gap-1.5 font-skin font-bold text-sm px-4 py-2.5 border-skin bg-surface shadow-skin-sm hover:bg-accent transition-colors'
+								>
+									<span className='hidden sm:inline'>Changelog</span>
+									<span className='sm:hidden'>Log</span>
+									{changelogBadge > 0 && (
+										<span className='absolute -top-2 -right-2 bg-accent text-black text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-black'>
+											{changelogBadge > 9 ? '9+' : changelogBadge}
+										</span>
+									)}
+								</button>
+								<button
 									onClick={() => setShowNewResourceForm(true)}
 									className='flex items-center gap-1.5 font-skin font-bold text-sm px-4 py-2.5 border-skin bg-surface shadow-skin-sm hover:bg-accent transition-colors'
 								>
@@ -587,13 +639,27 @@ export default function App() {
 							</>
 						)}
 						{!user && (
-							<button
-								onClick={() => setShowContactModal(true)}
-								className='flex items-center gap-1.5 font-skin font-bold text-sm px-4 py-2.5 border-skin bg-surface shadow-skin-sm hover:bg-accent transition-colors'
-							>
-								<Mail size={16} />
-								<span className='hidden sm:inline'>Contacte</span>
-							</button>
+							<>
+								<button
+									onClick={() => handleChangelogOpen()}
+									className='relative flex items-center gap-1.5 font-skin font-bold text-sm px-4 py-2.5 border-skin bg-surface shadow-skin-sm hover:bg-accent transition-colors'
+								>
+									<span className='hidden sm:inline'>Changelog</span>
+									<span className='sm:hidden'>Log</span>
+									{changelogBadge > 0 && (
+										<span className='absolute -top-2 -right-2 bg-accent text-black text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-black'>
+											{changelogBadge > 9 ? '9+' : changelogBadge}
+										</span>
+									)}
+								</button>
+								<button
+									onClick={() => setShowContactModal(true)}
+									className='flex items-center gap-1.5 font-skin font-bold text-sm px-4 py-2.5 border-skin bg-surface shadow-skin-sm hover:bg-accent transition-colors'
+								>
+									<Mail size={16} />
+									<span className='hidden sm:inline'>Contacte</span>
+								</button>
+							</>
 						)}
 						{user ? (
 							<div className='flex items-center gap-2'>
@@ -693,6 +759,19 @@ export default function App() {
 				</button>
 				{!user && (
 					<button
+						onClick={() => handleChangelogOpen()}
+						className='relative bg-surface border-skin px-3 py-2 font-bold font-skin text-sm shadow-skin-sm flex items-center gap-1.5 active:translate-y-[2px] active:shadow-none hover:bg-accent transition-colors'
+					>
+						Log
+						{changelogBadge > 0 && (
+							<span className='absolute -top-2 -right-2 bg-accent text-black text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-black'>
+								{changelogBadge > 9 ? '9+' : changelogBadge}
+							</span>
+						)}
+					</button>
+				)}
+				{!user && (
+					<button
 						onClick={() => setShowContactModal(true)}
 						className='bg-surface border-skin px-3 py-2 font-bold font-skin text-sm shadow-skin-sm flex items-center gap-1.5 active:translate-y-[2px] active:shadow-none hover:bg-accent transition-colors'
 					>
@@ -739,6 +818,15 @@ export default function App() {
 						<div className='p-4 flex flex-col gap-3'>
 							{isAdmin && (
 								<>
+									<button
+										onClick={() => {
+											setIsMobileUserMenuOpen(false)
+											handleChangelogOpen()
+										}}
+										className='font-bold font-skin text-base border-skin p-3 bg-surface hover:bg-accent transition-all flex items-center gap-3 shadow-[4px_4px_0px_0px_#ccc]'
+									>
+										Changelog
+									</button>
 									<button
 										onClick={() => {
 											setIsMobileUserMenuOpen(false)
@@ -822,6 +910,15 @@ export default function App() {
 							)}
 							{!isAdmin && isEditor && (
 								<>
+									<button
+										onClick={() => {
+											setIsMobileUserMenuOpen(false)
+											handleChangelogOpen()
+										}}
+										className='font-bold font-skin text-base border-skin p-3 bg-surface hover:bg-accent transition-all flex items-center gap-3 shadow-[4px_4px_0px_0px_#ccc]'
+									>
+										Changelog
+									</button>
 									<button
 										onClick={() => {
 											setIsMobileUserMenuOpen(false)
@@ -951,9 +1048,15 @@ export default function App() {
 									</span>
 								</button>
 							)}
+							<div className='border-t-2 border-black mt-1' />
+							<button
+								onClick={() => { setIsMobileMenuOpen(false); handleChangelogOpen() }}
+								className='font-bold font-skin text-lg border-skin p-3 bg-surface hover:bg-accent transition-all flex items-center justify-start shadow-[4px_4px_0px_0px_#ccc]'
+							>
+								Changelog
+							</button>
 							{!user && (
 								<>
-									<div className='border-t-2 border-black mt-1' />
 									<button
 										onClick={() => {
 											setIsMobileMenuOpen(false)

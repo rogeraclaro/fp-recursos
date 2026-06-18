@@ -275,3 +275,35 @@
 h3.font-bold.text-xl.leading-tight.mb-3 {
     word-break: break-word;
 }
+
+/* Contingut HTML del Changelog (generat per TipTap) */
+.changelog-content p { margin-bottom: 0.75rem; }
+.changelog-content h2 { font-size: 1.25rem; font-weight: 900; text-transform: uppercase; margin: 1.25rem 0 0.5rem; }
+.changelog-content h3 { font-size: 1.05rem; font-weight: 800; text-transform: uppercase; margin: 1rem 0 0.4rem; }
+.changelog-content strong { font-weight: 700; }
+.changelog-content em { font-style: italic; }
+.changelog-content ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 0.75rem; }
+.changelog-content ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 0.75rem; }
+.changelog-content li { margin-bottom: 0.25rem; }
+.changelog-content blockquote {
+    border-left: 4px solid var(--skin-accent);
+    padding-left: 1rem;
+    margin: 0.75rem 0;
+    color: var(--skin-text-muted);
+    font-style: italic;
+}
+.changelog-content a {
+    text-decoration: underline;
+    color: #2563eb;
+    word-break: break-word;
+}
+.changelog-content a:hover { color: #1d4ed8; }
+
+/* Placeholder TipTap */
+.tiptap p.is-editor-empty:first-child::before {
+    color: #9ca3af;
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+}

@@ -1,0 +1,16 @@
+project_id = "wmnomhexggvrdvyznini"
+
+[functions.create-editor]
+verify_jwt = true
+
+[functions.delete-editor]
+verify_jwt = true
+
+[functions.change-user-password]
+verify_jwt = true
+
+[functions.handle-editor-request]
+verify_jwt = true
+
+[functions.suggest-resource]
+verify_jwt = true

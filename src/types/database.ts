@@ -74,6 +74,29 @@ export interface ContactRequest {
   read: boolean
 }
 
+export interface ChangelogPost {
+  id: string
+  title: string
+  content: string
+  status: 'draft' | 'published'
+  author_id: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface ChangelogPostInsert {
+  title: string
+  content: string
+  status: 'draft' | 'published'
+  author_id: string | null
+}
+
+export interface ChangelogPostUpdate {
+  title?: string
+  content?: string
+  status?: 'draft' | 'published'
+}
+
 export type Database = {
   public: {
     Tables: {
