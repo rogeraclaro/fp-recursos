@@ -5,6 +5,15 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+function escapeHtml(value: unknown): string {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
@@ -113,7 +122,7 @@ Deno.serve(async (req) => {
                   <h1 style="margin: 0; font-size: 20px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em;">SSCE0110 Links</h1>
                 </div>
                 <div style="padding: 28px;">
-                  <p style="margin: 0 0 16px; font-size: 15px;">Hola ${name},</p>
+                  <p style="margin: 0 0 16px; font-size: 15px;">Hola ${escapeHtml(name)},</p>
                   <p style="margin: 0 0 16px; font-size: 15px;">
                     El teu compte a <strong>SSCE0110 Links</strong> ha estat reactivat.
                   </p>
@@ -190,7 +199,7 @@ Deno.serve(async (req) => {
                 <h1 style="margin: 0; font-size: 20px; font-weight: 900; text-transform: uppercase;">SSCE0110 Links</h1>
               </div>
               <div style="padding: 28px;">
-                <p style="margin: 0 0 16px; font-size: 15px;">Hola ${userName},</p>
+                <p style="margin: 0 0 16px; font-size: 15px;">Hola ${escapeHtml(userName)},</p>
                 <p style="margin: 0 0 16px; font-size: 15px;">El teu compte a <strong>SSCE0110 Links</strong> ha estat reactivat.</p>
                 <p style="margin: 0 0 24px; font-size: 15px;">Fes clic al botó per establir una nova contrasenya i accedir:</p>
                 <a href="${recoveryUrl}" style="display: inline-block; background: #000; color: #fff; font-family: monospace; font-weight: 700; font-size: 14px; text-transform: uppercase; padding: 12px 28px; text-decoration: none; border: 2px solid #000; box-shadow: 3px 3px 0 #f5c842;">
@@ -227,7 +236,7 @@ Deno.serve(async (req) => {
           to: email,
           subject: "Sol·licitud d'editor — Resposta",
           html: `
-            <p>Hola ${name},</p>
+            <p>Hola ${escapeHtml(name)},</p>
             <p>Gràcies per l'interès en participar com a editor a <strong>SSCE0110 Links</strong>.</p>
             <p>Lamentem informar-te que en aquest moment la teva sol·licitud no ha pogut ser aprovada.</p>
             <p>Si tens cap dubte, pots contactar-nos a través del lloc web.</p>
