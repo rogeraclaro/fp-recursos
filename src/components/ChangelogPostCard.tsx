@@ -1,4 +1,5 @@
 import React from 'react'
+import DOMPurify from 'dompurify'
 import { Edit2, Trash2 } from 'lucide-react'
 import type { ChangelogPost } from '../types/database'
 
@@ -13,6 +14,10 @@ interface Props {
 export const ChangelogPostCard: React.FC<Props> = ({ post, canEdit, onEdit, onDelete, onBookmarkClick }) => {
   const dateStr = new Date(post.created_at).toLocaleDateString('ca-ES', {
     year: 'numeric', month: 'long', day: 'numeric',
+  })
+
+  const safeHtml = DOMPurify.sanitize(post.content, {
+    ADD_ATTR: ['data-bookmark-id', 'target'],
   })
 
   return (
@@ -53,7 +58,7 @@ export const ChangelogPostCard: React.FC<Props> = ({ post, canEdit, onEdit, onDe
       {/* Contingut HTML del TipTap */}
       <div
         className='changelog-content font-skin text-sm leading-relaxed'
-        dangerouslySetInnerHTML={{ __html: post.content }}
+        dangerouslySetInnerHTML={{ __html: safeHtml }}
         onClick={(e) => {
           const anchor = (e.target as HTMLElement).closest('[data-bookmark-id]') as HTMLElement | null
           if (anchor) {
