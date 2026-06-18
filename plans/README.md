@@ -19,7 +19,7 @@ del qual només V1 estava resolt; aquests plans cobreixen la resta verificada al
 | 002 | `config.toml` versionat amb `verify_jwt` | P2 | S | — | DONE |
 | 003 | Restringir CORS de les Edge Functions | P2 | S | — | DONE |
 | 004 | Escapar HTML als correus Resend | P1 | S | — | DONE |
-| 005 | Validar URL anti-SSRF a `suggest-resource` | P2 | S–M | — | TODO |
+| 005 | Validar URL anti-SSRF a `suggest-resource` | P2 | S–M | — | DONE |
 | 006 | Tancar Stored XSS al changelog públic | P1 | M | — | TODO |
 | 007 | Aplicar de debò la desactivació d'editor | P1 | M | — | TODO |
 | 008 | Moure CallMeBot al servidor (treure creds del bundle) | P1 | M | 002 (recomanat) | TODO |
