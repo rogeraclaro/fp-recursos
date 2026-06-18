@@ -47,7 +47,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       .select('*')
       .eq('id', userId)
       .single()
-    setProfile(data)
+
+    const profileData = data as Profile | null
+
+    if (profileData && profileData.active === false) {
+      await supabase.auth.signOut()
+      setProfile(null)
+      setUser(null)
+      setSession(null)
+      setLoading(false)
+      return
+    }
+
+    setProfile(profileData)
     setLoading(false)
   }
 
