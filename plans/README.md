@@ -16,7 +16,7 @@ del qual només V1 estava resolt; aquests plans cobreixen la resta verificada al
 | Pla | Títol | Prioritat | Esforç | Depèn de | Estat |
 |-----|-------|-----------|--------|----------|-------|
 | 001 | Unificar nom secret service-role | P1 | S | — | DONE |
-| 002 | `config.toml` versionat amb `verify_jwt` | P2 | S | — | TODO |
+| 002 | `config.toml` versionat amb `verify_jwt` | P2 | S | — | DONE |
 | 003 | Restringir CORS de les Edge Functions | P2 | S | — | TODO |
 | 004 | Escapar HTML als correus Resend | P1 | S | — | TODO |
 | 005 | Validar URL anti-SSRF a `suggest-resource` | P2 | S–M | — | TODO |
