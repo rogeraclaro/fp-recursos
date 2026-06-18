@@ -1,8 +1,0 @@
-- generic [ref=e3]:
-  - banner [ref=e4]:
-    - generic [ref=e5]:
-      - generic [ref=e6]:
-        - heading "FP Recursos" [level=1] [ref=e7]
-        - paragraph [ref=e9]: "Total: 0 | Categories: 0"
-      - button "LOGIN" [ref=e11] [cursor=pointer]
-  - main [ref=e12]
