@@ -21,7 +21,7 @@ del qual només V1 estava resolt; aquests plans cobreixen la resta verificada al
 | 004 | Escapar HTML als correus Resend | P1 | S | — | DONE |
 | 005 | Validar URL anti-SSRF a `suggest-resource` | P2 | S–M | — | DONE |
 | 006 | Tancar Stored XSS al changelog públic | P1 | M | — | DONE |
-| 007 | Aplicar de debò la desactivació d'editor | P1 | M | — | TODO |
+| 007 | Aplicar de debò la desactivació d'editor | P1 | M | — | DONE |
 | 008 | Moure CallMeBot al servidor (treure creds del bundle) | P1 | M | 002 (recomanat) | TODO |
 | 009 | Deixar `npm run lint` en verd | P2 | M | 006/007/008 (recomanat) | TODO |
 
