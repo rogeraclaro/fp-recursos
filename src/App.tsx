@@ -46,6 +46,7 @@ import { Button, Input, Label } from './components/UI'
 import { supabase } from './lib/supabase'
 import type { Bookmark, BookmarkInsert, Category } from './types/database'
 import { theme } from './theme'
+import { exportBookmarksToCsv } from './utils/exportCsv'
 
 type View = 'public' | 'editor' | 'admin' | 'changelog'
 
@@ -511,6 +512,14 @@ export default function App() {
 						{isAdmin && (
 							<>
 								<button
+									onClick={() => exportBookmarksToCsv(searchQuery ? searchResults : bookmarks)}
+									className='flex items-center gap-1.5 font-skin font-bold text-sm px-4 py-2.5 border-skin bg-surface shadow-skin-sm hover:bg-accent transition-colors'
+									title='Exportar a CSV'
+								>
+									<Download size={16} />
+									<span className='hidden sm:inline'>Exportar</span>
+								</button>
+								<button
 									onClick={() => handleChangelogOpen()}
 									className='relative flex items-center gap-1.5 font-skin font-bold text-sm px-4 py-2.5 border-skin bg-surface shadow-skin-sm hover:bg-accent transition-colors'
 								>
@@ -590,6 +599,14 @@ export default function App() {
 						)}
 						{!isAdmin && isEditor && (
 							<>
+								<button
+									onClick={() => exportBookmarksToCsv(searchQuery ? searchResults : bookmarks)}
+									className='flex items-center gap-1.5 font-skin font-bold text-sm px-4 py-2.5 border-skin bg-surface shadow-skin-sm hover:bg-accent transition-colors'
+									title='Exportar a CSV'
+								>
+									<Download size={16} />
+									<span className='hidden sm:inline'>Exportar</span>
+								</button>
 								<button
 									onClick={() => handleChangelogOpen()}
 									className='relative flex items-center gap-1.5 font-skin font-bold text-sm px-4 py-2.5 border-skin bg-surface shadow-skin-sm hover:bg-accent transition-colors'
