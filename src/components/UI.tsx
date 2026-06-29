@@ -83,13 +83,14 @@ export const Modal: React.FC<{
   onClose: () => void;
   title: string;
   children: React.ReactNode;
+  footer?: React.ReactNode;
   priority?: 'normal' | 'high';
-}> = ({ isOpen, onClose, title, children, priority = 'normal' }) => {
+}> = ({ isOpen, onClose, title, children, footer, priority = 'normal' }) => {
   if (!isOpen) return null;
   const zIndex = priority === 'high' ? 'z-[60]' : 'z-50';
   return (
     <div className={`fixed inset-0 ${zIndex} flex items-center justify-center p-4 modal-overlay`}>
-      <div className="bg-surface border-4 border-black w-full max-w-xl shadow-skin-lg max-h-[90vh] flex flex-col">
+      <div className="bg-surface border-4 border-black w-full max-w-xl shadow-skin-lg max-h-[calc(100svh-2rem)] flex flex-col">
         <div className="flex-shrink-0 flex justify-between items-center p-4 border-b-2 border-black bg-accent">
           <h2 className="font-bold text-xl font-skin uppercase truncate pr-4">{title}</h2>
           <button onClick={onClose} className="p-1 hover:bg-black hover:text-white transition-colors border border-black">
@@ -101,6 +102,11 @@ export const Modal: React.FC<{
         <div className="p-6 overflow-y-auto flex-1">
           {children}
         </div>
+        {footer && (
+          <div className="px-6 py-4 border-t-2 border-black flex gap-3 flex-shrink-0">
+            {footer}
+          </div>
+        )}
       </div>
     </div>
   );

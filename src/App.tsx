@@ -1319,7 +1319,7 @@ export default function App() {
 						<div className='bg-accent border-4 border-black p-4 shadow-[8px_8px_0px_0px_#000]'>
 							<h2 className='font-black font-mono text-xl uppercase tracking-wider'>Categories</h2>
 						</div>
-						<div className='bg-white border-4 border-t-0 border-black shadow-[8px_8px_0px_0px_#000]'>
+						<div className='bg-white border-4 border-t-0 border-black shadow-[8px_8px_0px_0px_#000] max-h-[calc(100svh-10rem)] overflow-y-auto'>
 						<div className='p-6 space-y-4'>
 							<div className='flex gap-2'>
 								<input
@@ -1512,7 +1512,7 @@ export default function App() {
 						<div className='bg-accent border-4 border-black p-4 shadow-[8px_8px_0px_0px_#000]'>
 							<h2 className='font-black font-mono text-xl uppercase tracking-wider'>Les meves categories</h2>
 						</div>
-						<div className='bg-white border-4 border-t-0 border-black p-6 shadow-[8px_8px_0px_0px_#000] space-y-4'>
+						<div className='bg-white border-4 border-t-0 border-black p-6 shadow-[8px_8px_0px_0px_#000] space-y-4 max-h-[calc(100svh-10rem)] overflow-y-auto'>
 							<div className='flex gap-2'>
 								<input
 									type='text'
@@ -1658,58 +1658,60 @@ export default function App() {
 			{/* Modal perfil d'usuari */}
 			{showProfileModal && (
 				<div className='fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4'>
-					<div className='w-full max-w-md relative'>
+					<div className='w-full max-w-md relative flex flex-col max-h-[calc(100svh-2rem)]'>
 						<button
 							onClick={() => setShowProfileModal(false)}
 							className='absolute -top-3 -right-3 z-10 p-1.5 bg-surface border-2 border-black hover:bg-black hover:text-white transition-colors shadow-[2px_2px_0px_0px_#000]'
 						>
 							<X size={18} />
 						</button>
-						<div className='bg-accent border-4 border-black p-4 shadow-[8px_8px_0px_0px_#000]'>
+						<div className='bg-accent border-4 border-black p-4 shadow-[8px_8px_0px_0px_#000] flex-shrink-0'>
 							<h2 className='font-black font-mono text-xl uppercase tracking-wider'>El meu perfil</h2>
 						</div>
-						<div className='bg-white border-4 border-t-0 border-black p-6 shadow-[8px_8px_0px_0px_#000] space-y-4'>
-							<div>
-								<Label>Nom d'usuari</Label>
-								<Input
-									type='text'
-									value={profileUsername}
-									onChange={(e) => setProfileUsername(e.target.value)}
-								/>
+						<div className='bg-white border-4 border-t-0 border-black shadow-[8px_8px_0px_0px_#000] flex flex-col flex-1 min-h-0'>
+							<div className='p-6 overflow-y-auto flex-1 space-y-4'>
+								<div>
+									<Label>Nom d'usuari</Label>
+									<Input
+										type='text'
+										value={profileUsername}
+										onChange={(e) => setProfileUsername(e.target.value)}
+									/>
+								</div>
+								<div>
+									<Label>Email</Label>
+									<Input
+										type='email'
+										value={user?.email ?? ''}
+										readOnly
+										className='w-full bg-surface border-skin p-3 font-skin focus:outline-none bg-gray-50 text-gray-400 cursor-not-allowed shadow-[2px_2px_0px_0px_#ccc]'
+									/>
+								</div>
+								<div>
+									<Label>Contrasenya nova</Label>
+									<Input
+										type='password'
+										value={profilePassword}
+										onChange={(e) => setProfilePassword(e.target.value)}
+										placeholder='Deixa en blanc per no canviar'
+									/>
+								</div>
+								<div>
+									<Label>Confirma la contrasenya</Label>
+									<Input
+										type='password'
+										value={profileConfirmPassword}
+										onChange={(e) => setProfileConfirmPassword(e.target.value)}
+										placeholder='Repeteix la contrasenya nova'
+									/>
+								</div>
+								{profileError && (
+									<p className='font-skin text-xs text-red-600 border border-red-300 bg-red-50 px-3 py-2'>
+										{profileError}
+									</p>
+								)}
 							</div>
-							<div>
-								<Label>Email</Label>
-								<Input
-									type='email'
-									value={user?.email ?? ''}
-									readOnly
-									className='w-full bg-surface border-skin p-3 font-skin focus:outline-none bg-gray-50 text-gray-400 cursor-not-allowed shadow-[2px_2px_0px_0px_#ccc]'
-								/>
-							</div>
-							<div>
-								<Label>Contrasenya nova</Label>
-								<Input
-									type='password'
-									value={profilePassword}
-									onChange={(e) => setProfilePassword(e.target.value)}
-									placeholder='Deixa en blanc per no canviar'
-								/>
-							</div>
-							<div>
-								<Label>Confirma la contrasenya</Label>
-								<Input
-									type='password'
-									value={profileConfirmPassword}
-									onChange={(e) => setProfileConfirmPassword(e.target.value)}
-									placeholder='Repeteix la contrasenya nova'
-								/>
-							</div>
-							{profileError && (
-								<p className='font-skin text-xs text-red-600 border border-red-300 bg-red-50 px-3 py-2'>
-									{profileError}
-								</p>
-							)}
-							<div className='flex justify-end gap-3 pt-2'>
+							<div className='px-6 py-4 border-t-2 border-black flex justify-end gap-3 flex-shrink-0'>
 								<Button variant='secondary' onClick={() => setShowProfileModal(false)}>Cancel·lar</Button>
 								<Button
 									onClick={handleSaveProfile}
