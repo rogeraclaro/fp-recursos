@@ -1187,8 +1187,44 @@ export default function App() {
 					</div>
 				)}
 
+				{/* Vista "Més recents" */}
+				{showRecentView && !searchQuery && (
+					<div>
+						<div className='flex items-center gap-4 mb-6 flex-wrap'>
+							<h2 className='text-3xl font-black uppercase bg-black text-white px-4 py-2 inline-block shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)]'>
+								Més recents
+							</h2>
+							<span className='font-skin font-bold text-xl text-gray-500'>
+								{recentBookmarks.length} recurs{recentBookmarks.length !== 1 ? 'os' : ''}
+							</span>
+						</div>
+						<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6'>
+							{recentBookmarks.map((b) => (
+								<BookmarkCard
+									key={b.id}
+									bookmark={{
+										...b,
+										highlighted: isAdmin ? b.highlighted : isPersonalHighlight(b.id),
+									}}
+									canEdit={isAdmin || (isEditor && b.user_id === user?.id)}
+									canHighlight={isAdmin || isEditor}
+									onEdit={handleEditBookmark}
+									onDelete={handleDelete}
+									onToggleHighlight={
+										isAdmin ? handleToggleHighlight : handleToggleEditorHighlight
+									}
+									isOrphan={orphanBookmarkIds.has(b.id)}
+									isUnreviewed={isAdmin && !b.admin_reviewed && b.user_id !== user?.id}
+									isNew={newBookmarkIds.has(b.id)}
+								/>
+							))}
+						</div>
+					</div>
+				)}
+
 				{/* Seccions per categoria */}
 				{!searchQuery &&
+					!showRecentView &&
 					[...categories]
 						.sort((a, b) => a.name.localeCompare(b.name))
 						.map((cat) => {
@@ -1231,7 +1267,10 @@ export default function App() {
 						})}
 
 				{/* Secció Altres */}
-				{!searchQuery && groupedBookmarks['Altres'] && groupedBookmarks['Altres'].length > 0 && (
+				{!searchQuery &&
+					!showRecentView &&
+					groupedBookmarks['Altres'] &&
+					groupedBookmarks['Altres'].length > 0 && (
 					<div id='category-Altres' className='scroll-mt-48'>
 						<div className='flex items-center gap-4 mb-6'>
 							<h2 className='text-3xl font-black uppercase bg-blue-100 text-black px-4 py-2 inline-block border-skin shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)]'>
@@ -1270,7 +1309,7 @@ export default function App() {
 				)}
 
 				{/* Secció virtual DESTACAT */}
-				{!searchQuery && displayHighlighted.length > 0 && (
+				{!searchQuery && !showRecentView && displayHighlighted.length > 0 && (
 					<div id='category-DESTACAT' className='scroll-mt-48'>
 						<div className='flex items-center gap-4 mb-6'>
 							<h2 className='text-3xl font-black uppercase bg-accent text-black px-4 py-2 inline-block border-skin shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)]'>
