@@ -13,6 +13,7 @@ import {
 	User,
 	MessageSquare,
 	Mail,
+	Clock,
 } from 'lucide-react'
 import { BookmarkCard } from './components/BookmarkCard'
 import { BookmarkForm } from './components/BookmarkForm'
@@ -71,6 +72,7 @@ export default function App() {
 	const [loading, setLoading] = useState(true)
 	const [searchQuery, setSearchQuery] = useState('')
 	const [isSearchModalOpen, setIsSearchModalOpen] = useState(false)
+	const [showRecentView, setShowRecentView] = useState(false)
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 	const [editingBookmark, setEditingBookmark] = useState<Bookmark | null>(null)
 	const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false)
@@ -232,6 +234,14 @@ export default function App() {
 		)
 	}, [bookmarks, searchQuery])
 
+	const recentBookmarks = useMemo(
+		() =>
+			[...bookmarks].sort(
+				(a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+			),
+		[bookmarks],
+	)
+
 	function handleChangelogOpen() {
 		setView('changelog')
 		setChangelogBadge(0)
@@ -245,7 +255,7 @@ export default function App() {
 		}, 150)
 	}
 
-	function scrollToCategory(cat: string) {
+	function scrollToCategoryElement(cat: string) {
 		const el = document.getElementById(`category-${cat}`)
 		if (el) {
 			const offset = 80
@@ -256,9 +266,30 @@ export default function App() {
 		}
 	}
 
+	function scrollToCategory(cat: string) {
+		if (showRecentView) {
+			setShowRecentView(false)
+			setTimeout(() => scrollToCategoryElement(cat), 150)
+			return
+		}
+		scrollToCategoryElement(cat)
+	}
+
+	function toggleRecentView() {
+		setIsMobileMenuOpen(false)
+		if (showRecentView) {
+			setShowRecentView(false)
+			return
+		}
+		setShowRecentView(true)
+		setSearchQuery('')
+		window.scrollTo({ top: 0, behavior: 'smooth' })
+	}
+
 	function handleSearch(query: string) {
 		setSearchQuery(query)
 		setIsSearchModalOpen(false)
+		setShowRecentView(false)
 	}
 
 	async function handleDelete(id: string) {
@@ -698,7 +729,10 @@ export default function App() {
 							SALTAR A:
 						</span>
 						<button
-							onClick={() => setIsSearchModalOpen(true)}
+							onClick={() => {
+								setIsSearchModalOpen(true)
+								setShowRecentView(false)
+							}}
 							className='px-3 py-1 bg-accent border-skin text-xs font-bold uppercase hover:bg-black hover:text-white transition-colors flex items-center gap-2 whitespace-nowrap shadow-[2px_2px_0px_0px_#000]'
 						>
 							<Search size={14} /> CERCAR
@@ -1001,6 +1035,7 @@ export default function App() {
 								onClick={() => {
 									setIsMobileMenuOpen(false)
 									setIsSearchModalOpen(true)
+									setShowRecentView(false)
 								}}
 								className='text-left font-bold font-skin text-lg border-skin p-3 bg-accent hover:bg-black hover:text-white transition-all flex justify-between items-center shadow-skin-sm'
 							>
