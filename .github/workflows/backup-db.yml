@@ -1,0 +1,46 @@
+name: Backup Supabase database
+
+on:
+  schedule:
+    - cron: '15 3 * * *' # cada dia a les 03:15 UTC
+  workflow_dispatch: {} # permet llançar-lo manualment des de GitHub
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Instal·lar client de PostgreSQL
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Fer el dump de la base de dades
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          pg_dump "$SUPABASE_DB_URL" --no-owner --no-privileges | gzip > backup.sql.gz
+
+      - name: Clonar el repo de backups
+        env:
+          BACKUP_REPO_TOKEN: ${{ secrets.BACKUP_REPO_TOKEN }}
+        run: |
+          git clone "https://x-access-token:${BACKUP_REPO_TOKEN}@github.com/rogeraclaro/fp-recursos-backups.git" backups-repo
+
+      - name: Afegir el backup nou i eliminar els antics (retenir els últims 30)
+        run: |
+          mkdir -p backups-repo/backups
+          DATE=$(date -u +%Y-%m-%d)
+          mv backup.sql.gz "backups-repo/backups/${DATE}.sql.gz"
+          cd backups-repo/backups
+          ls -1t *.sql.gz | tail -n +31 | xargs -r rm --
+
+      - name: Pujar el backup al repo
+        run: |
+          cd backups-repo
+          git config user.name "backup-bot"
+          git config user.email "backup-bot@users.noreply.github.com"
+          git add backups/
+          if ! git diff --cached --quiet; then
+            git commit -m "backup: $(date -u +%Y-%m-%d)"
+            git push
+          else
+            echo "Sense canvis, no cal commit."
+          fi
