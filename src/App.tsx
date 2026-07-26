@@ -737,6 +737,14 @@ export default function App() {
 						>
 							<Search size={14} /> CERCAR
 						</button>
+						<button
+							onClick={toggleRecentView}
+							className={`px-3 py-1 border-skin text-xs font-bold uppercase transition-colors flex items-center gap-2 whitespace-nowrap shadow-[2px_2px_0px_0px_#000] ${
+								showRecentView ? 'bg-black text-white' : 'bg-accent hover:bg-black hover:text-white'
+							}`}
+						>
+							<Clock size={14} /> MÉS RECENTS
+						</button>
 						<div className='flex flex-wrap gap-2'>
 							{[...categories]
 								.sort((a, b) => a.name.localeCompare(b.name))
@@ -1041,6 +1049,16 @@ export default function App() {
 							>
 								<span className='flex items-center gap-2'>
 									<Search size={18} /> CERCAR
+								</span>
+							</button>
+							<button
+								onClick={toggleRecentView}
+								className={`text-left font-bold font-skin text-lg border-skin p-3 transition-all flex justify-between items-center shadow-skin-sm ${
+									showRecentView ? 'bg-black text-white' : 'bg-accent hover:bg-black hover:text-white'
+								}`}
+							>
+								<span className='flex items-center gap-2'>
+									<Clock size={18} /> MÉS RECENTS
 								</span>
 							</button>
 							{[...categories]
