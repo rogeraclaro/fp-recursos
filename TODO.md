@@ -1,5 +1,51 @@
 # TODO — fp-recursos
 
+## 🔴 Pendent — Pla 008 CallMeBot al servidor (preparat, NO aplicat — 2026-07-26)
+
+Pla 008 (`plans/008-callmebot-al-servidor.md`) està escrit i verificat, però
+**el codi encara NO s'ha tocat** — es va desfer expressament perquè les
+notificacions de WhatsApp no es tallessin sense avís. Ara mateix `notify.ts` i
+`contacts.ts` segueixen fent el fetch directe a CallMeBot amb
+`VITE_CALLMEBOT_PHONE`/`VITE_CALLMEBOT_APIKEY` (credencials al bundle client,
+és el problema de seguretat que el pla soluciona).
+
+**Quan es vulgui fer el canvi, cal fer-ho TOT junt (codi + accions manuals),
+no per parts, perquè si es desplega el codi sense fer els passos manuals, les
+notificacions de WhatsApp queden mudes en silenci (best-effort, sense error
+visible):**
+
+### A. Canvis de codi (seguir `plans/008-callmebot-al-servidor.md` pas a pas)
+- [ ] Crear `supabase/functions/notify-admin/index.ts` (Edge Function que llegeix
+      `CALLMEBOT_PHONE`/`CALLMEBOT_APIKEY` de `Deno.env`, sense prefix `VITE_`)
+- [ ] Reescriure `src/services/notify.ts` perquè invoqui
+      `supabase.functions.invoke('notify-admin', { body: { message: text } })`
+- [ ] `src/services/contacts.ts`: eliminar la funció local `sendWhatsApp` i usar
+      `notifyWhatsApp(...)` de `notify.ts`
+- [ ] Afegir a `supabase/config.toml`: `[functions.notify-admin]` amb `verify_jwt = false`
+- [ ] Actualitzar `.env.example` amb comentari documentant els secrets nous
+
+### B. Accions manuals (Supabase + rotació)
+- [ ] **Rotar la clau de CallMeBot** a callmebot.com (la vella es considera
+      compromesa — hauria estat exposada al bundle JS públic quan es desplegui)
+- [ ] Configurar secrets a Supabase (sense prefix `VITE_`):
+      ```bash
+      supabase secrets set CALLMEBOT_PHONE=<el_teu_numero> CALLMEBOT_APIKEY=<la_clau_nova>
+      ```
+- [ ] Desplegar la funció nova:
+      ```bash
+      supabase functions deploy notify-admin
+      ```
+
+### C. Build + desplegament + verificació
+- [ ] `npm run build` → verificar `grep -rl "callmebot" dist/` sense resultats
+- [ ] `git push fp-recursos main` + pujar `dist/` al VPS per FTP
+- [ ] **Provar en producció**: enviar el formulari de contacte com a visitant
+      anònim → confirmar que arriba el WhatsApp a l'admin
+- [ ] Confirmar al DevTools → Sources del bundle de producció que no hi apareix
+      ni "callmebot" ni cap número/clau
+
+---
+
 ## ✅ Fet (sessió 2026-05-20)
 
 ### Categories
@@ -144,7 +190,8 @@ Personalitzar template "Invite user" a Supabase → Authentication → Email Tem
 9. Test complet flux
 
 #### Notes
-- CallMeBot ja configurat: VITE_CALLMEBOT_PHONE=34627595835, VITE_CALLMEBOT_APIKEY=1519122
+- CallMeBot: veure secció "Pendent — Pla 008" al capdamunt (ja NO es configura
+  amb `VITE_CALLMEBOT_*`, ara és un secret de servidor via Edge Function)
 - Supabase URL: https://wmnomhexggvrdvyznini.supabase.co
 - El trigger `handle_new_user` pot ja existir — verificar a Database → Functions
 
