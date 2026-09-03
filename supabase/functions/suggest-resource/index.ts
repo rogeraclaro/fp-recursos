@@ -3,7 +3,8 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const GROQ_API_KEY = Deno.env.get('GROQ_API_KEY')!
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions'
-const MODEL = 'llama-3.3-70b-versatile'
+// Ordre de preferència. Si Groq en retira un (404 model_not_found), es prova el següent.
+const MODEL_CANDIDATES = ['openai/gpt-oss-20b', 'openai/gpt-oss-120b']
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': 'https://fp-recursos.masellas.info',
@@ -207,32 +208,46 @@ Respon NOMÉS amb JSON vàlid (sense markdown ni text addicional):
   "category": "una de les categories disponibles que millor s'ajusti"
 }`
 
-    const response = await fetch(GROQ_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${GROQ_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: MODEL,
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.3,
-        max_tokens: 400,
-        response_format: { type: 'json_object' },
-      }),
-    })
+    let groqData: unknown = null
+    let usedModel = ''
+    let lastError = ''
 
-    if (!response.ok) {
+    for (const model of MODEL_CANDIDATES) {
+      const response = await fetch(GROQ_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${GROQ_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model,
+          messages: [{ role: 'user', content: prompt }],
+          temperature: 0.3,
+          max_tokens: 400,
+          response_format: { type: 'json_object' },
+        }),
+      })
+
+      if (response.ok) {
+        groqData = await response.json()
+        usedModel = model
+        break
+      }
+
       const detail = await response.text().catch(() => '')
-      throw new Error(`Groq error ${response.status}: ${detail.slice(0, 300)}`)
+      lastError = `Groq error ${response.status}: ${detail.slice(0, 300)}`
+      // Només provem el següent model si aquest no existeix; qualsevol altre error és definitiu.
+      if (!(response.status === 404 && detail.includes('model_not_found'))) break
     }
 
-    const groqData = await response.json()
-    const text: string = groqData.choices?.[0]?.message?.content ?? ''
+    if (!groqData) throw new Error(lastError || 'Groq no ha retornat cap resposta')
+
+    const text: string =
+      (groqData as { choices?: { message?: { content?: string } }[] }).choices?.[0]?.message?.content ?? ''
     const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
     const result = JSON.parse(cleaned)
 
-    return new Response(JSON.stringify({ ...result, model: MODEL }), {
+    return new Response(JSON.stringify({ ...result, model: usedModel }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
 
