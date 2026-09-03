@@ -87,7 +87,7 @@ export const BookmarkForm: React.FC<Props> = ({ bookmark, categories, userId, on
             className="mt-2 flex items-center gap-1.5 font-skin text-xs px-3 py-1.5 bg-accent border-skin hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             <Sparkles size={12} />
-            {suggesting ? 'Analitzant...' : `Suggerir amb IA (${aiModel ?? 'llama-3.1-8b-instant'})`}
+            {suggesting ? 'Analitzant...' : `Suggerir amb IA${aiModel ? ` (${aiModel})` : ''}`}
           </button>
         </div>
         <div>

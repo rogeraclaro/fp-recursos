@@ -3,7 +3,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const GROQ_API_KEY = Deno.env.get('GROQ_API_KEY')!
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions'
-const MODEL = 'llama-3.1-8b-instant'
+const MODEL = 'llama-3.3-70b-versatile'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': 'https://fp-recursos.masellas.info',
@@ -105,18 +105,34 @@ async function assertSafeUrl(raw: string): Promise<URL> {
 }
 
 async function fetchPageContent(url: string): Promise<string | null> {
+  const MAX_REDIRECTS = 5
+  let currentUrl = url
   try {
-    const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 6000)
-    const res = await fetch(url, {
-      signal: controller.signal,
-      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; FPRecursos/1.0)' },
-    })
-    clearTimeout(timeout)
-    if (!res.ok) return null
-    const contentType = res.headers.get('content-type') ?? ''
-    if (!contentType.includes('html')) return null
-    return await res.text()
+    for (let i = 0; i <= MAX_REDIRECTS; i++) {
+      const controller = new AbortController()
+      const timeout = setTimeout(() => controller.abort(), 6000)
+      const res = await fetch(currentUrl, {
+        signal: controller.signal,
+        redirect: 'manual',
+        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; FPRecursos/1.0)' },
+      })
+      clearTimeout(timeout)
+
+      if (res.status >= 300 && res.status < 400) {
+        const location = res.headers.get('location')
+        if (!location) return null
+        const next = new URL(location, currentUrl)
+        await assertSafeUrl(next.href)
+        currentUrl = next.href
+        continue
+      }
+
+      if (!res.ok) return null
+      const contentType = res.headers.get('content-type') ?? ''
+      if (!contentType.includes('html')) return null
+      return await res.text()
+    }
+    return null
   } catch {
     return null
   }
@@ -202,10 +218,14 @@ Respon NOMÉS amb JSON vàlid (sense markdown ni text addicional):
         messages: [{ role: 'user', content: prompt }],
         temperature: 0.3,
         max_tokens: 400,
+        response_format: { type: 'json_object' },
       }),
     })
 
-    if (!response.ok) throw new Error(`Groq error: ${response.status}`)
+    if (!response.ok) {
+      const detail = await response.text().catch(() => '')
+      throw new Error(`Groq error ${response.status}: ${detail.slice(0, 300)}`)
+    }
 
     const groqData = await response.json()
     const text: string = groqData.choices?.[0]?.message?.content ?? ''
