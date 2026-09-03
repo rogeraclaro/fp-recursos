@@ -223,7 +223,10 @@ Respon NOMÉS amb JSON vàlid (sense markdown ni text addicional):
           model,
           messages: [{ role: 'user', content: prompt }],
           temperature: 0.3,
-          max_tokens: 400,
+          // gpt-oss són models de raonament: els tokens de "pensament" compten
+          // contra el límit, així que cal marge i poca profunditat de raonament.
+          max_tokens: 1500,
+          reasoning_effort: 'low',
           response_format: { type: 'json_object' },
         }),
       })
