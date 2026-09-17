@@ -212,6 +212,20 @@ Respon NOMÉS amb JSON vàlid (sense markdown ni text addicional):
     let usedModel = ''
     let lastError = ''
 
+    function sanitizeSuggestion(
+      raw: unknown,
+      validCategories: string[],
+    ): { title: string; description: string; category: string | null } {
+      const obj = (raw ?? {}) as Record<string, unknown>
+      const title = typeof obj.title === 'string' ? obj.title.slice(0, 200) : ''
+      const description = typeof obj.description === 'string' ? obj.description.slice(0, 1000) : ''
+      const category =
+        typeof obj.category === 'string' && validCategories.includes(obj.category)
+          ? obj.category
+          : null
+      return { title, description, category }
+    }
+
     for (const model of MODEL_CANDIDATES) {
       const response = await fetch(GROQ_URL, {
         method: 'POST',
@@ -248,7 +262,8 @@ Respon NOMÉS amb JSON vàlid (sense markdown ni text addicional):
     const text: string =
       (groqData as { choices?: { message?: { content?: string } }[] }).choices?.[0]?.message?.content ?? ''
     const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
-    const result = JSON.parse(cleaned)
+    const parsed = JSON.parse(cleaned)
+    const result = sanitizeSuggestion(parsed, categories as string[])
 
     return new Response(JSON.stringify({ ...result, model: usedModel }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
