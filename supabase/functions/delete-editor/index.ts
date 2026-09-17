@@ -34,12 +34,12 @@ serve(async (req) => {
 
     const { data: callerProfile } = await supabaseUser
       .from('profiles')
-      .select('role')
+      .select('role, active')
       .eq('id', caller.id)
       .single()
 
-    if (callerProfile?.role !== 'admin') {
-      return new Response(JSON.stringify({ error: 'Només els administradors poden eliminar editors' }), {
+    if (callerProfile?.role !== 'admin' || callerProfile?.active === false) {
+      return new Response(JSON.stringify({ error: 'Només els administradors actius poden eliminar editors' }), {
         status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       })
     }
