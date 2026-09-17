@@ -28,11 +28,11 @@ del qual només V1 estava resolt; aquests plans cobreixen la resta verificada al
 | 007 | Aplicar de debò la desactivació d'editor | P1 | M | — | DONE |
 | 008 | Moure CallMeBot al servidor (treure creds del bundle) | P1 | M | 002 (recomanat) | TODO |
 | 009 | Deixar `npm run lint` en verd | P2 | M | 006/007/008 (recomanat) | TODO — la baseline de 26 errors segueix sent vàlida (~30 escanejant només `src`/`supabase`/`extension`; el 216 reportat inicialment a la segona auditoria era un artefacte de `eslint.config.js` escanejant `.claude/worktrees/`, vegeu nota més avall) |
-| 010 | Rebutjar admins/editors desactivats a les Edge Functions privilegiades | P1 | S | — | DONE (worktree `advisor/010-active-edge-functions`, no mergejat encara) |
-| 011 | Versionar la protecció anti-auto-promoció de `profiles` | P1 | M | — | DONE (worktree `advisor/011-guard-profiles-migration`, migració creada, **no aplicada** a producció) |
-| 012 | Actualitzar dependències amb vulnerabilitats conegudes (dompurify, postcss, vite, tiptap...) | P1 | S | — | DONE (worktree `advisor/012-actualitzar-dependencies`, `npm audit` → 0, no mergejat encara) |
-| 013 | Validar la resposta de la IA a `suggest-resource` | P2 | S | — | DONE (worktree `advisor/013-validar-resposta-ia`, no mergejat encara) |
-| 014 | Afegir CI mínima (typecheck+build+test, lint no-bloquejant) | P2 | S | — | DONE (worktree `advisor/014-ci-basica`, no mergejat encara) |
+| 010 | Rebutjar admins/editors desactivats a les Edge Functions privilegiades | P1 | S | — | DONE (mergejat a `main`, cal `supabase functions deploy` per cada funció) |
+| 011 | Versionar la protecció anti-auto-promoció de `profiles` | P1 | M | — | DONE (mergejat a `main`, migració creada, **no aplicada** a producció — cal `supabase db push`) |
+| 012 | Actualitzar dependències amb vulnerabilitats conegudes (dompurify, postcss, vite, tiptap...) | P1 | S | — | DONE (mergejat a `main`, `npm audit` → 0) |
+| 013 | Validar la resposta de la IA a `suggest-resource` | P2 | S | — | DONE (mergejat a `main`, cal `supabase functions deploy suggest-resource`) |
+| 014 | Afegir CI mínima (typecheck+build+test, lint no-bloquejant) | P2 | S | — | DONE (mergejat a `main`) |
 
 Valors d'estat: TODO | IN PROGRESS | DONE | BLOCKED (amb motiu d'una línia) | REJECTED (amb motiu).
 
