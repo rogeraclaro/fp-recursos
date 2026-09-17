@@ -34,12 +34,12 @@ serve(async (req) => {
 
     const { data: callerProfile } = await supabaseUser
       .from('profiles')
-      .select('role')
+      .select('role, active')
       .eq('id', caller.id)
       .single()
 
-    if (callerProfile?.role !== 'admin') {
-      return new Response(JSON.stringify({ error: 'Només els administradors poden canviar contrasenyes' }), {
+    if (callerProfile?.role !== 'admin' || callerProfile?.active === false) {
+      return new Response(JSON.stringify({ error: 'Només els administradors actius poden canviar contrasenyes' }), {
         status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       })
     }
